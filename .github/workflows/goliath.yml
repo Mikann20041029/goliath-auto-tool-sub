@@ -14,36 +14,53 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_PAT }}
 
-      - uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - run: pip install -r requirements.txt
+      - name: Install deps
+        run: pip install -r requirements.txt
 
-      - env:
+      - name: Debug cwd
+        run: |
+          echo "PWD:"
+          pwd
+          echo "LS:"
+          ls -la
+          echo "LS goliath:"
+          ls -la goliath || true
+          echo "LS goliath/goliath:"
+          ls -la goliath/goliath || true
+
+      # ここが超重要：実際に動かすのは /goliath/main.py
+      - name: Run goliath/main.py
+        working-directory: .
+        env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          GH_PAT: ${{ secrets.GH_PAT }}
           BSKY_HANDLE: ${{ secrets.BSKY_HANDLE }}
           BSKY_PASSWORD: ${{ secrets.BSKY_PASSWORD }}
           MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
           MASTODON_API_BASE: ${{ secrets.MASTODON_API_BASE }}
-          # Xは任意（無ければ自動スキップ）
-          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
+          GH_PAT: ${{ secrets.GH_PAT }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GH_TOKEN: ${{ github.token }}
+          # 追加で入れてるやつ（使わなくてもOK）
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
           X_API_KEY: ${{ secrets.X_API_KEY }}
           X_API_SECRET: ${{ secrets.X_API_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
-          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+        run: python goliath/main.py
 
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GH_TOKEN: ${{ github.token }}
-          GITHUB_REF_NAME: ${{ github.ref_name }}
-        run: python main.py
-
-      - run: |
+      - name: Commit and push changes
+        run: |
           git config --global user.name "Goliath-Bot"
           git config --global user.email "bot@goliath.local"
           git add goliath/
