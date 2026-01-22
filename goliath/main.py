@@ -2,29 +2,50 @@ import os
 import re
 import json
 import time
+import random
+import hashlib
 import datetime
 from typing import List, Dict, Any, Tuple, Optional
 
 import requests
 from openai import OpenAI
 
-# ====== 重要 ======
-# これは「返信の自動投稿」はしません。
-# SNS上の投稿を拾って「手動返信用の下書き」を GitHub Issues に出すだけです。
-# ==================
+# 追加: 本物Collector
+from collectors import collect_items
 
-UA = "goliath-reply-drafter/1.0"
-TIMEOUT = 20
+# Optional SNS libs (missing secretsなら黙ってスキップ)
+try:
+    from atproto import Client as BskyClient
+except Exception:
+    BskyClient = None
+
+try:
+    from mastodon import Mastodon
+except Exception:
+    Mastodon = None
+
 
 ROOT = "goliath"
+PAGES_DIR = f"{ROOT}/pages"
 DB_PATH = f"{ROOT}/db.json"
+INDEX_PATH = f"{ROOT}/index.html"
+SEED_SITES_PATH = f"{ROOT}/sites.seed.json"
 
-# ---------------------------
-# Utils
-# ---------------------------
 
 def now_utc_iso() -> str:
     return datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
+
+
+def slugify(s: str, max_len: int = 60) -> str:
+    s = s.lower().strip()
+    s = re.sub(r"[^a-z0-9]+", "-", s)
+    s = re.sub(r"-{2,}", "-", s).strip("-")
+    return s[:max_len] or "tool"
+
+
+def ensure_dirs():
+    os.makedirs(PAGES_DIR, exist_ok=True)
+
 
 def read_json(path: str, default: Any) -> Any:
     if not os.path.exists(path):
@@ -32,415 +53,506 @@ def read_json(path: str, default: Any) -> Any:
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
-def clip(s: str, n: int) -> str:
-    s = (s or "").strip()
-    if len(s) <= n:
-        return s
-    return s[:n].rstrip() + "…"
 
-def safe_json_load(s: str) -> Optional[dict]:
+def write_json(path: str, obj: Any):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(obj, f, ensure_ascii=False, indent=2)
+
+
+def write_text(path: str, text: str):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(text)
+
+
+def extract_html_only(raw: str) -> str:
+    # 余計な挨拶/markdown/``` を排除して <!DOCTYPE html>..</html> のみ切り出す
+    m = re.search(r"(<!DOCTYPE\s+html.*?</html\s*>)", raw, flags=re.IGNORECASE | re.DOTALL)
+    if m:
+        return m.group(1).strip()
+    # それでも無理なら、とりあえずコードフェンス除去して返す
+    raw = re.sub(r"^```[a-zA-Z]*\s*", "", raw.strip())
+    raw = re.sub(r"\s*```$", "", raw.strip())
+    return raw.strip()
+
+
+def stable_id(*parts: str) -> str:
+    h = hashlib.sha256("|".join(parts).encode("utf-8")).hexdigest()
+    return h[:16]
+
+
+# ---------------------------
+# Cluster
+# ---------------------------
+
+def cluster_20(items: List[Dict[str, str]]) -> Dict[str, Any]:
+    """
+    「20件束ねる」最小実装。
+    将来はembedding等で類似クラスタ化に差し替え。
+    items 形式は collectors.collect_items の返す形式:
+      [{"text": "...", "url":"...", "platform":"..."}...]
+    """
+    items = items[:20]
+    theme = items[0]["text"] if items else "useful calculator tool"
+    urls = [x["url"] for x in items]
+    texts = [x["text"] for x in items]
+    return {"theme": theme, "items": items, "urls": urls, "texts": texts}
+
+
+# ---------------------------
+# Related Sites Logic
+# ---------------------------
+
+def load_seed_sites() -> List[Dict[str, Any]]:
+    """
+    既存資産（hubや既存サイト）を「関連サイト候補」として入れておける。
+    形式:
+      [{"title":"Hub","url":"https://mikann20041029.github.io/hub/","tags":["hub","tools"]}, ...]
+    """
+    if os.path.exists(SEED_SITES_PATH):
+        return read_json(SEED_SITES_PATH, [])
+    return []
+
+
+def jaccard(a: List[str], b: List[str]) -> float:
+    sa, sb = set(a), set(b)
+    if not sa or not sb:
+        return 0.0
+    return len(sa & sb) / len(sa | sb)
+
+
+def pick_related(current_tags: List[str], all_entries: List[Dict[str, Any]], seed_sites: List[Dict[str, Any]], k: int = 8) -> List[Dict[str, str]]:
+    candidates: List[Tuple[float, Dict[str, str]]] = []
+
+    # goliath内の過去ページ
+    for e in all_entries:
+        tags = e.get("tags", [])
+        score = jaccard(current_tags, tags)
+        if score <= 0:
+            continue
+        candidates.append((score, {"title": e["title"], "url": e["public_url"]}))
+
+    # 既存の外部/既存サイト
+    for s in seed_sites:
+        tags = s.get("tags", [])
+        score = jaccard(current_tags, tags)
+        if score <= 0:
+            continue
+        candidates.append((score, {"title": s["title"], "url": s["url"]}))
+
+    candidates.sort(key=lambda x: x[0], reverse=True)
+
+    # 重複URLを落として上位k
+    seen = set()
+    related = []
+    for _, item in candidates:
+        if item["url"] in seen:
+            continue
+        seen.add(item["url"])
+        related.append(item)
+        if len(related) >= k:
+            break
+    return related
+
+
+# ---------------------------
+# Builder / Validator / Auto-fix
+# ---------------------------
+
+def build_prompt(theme: str, cluster: Dict[str, Any], base_url: str) -> str:
+    # 重要: 余計な文章禁止、HTMLのみ
+    # 重要: フッターに規約系リンク、言語切替、関連サイト欄（プレースホルダ）
+    return f"""
+You are generating a production-grade single-file HTML tool site.
+
+STRICT OUTPUT RULE:
+- Output ONLY raw HTML that starts with <!DOCTYPE html> and ends with </html>.
+- No markdown, no backticks, no explanations.
+
+[Goal]
+Create a modern SaaS-style tool page to solve: "{theme}"
+
+[Design]
+- Use Tailwind CSS via CDN
+- Clean SaaS UI: hero section + centered tool card + sections
+- Dark/Light mode toggle (CSS class switch)
+
+[Content]
+- Include a Japanese long-form article >= 2500 Japanese characters.
+- Use clear structure with H2/H3 headings, checklist, pitfalls, FAQ(>=5).
+- Add "References" section with 8-12 reputable external links (official docs / well-known sites). Do NOT fabricate quotes.
+
+[Tool]
+- Implement an interactive JS mini-tool relevant to the theme (static, no server).
+- Must work offline except CDN.
+
+[Multi-language]
+- Provide language switcher for JA/EN/FR/DE.
+- At minimum translate: hero, tool labels, and footer pages (policy/about/contact/disclaimer/terms).
+- Article can be JA primary; provide short EN/FR/DE summary sections.
+
+[Compliance / Footer]
+- Auto-generate sections for:
+  - Privacy Policy (cookie/ads explanation)
+  - Terms of Service
+  - Disclaimer
+  - About / Operator info
+  - Contact
+- These must be accessible via footer links using in-page anchors.
+
+[Related Sites]
+- Include a "Related sites" section near bottom as a list:
+  - It must be filled from a JSON embedded in the page like: window.__RELATED__ = [...]
+  - Render it into the list on load.
+  - If empty, hide the section.
+
+[SEO]
+- Include title/meta description/canonical.
+- Canonical must be: {base_url}
+
+Return ONLY the final HTML.
+""".strip()
+
+
+def openai_generate_html(client: OpenAI, prompt: str) -> str:
+    res = client.chat.completions.create(
+        model=os.getenv("OPENAI_MODEL", "gpt-4o"),
+        messages=[{"role": "user", "content": prompt}],
+    )
+    raw = res.choices[0].message.content or ""
+    return extract_html_only(raw)
+
+
+def validate_html(html: str) -> Tuple[bool, str]:
+    if "<!doctype html" not in html.lower():
+        return False, "missing doctype"
+    if "</html>" not in html.lower():
+        return False, "missing </html>"
+    if "tailwind" not in html.lower():
+        return False, "tailwind not found"
+    if "__RELATED__" not in html:
+        return False, "related-sites placeholder window.__RELATED__ not found"
+    must = ["privacy", "terms", "disclaimer", "about", "contact"]
+    missing = [m for m in must if m not in html.lower()]
+    if missing:
+        return False, f"missing policy sections: {missing}"
+    return True, "ok"
+
+
+def prompt_for_fix(theme: str, error: str, html: str) -> str:
+    return f"""
+You must return ONLY a unified diff patch for a single file named index.html.
+
+Rules:
+- Output ONLY the diff. No markdown. No explanations.
+- The patch MUST fix this validation error: {error}
+- Do not remove required features:
+  Tailwind CDN, SaaS layout, dark/light toggle, language switcher,
+  footer policy sections, window.__RELATED__ rendering.
+
+Here is current index.html content:
+{html}
+""".strip()
+
+
+def apply_unified_diff_to_text(original: str, diff_text: str) -> Optional[str]:
+    """
+    単一ファイル(index.html)用の最小パッチ適用。
+    OpenAIが出す一般的な unified diff を想定。
+    """
+    if not diff_text.startswith("---"):
+        return None
+
+    lines = diff_text.splitlines()
+
+    hunks = []
+    for i, l in enumerate(lines):
+        if l.startswith("@@"):
+            hunks.append(i)
+    if not hunks:
+        return None
+
+    orig_lines = original.splitlines()
+
     try:
-        return json.loads(s)
+        result = []
+        oidx = 0
+        i = 0
+        while i < len(lines):
+            if not lines[i].startswith("@@"):
+                i += 1
+                continue
+            header = lines[i]
+            m = re.match(r"@@ -(\d+),?(\d*) \+(\d+),?(\d*) @@", header)
+            if not m:
+                return None
+            old_start = int(m.group(1)) - 1
+
+            while oidx < old_start and oidx < len(orig_lines):
+                result.append(orig_lines[oidx])
+                oidx += 1
+
+            i += 1
+            while i < len(lines) and not lines[i].startswith("@@"):
+                l = lines[i]
+                if l.startswith(" "):
+                    result.append(l[1:])
+                    oidx += 1
+                elif l.startswith("-"):
+                    oidx += 1
+                elif l.startswith("+"):
+                    result.append(l[1:])
+                else:
+                    return None
+                i += 1
+
+        while oidx < len(orig_lines):
+            result.append(orig_lines[oidx])
+            oidx += 1
+
+        return "\n".join(result) + ("\n" if original.endswith("\n") else "")
     except Exception:
-        # ```json ... ``` みたいなのが混じるケースを雑に救う
-        s2 = re.sub(r"^```[a-zA-Z]*\s*", "", (s or "").strip())
-        s2 = re.sub(r"\s*```$", "", s2.strip())
-        try:
-            return json.loads(s2)
-        except Exception:
-            return None
+        return None
+
+
+def infer_tags_simple(theme: str) -> List[str]:
+    t = theme.lower()
+    tags = []
+    rules = {
+        "convert": "convert",
+        "calculator": "calculator",
+        "compare": "compare",
+        "tax": "finance",
+        "time": "time",
+        "timezone": "time",
+        "subscription": "pricing",
+        "plan": "pricing",
+        "checklist": "productivity",
+        "template": "productivity",
+    }
+    for k, v in rules.items():
+        if k in t and v not in tags:
+            tags.append(v)
+    if not tags:
+        tags = ["tools"]
+    return tags[:6]
+
+
+# ---------------------------
+# Publishing / Index / Notify / SNS
+# ---------------------------
+
+def get_repo_pages_base() -> str:
+    repo = os.getenv("GITHUB_REPOSITORY", "Mikann20041029/goliath-auto-tool")
+    owner = repo.split("/")[0]
+    name = repo.split("/")[1]
+    return f"https://{owner.lower()}.github.io/{name}/"
+
+
+def update_db_and_index(entry: Dict[str, Any], all_entries: List[Dict[str, Any]]):
+    all_entries.insert(0, entry)
+    write_json(DB_PATH, all_entries)
+
+    rows = []
+    for e in all_entries[:50]:
+        rows.append(f"""
+        <a class="block p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 transition"
+           href="{e['path']}/">
+          <div class="font-semibold">{e['title']}</div>
+          <div class="text-sm opacity-70">{e['created_at']} • {", ".join(e.get("tags", []))}</div>
+        </a>
+        """.strip())
+
+    html = f"""<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Goliath Tools</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-50">
+  <div class="max-w-4xl mx-auto p-6">
+    <div class="flex items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold">Goliath Tools</h1>
+        <p class="opacity-70">Auto-generated tools + long-form guides</p>
+      </div>
+      <button id="themeBtn" class="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-800">Dark/Light</button>
+    </div>
+
+    <div class="mt-6 grid gap-3">
+      {"".join(rows)}
+    </div>
+
+    <div class="mt-10 text-xs opacity-60">
+      <a class="underline" href="./pages/">All pages</a>
+    </div>
+  </div>
+
+<script>
+  const root = document.documentElement;
+  const k="goliath_theme";
+  const saved = localStorage.getItem(k);
+  if(saved==="dark") root.classList.add("dark");
+  document.getElementById("themeBtn").onclick=()=>{
+    root.classList.toggle("dark");
+    localStorage.setItem(k, root.classList.contains("dark") ? "dark" : "light");
+  };
+</script>
+</body>
+</html>
+"""
+    write_text(INDEX_PATH, html)
+
 
 def create_github_issue(title: str, body: str):
-    pat = os.getenv("GH_PAT", "").strip()
-    repo = os.getenv("GITHUB_REPOSITORY", "").strip()
+    pat = os.getenv("GH_PAT", "")
+    repo = os.getenv("GITHUB_REPOSITORY", "")
     if not pat or not repo:
         return
     url = f"https://api.github.com/repos/{repo}/issues"
-    headers = {"Authorization": f"token {pat}", "Accept": "application/vnd.github+json", "User-Agent": UA}
+    headers = {"Authorization": f"token {pat}", "Accept": "application/vnd.github+json"}
     payload = {"title": title, "body": body}
     try:
-        requests.post(url, headers=headers, json=payload, timeout=TIMEOUT)
+        requests.post(url, headers=headers, json=payload, timeout=20)
     except Exception:
         pass
 
-# ---------------------------
-# Collectors (HN / Bluesky / Mastodon / X optional)
-#   ※ ここは「投稿を拾う」だけ。返信は作らない。
-# ---------------------------
 
-DEFAULT_QUERIES = [
-    "how do i", "how to", "error", "issue", "problem", "can't", "doesn't work",
-    "convert", "calculator", "compare", "template", "timezone", "subscription",
-]
-
-def _days_ago_ts(days: int) -> int:
-    dt = datetime.datetime.utcnow() - datetime.timedelta(days=days)
-    return int(dt.timestamp())
-
-def _dedup(items: List[Dict[str, str]]) -> List[Dict[str, str]]:
-    seen = set()
-    out = []
-    for it in items:
-        u = (it.get("url") or "").strip()
-        t = (it.get("text") or "").strip()
-        if not u or not t:
-            continue
-        key = u + "|" + t[:160]
-        if key in seen:
-            continue
-        seen.add(key)
-        out.append(it)
-    return out
-
-def collect_hn(queries: List[str], days_back: int, limit_per_query: int) -> List[Dict[str, str]]:
-    session = requests.Session()
-    session.headers.update({"User-Agent": UA})
-    min_ts = _days_ago_ts(days_back)
-    out: List[Dict[str, str]] = []
-
-    url = "https://hn.algolia.com/api/v1/search_by_date"
-    for q in queries:
-        params = {
-            "query": q,
-            "tags": "(story,comment)",
-            "numericFilters": f"created_at_i>{min_ts}",
-            "hitsPerPage": str(limit_per_query),
-        }
-        try:
-            r = session.get(url, params=params, timeout=TIMEOUT)
-            r.raise_for_status()
-            data = r.json()
-        except Exception:
-            continue
-
-        for h in (data.get("hits") or []):
-            created_at = h.get("created_at") or ""
-            title = (h.get("title") or "").strip()
-            story_title = (h.get("story_title") or "").strip()
-            comment_text = (h.get("comment_text") or "").strip()
-            text = title or story_title or comment_text
-            if not text:
-                continue
-
-            object_id = h.get("objectID")
-            if not object_id:
-                continue
-            hn_url = f"https://news.ycombinator.com/item?id={object_id}"
-            out.append({"platform": "hn", "thread_url": hn_url, "post_text": text, "created_at": created_at})
-        time.sleep(0.2)
-
-    return _dedup([{"platform": x["platform"], "thread_url": x["thread_url"], "post_text": x["post_text"]} for x in out])
-
-def collect_bluesky(queries: List[str], limit_per_query: int) -> List[Dict[str, str]]:
-    session = requests.Session()
-    session.headers.update({"User-Agent": UA})
-    base = "https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts"
-    out: List[Dict[str, str]] = []
-
-    for q in queries:
-        params = {"q": q, "limit": str(limit_per_query)}
-        try:
-            r = session.get(base, params=params, timeout=TIMEOUT)
-            r.raise_for_status()
-            data = r.json()
-        except Exception:
-            continue
-
-        for p in (data.get("posts") or []):
-            record = p.get("record") or {}
-            text = str(record.get("text") or "").strip()
-            if not text:
-                continue
-            uri = p.get("uri") or ""
-            author = p.get("author") or {}
-            handle = author.get("handle") or ""
-            rkey = ""
-            if uri and "/app.bsky.feed.post/" in uri:
-                rkey = uri.split("/app.bsky.feed.post/")[-1]
-            if handle and rkey:
-                url = f"https://bsky.app/profile/{handle}/post/{rkey}"
-            else:
-                url = uri or "https://bsky.app/"
-            out.append({"platform": "bluesky", "thread_url": url, "post_text": text})
-        time.sleep(0.2)
-
-    return _dedup(out)
-
-def collect_mastodon(queries: List[str], limit_per_query: int) -> List[Dict[str, str]]:
-    api_base = (os.getenv("MASTODON_API_BASE") or "").strip().rstrip("/")
-    token = (os.getenv("MASTODON_ACCESS_TOKEN") or "").strip()
-    if not api_base or not token:
-        return []
-
-    session = requests.Session()
-    session.headers.update({"User-Agent": UA, "Authorization": f"Bearer {token}"})
-    out: List[Dict[str, str]] = []
-
-    for q in queries:
-        url = f"{api_base}/api/v2/search"
-        params = {"q": q, "type": "statuses", "limit": str(limit_per_query), "resolve": "false"}
-        try:
-            r = session.get(url, params=params, timeout=TIMEOUT)
-            r.raise_for_status()
-            data = r.json()
-        except Exception:
-            continue
-
-        for s in (data.get("statuses") or []):
-            content = (s.get("content") or "").strip()
-            if not content:
-                continue
-            # contentはHTMLなので雑にタグ除去
-            txt = content.replace("<br />", "\n").replace("<br/>", "\n").replace("<br>", "\n")
-            txt = re.sub(r"<[^>]+>", "", txt).strip()
-            if not txt:
-                continue
-            url2 = (s.get("url") or "").strip()
-            if not url2:
-                continue
-            out.append({"platform": "mastodon", "thread_url": url2, "post_text": txt})
-        time.sleep(0.2)
-
-    return _dedup(out)
-
-def collect_x(queries: List[str], limit_per_query: int) -> List[Dict[str, str]]:
-    # Bearerが無ければ黙ってスキップ（= ここで落とさない）
-    bearer = (os.getenv("X_BEARER_TOKEN") or "").strip()
-    if not bearer:
-        return []
-
-    session = requests.Session()
-    session.headers.update({"User-Agent": UA, "Authorization": f"Bearer {bearer}"})
-
-    out: List[Dict[str, str]] = []
-    url = "https://api.x.com/2/tweets/search/recent"
-    for q in queries:
-        params = {"query": q, "max_results": str(min(limit_per_query, 100)), "tweet.fields": "created_at"}
-        try:
-            r = session.get(url, params=params, timeout=TIMEOUT)
-            r.raise_for_status()
-            data = r.json()
-        except Exception:
-            continue
-
-        for t in (data.get("data") or []):
-            tid = t.get("id")
-            text = (t.get("text") or "").strip()
-            if not tid or not text:
-                continue
-            out.append({"platform": "x", "thread_url": f"https://x.com/i/web/status/{tid}", "post_text": text})
-        time.sleep(0.2)
-
-    return _dedup(out)
-
-def collect_threads(days_back: int, total_limit: int, per_query: int) -> List[Dict[str, str]]:
-    srcs = (os.getenv("COLLECT_SOURCES") or "hn,bluesky,mastodon,x").lower().split(",")
-    srcs = [s.strip() for s in srcs if s.strip()]
-
-    qenv = (os.getenv("COLLECT_QUERIES") or "").strip()
-    queries = [x.strip() for x in qenv.split(",") if x.strip()] if qenv else DEFAULT_QUERIES
-
-    items: List[Dict[str, str]] = []
-    if "hn" in srcs:
-        items += collect_hn(queries, days_back=days_back, limit_per_query=per_query)
-    if "bluesky" in srcs:
-        items += collect_bluesky(queries, limit_per_query=per_query)
-    if "mastodon" in srcs:
-        items += collect_mastodon(queries, limit_per_query=per_query)
-    if "x" in srcs:
-        items += collect_x(queries, limit_per_query=per_query)
-
-    items = _dedup(items)
-    return items[:total_limit]
-
-# ---------------------------
-# Load tools (あなたのサイトの既存ツール一覧)
-#   ここは goliath/db.json を “ツール棚” として使う想定
-# ---------------------------
-
-def load_tool_catalog(limit: int = 200) -> List[Dict[str, str]]:
-    db = read_json(DB_PATH, [])
-    out = []
-    for e in db[:limit]:
-        title = (e.get("title") or "").strip()
-        url = (e.get("public_url") or "").strip()
-        if title and url:
-            out.append({"title": title, "url": url, "tags": e.get("tags", [])})
-    return out
-
-# ---------------------------
-# OpenAI: match tool + draft reply (手動返信用)
-# ---------------------------
-
-def openai_match_and_draft(
-    client: OpenAI,
-    platform: str,
-    thread_url: str,
-    post_text: str,
-    tools: List[Dict[str, str]],
-) -> Optional[Dict[str, Any]]:
-    """
-    返り値は必ず target_url を含める（あなたの指定）
-    """
-    tools_compact = tools[:120]  # トークン節約
-    prompt = f"""
-You are drafting a helpful, natural reply for a person asking for help on social media.
-This is NOT auto-posted. The user will manually send it.
-
-STRICT OUTPUT:
-Return ONLY valid JSON (no markdown, no commentary).
-
-Inputs:
-- platform: {platform}
-- target_url: {thread_url}
-- post_text: {post_text}
-
-Available tools (title + url):
-{json.dumps(tools_compact, ensure_ascii=False)}
-
-Task:
-1) Choose the SINGLE best matching tool from the list above (or choose none if truly irrelevant).
-2) Draft a short, friendly reply in the same language as the post_text if possible.
-3) The reply must NOT be spammy. One suggestion, one link, no aggressive marketing.
-4) Put the chosen tool URL at the end of the reply on a new line.
-
-Return JSON schema:
-{{
-  "tool_title": "string (empty if none)",
-  "tool_url": "string (empty if none)",
-  "reply": "string (empty if none)"
-}}
-""".strip()
-
+def post_bluesky(text: str):
+    h = os.getenv("BSKY_HANDLE", "")
+    p = os.getenv("BSKY_PASSWORD", "")
+    if not h or not p or BskyClient is None:
+        return
     try:
-        res = client.chat.completions.create(
-            model=os.getenv("OPENAI_MODEL", "gpt-4o"),
-            messages=[{"role": "user", "content": prompt}],
-        )
-        raw = res.choices[0].message.content or ""
+        c = BskyClient()
+        c.login(h, p)
+        c.send_post(text=text)
     except Exception:
-        return None
+        pass
 
-    obj = safe_json_load(raw)
-    if not obj:
-        return None
 
-    tool_title = (obj.get("tool_title") or "").strip()
-    tool_url = (obj.get("tool_url") or "").strip()
-    reply = (obj.get("reply") or "").strip()
+def post_mastodon(text: str):
+    tok = os.getenv("MASTODON_ACCESS_TOKEN", "")
+    base = os.getenv("MASTODON_API_BASE", "")
+    if not tok or not base or Mastodon is None:
+        return
+    try:
+        m = Mastodon(access_token=tok, api_base_url=base)
+        m.status_post(text)
+    except Exception:
+        pass
 
-    # tool_url が無い/短すぎるなら無効扱い
-    if not tool_url or not reply:
-        return None
 
-    # ===== ここがあなたの指定(1): target_url にして必ず返す =====
-    return {
-        "platform": platform,
-        "target_url": thread_url,  # ← 名前を明確化
-        "post_excerpt": clip(post_text, 200),
-        "tool_title": tool_title,
-        "tool_url": tool_url,
-        "reply": reply,
-    }
+def inject_related_json(html: str, related: List[Dict[str, str]]) -> str:
+    rel_json = json.dumps(related, ensure_ascii=False)
+    new = re.sub(
+        r"window\.__RELATED__\s*=\s*\[[\s\S]*?\]\s*;",
+        f"window.__RELATED__ = {rel_json};",
+        html
+    )
+    return new
 
-# ---------------------------
-# main
-# ---------------------------
 
 def main():
-    # 収集設定（envで上書き可能）
-    days_back = int(os.getenv("COLLECT_DAYS_BACK", "365"))
-    total_limit = int(os.getenv("COLLECT_TOTAL_LIMIT", "30"))
-    per_query = int(os.getenv("COLLECT_PER_QUERY", "8"))
+    ensure_dirs()
 
-    # 返信下書きの最大件数（暴走防止）
-    max_drafts = int(os.getenv("DRAFT_MAX", "10"))
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", ""))
 
-    api_key = (os.getenv("OPENAI_API_KEY") or "").strip()
-    if not api_key:
+    # 1) Collector -> Cluster（本物版）
+    items = collect_items(days_back=365, total_limit=60, per_query=15)
+
+    # 何も取れなかったら、いったん止めてIssue通知（壊れた生成を避ける）
+    if not items:
         create_github_issue(
-            title="[Goliath] Missing OPENAI_API_KEY",
-            body="OPENAI_API_KEY is not set in secrets/env."
+            title="[Goliath] Collector got 0 items",
+            body="No items collected from sources. Check COLLECT_SOURCES / tokens / instance settings."
         )
         return
 
-    client = OpenAI(api_key=api_key)
+    cluster = cluster_20(items)
+    theme = cluster["theme"]
 
-    # 1) 投稿（悩み）を拾う
-    threads = collect_threads(days_back=days_back, total_limit=total_limit, per_query=per_query)
-    if not threads:
+    # 2) Identify output path (no overwrite)
+    created_at = now_utc_iso()
+    tags = infer_tags_simple(theme)
+    slug = slugify(theme)
+    folder = f"{int(time.time())}-{slug}"
+    page_dir = f"{PAGES_DIR}/{folder}"
+    os.makedirs(page_dir, exist_ok=True)
+
+    pages_base = get_repo_pages_base()
+    public_url = f"{pages_base}{ROOT}/pages/{folder}/"
+    canonical = public_url.rstrip("/")
+
+    # 3) Builder with Auto-fix loop
+    prompt = build_prompt(theme, cluster, canonical)
+    html = openai_generate_html(client, prompt)
+
+    ok, msg = validate_html(html)
+    attempts = 0
+    while not ok and attempts < 5:
+        attempts += 1
+        fix_prompt = prompt_for_fix(theme, msg, html)
+        diff = client.chat.completions.create(
+            model=os.getenv("OPENAI_MODEL", "gpt-4o"),
+            messages=[{"role": "user", "content": fix_prompt}],
+        ).choices[0].message.content or ""
+
+        patched = apply_unified_diff_to_text(html, diff.strip())
+        if patched is None:
+            regen_prompt = build_prompt(theme, cluster, canonical) + f"\n\n[Fix needed]\nValidation error: {msg}\nReturn ONLY corrected HTML.\n"
+            html = openai_generate_html(client, regen_prompt)
+        else:
+            html = patched
+
+        ok, msg = validate_html(html)
+
+    if not ok:
         create_github_issue(
-            title="[Goliath] 0 threads collected",
-            body="Collector returned 0 items. Check COLLECT_SOURCES / tokens / instance settings."
+            title=f"[Goliath] Build failed after 5 fixes: {slug}",
+            body=f"- theme: {theme}\n- error: {msg}\n- created_at: {created_at}\n"
         )
         return
 
-    # 2) あなたの既存ツール棚を読む
-    tools = load_tool_catalog(limit=200)
-    if not tools:
-        create_github_issue(
-            title="[Goliath] Tool catalog is empty",
-            body=f"{DB_PATH} is empty or missing. Run your tool builder first so db.json has entries."
-        )
-        return
+    # 4) Related sites list generation
+    all_entries = read_json(DB_PATH, [])
+    seed_sites = load_seed_sites()
+    related = pick_related(tags, all_entries, seed_sites, k=8)
 
-    # 3) 返信下書きを作る
-    drafts: List[Dict[str, Any]] = []
-    for t in threads:
-        if len(drafts) >= max_drafts:
-            break
-        platform = t.get("platform", "").strip()
-        thread_url = t.get("thread_url", "").strip()
-        post_text = t.get("post_text", "").strip()
-        if not platform or not thread_url or not post_text:
-            continue
+    html = inject_related_json(html, related)
 
-        d = openai_match_and_draft(client, platform, thread_url, post_text, tools)
-        if d:
-            drafts.append(d)
-        time.sleep(0.3)
+    # 5) Save page
+    page_path = f"{page_dir}/index.html"
+    write_text(page_path, html)
 
-    if not drafts:
-        create_github_issue(
-            title="[Goliath] 0 reply drafts produced",
-            body="OpenAI matching returned no usable drafts. Try adjusting COLLECT_QUERIES or increase COLLECT_TOTAL_LIMIT."
-        )
-        return
+    # 6) Update DB + index
+    entry = {
+        "id": stable_id(created_at, slug),
+        "title": theme[:80],
+        "created_at": created_at,
+        "path": f"./pages/{folder}",
+        "public_url": public_url,
+        "tags": tags,
+        "source_urls": cluster.get("urls", [])[:20],
+        "related": related,
+    }
+    update_db_and_index(entry, all_entries)
 
-    # 4) Issues本文をあなたの指定どおりに出す
-    lines = []
-    lines.append(f"generated_at: {now_utc_iso()}")
-    lines.append(f"collected_threads: {len(threads)}")
-    lines.append(f"drafts: {len(drafts)}")
-    lines.append("")
-    lines.append("FORMAT:")
-    lines.append("TARGET_URL: <url>")
-    lines.append("REPLY_DRAFT:")
-    lines.append("<text>")
-    lines.append("")
-
-    # ===== ここがあなたの指定(2): Issues本文フォーマット =====
-    for i, d in enumerate(drafts, 1):
-        lines.append("---")
-        lines.append(f"{i}) [{d['platform']}]")
-        lines.append(f"TARGET_URL: {d['target_url']}")
-        lines.append("")
-        lines.append("REPLY_DRAFT:")
-        lines.append(d["reply"])
-        lines.append("")
-        # 補助情報（必要なら残す。不要なら消してOK）
-        lines.append(f"TOOL: {d.get('tool_title','')}")
-        lines.append(f"TOOL_URL: {d.get('tool_url','')}")
-        lines.append("")
-        lines.append(f"POST_EXCERPT: {d.get('post_excerpt','')}")
-        lines.append("")
-
+    # 7) Notify
     create_github_issue(
-        title="[Goliath] Reply drafts (manual) — target_url + reply + tool url",
-        body="\n".join(lines).rstrip() + "\n"
+        title=f"[Goliath] New tool published: {slug}",
+        body=f"- theme: {theme}\n- url: {public_url}\n- tags: {', '.join(tags)}\n- related_count: {len(related)}\n- created_at: {created_at}\n"
     )
+
+    # 8) SNS (optional)
+    post_text = f"New tool: {theme}\n{public_url}"
+    post_bluesky(post_text)
+    post_mastodon(post_text)
+
 
 if __name__ == "__main__":
     main()
 
-    main()
