@@ -3,61 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="BMI健康管理ツールであなたの健康を管理しましょう。">
-    <title>BMI健康管理ツール</title>
+    <title>BMI健康管理と理想の体型シミュレーター</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/aspect-ratio"></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
-    <header class="bg-blue-600 p-4 text-white">
-        <h1 class="text-3xl">BMI健康管理ツール</h1>
-        <div class="mt-2">
-            <button class="bg-white text-blue-600 px-2 py-1 rounded">日本語</button>
-            <button class="bg-white text-blue-600 px-2 py-1 rounded">EN</button>
-            <button class="bg-white text-blue-600 px-2 py-1 rounded">FR</button>
-            <button class="bg-white text-blue-600 px-2 py-1 rounded">DE</button>
+    <header class="bg-blue-900 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">BMI健康管理と理想の体型シミュレーター</h1>
+            <div class="flex space-x-4">
+                <button class="px-3 py-1 bg-blue-700 rounded-md">JP</button>
+                <button class="px-3 py-1 bg-blue-700 rounded-md">EN</button>
+                <button class="px-3 py-1 bg-blue-700 rounded-md">FR</button>
+                <button class="px-3 py-1 bg-blue-700 rounded-md">DE</button>
+            </div>
         </div>
     </header>
-    <main class="container mx-auto my-10 p-5 bg-white shadow rounded">
-        <section>
-            <h2 class="text-2xl font-semibold mb-4">BMIの計算</h2>
-            <div class="mb-4">
-                <label for="height" class="block">身長(cm):</label>
-                <input id="height" type="number" class="border-2 border-gray-200 p-2 w-full" placeholder="例: 170">
+    
+    <main class="container mx-auto mt-6 px-4">
+        <section class="bg-white p-6 shadow-md rounded-lg">
+            <h2 class="text-2xl font-bold mb-4">体型シミュレーター</h2>
+            <div class="flex flex-col mb-4">
+                <label class="mb-2" for="height">身長 (cm):</label>
+                <input class="p-2 border border-gray-300 rounded-md" type="number" id="height">
             </div>
-            <div class="mb-4">
-                <label for="weight" class="block">体重(kg):</label>
-                <input id="weight" type="number" class="border-2 border-gray-200 p-2 w-full" placeholder="例: 65">
+            <div class="flex flex-col mb-4">
+                <label class="mb-2" for="weight">体重 (kg):</label>
+                <input class="p-2 border border-gray-300 rounded-md" type="number" id="weight">
             </div>
-            <button id="calculateButton" class="bg-blue-600 text-white px-4 py-2 rounded">計算する</button>
-            <p id="result" class="mt-4 text-lg"></p>
+            <button id="calculateBtn" class="bg-blue-900 text-white px-4 py-2 rounded-md">BMIを計算</button>
+            <div id="result" class="mt-4 text-lg font-semibold"></div>
         </section>
-        <section class="mt-10">
-            <h2 class="text-2xl font-semibold mb-4">BMI健康管理ツールについて</h2>
-            <article class="text-justify">
-                <p>BMI健康管理ツールは、あなたの健康を管理するための便利なツールです。このツールを使用すると、身長と体重に基づいてBMIを迅速に計算でき、健康状態を把握するのに役立ちます。BMI（ボディ・マス・インデックス）は、体重を身長の二乗で割った値であり、体重が身長に対して適切かどうかを示します。</p>
-                <p>これまでの研究により、BMIは個人の健康状態を評価する指標として広く用いられてきました。BMIが健康な範囲内にある場合、様々な疾患のリスクが低下すると考えられています。具体的には、BMIが18.5未満の場合は低体重、18.5から24.9の間は健康体重、25から29.9の間は過体重、30以上は肥満と分類されます。</p>
-                <p>健康を維持するためには、適度な運動やバランスの取れた食事が推奨されます。本ツールは、食品摂取やライフスタイルの改善に役立つ提案を提供することも可能です。健康的な生活を送るためには、BMIを定期的に確認し、必要に応じて生活習慣を見直すことが重要です。</p>
-                <p>また、BMI健康管理ツールは、複数の言語に対応しており、グローバルなユーザーにとっても便利です。現代の健康管理において、デジタルツールは欠かせない存在となっています。私たちのツールを活用して、家族全員の健康を管理し、より良い生活を送りましょう。</p>
-            </article>
+
+        <section class="bg-white p-6 shadow-md rounded-lg mt-6">
+            <h2 class="text-2xl font-bold mb-4">健康に関する記事</h2>
+            <p>
+                健康的な生活を送ることは、身体的にも精神的にも高い生活の質を維持するために欠かせません。適度な運動、バランスの取れた食事、十分な睡眠は、健康を保つための基本的な要素です。また、ストレス管理や定期的な健康診断も重要です。健康維持のためには、まず自分の健康状態を把握することが大切です...
+                <br><br>
+                健康的な食生活は、さまざまな栄養素をバランス良く摂取することが重要です。例えば、果物や野菜はビタミンやミネラルの優れた供給源であり、オメガ3脂肪酸を含む魚は心臓の健康に役立ちます。また、過度の加工食品や砂糖を避けることも、体重管理の観点から重要です。食生活の改善は、生活習慣病のリスクを減少させるのに役立ちます...
+                <br><br>
+                運動は、筋力を高めるだけでなく、ストレス解消や精神的な健康の改善にも効果的です。週に150分程度の中等度の運動が推奨されており、ウォーキングやサイクリングなど、日常生活に取り入れやすい活動を選びましょう。運動の種類や量は、自分の体力レベルや健康状態に合わせて調整することが重要です...
+                <br><br>
+                良質な睡眠は、身体の修復や記憶の定着に不可欠であり、成人は1日7〜9時間の睡眠が推奨されています。睡眠不足はストレスホルモンの増加や免疫機能の低下につながるため、良好な睡眠習慣を確立することが健康の維持にとって非常に重要です。寝る前のリラクゼーションや規則正しい就寝時間を心がけましょう...
+                <br><br>
+                ストレス管理は、心身の健全性を保つために必要です。リラクゼーションテクニックや瞑想、趣味に時間を割くことは、ストレスの軽減に役立ちます。また、社会的なサポートを受けることも、ストレス管理の重要な要素です。家族や友人とのコミュニケーションを大切にし、必要に応じて専門家の助けを求めることを検討しましょう...
+            </p>
         </section>
     </main>
-    <footer class="bg-blue-600 p-4 text-white text-center">
-        <p>&copy; 2023 BMI健康管理ツール</p>
+
+    <footer class="bg-blue-900 text-white p-4 mt-6">
+        <div class="container mx-auto">
+            <p class="text-center">© 2023 BMI健康管理と理想の体型シミュレーター. All rights reserved.</p>
+        </div>
     </footer>
+
     <script>
-        document.getElementById('calculateButton').addEventListener('click', function() {
-            var height = document.getElementById('height').value / 100;
-            var weight = document.getElementById('weight').value;
-            if(height > 0 && weight > 0){
-                var bmi = (weight / (height * height)).toFixed(2);
-                document.getElementById('result').innerText = `あなたのBMIは: ${bmi}`;
+        document.getElementById('calculateBtn').addEventListener('click', function() {
+            const height = parseFloat(document.getElementById('height').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            if (height > 0 && weight > 0) {
+                const bmi = (weight / (height / 100) ** 2).toFixed(2);
+                document.getElementById('result').textContent = `あなたのBMIは ${bmi} です。`;
             } else {
-                document.getElementById('result').innerText = '身長と体重の両方を正しく入力してください。';
+                document.getElementById('result').textContent = '有効な身長と体重を入力してください。';
             }
         });
     </script>
