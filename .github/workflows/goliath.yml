@@ -3,44 +3,41 @@ name: Goliath Auto Tool System (safe)
 on:
   workflow_dispatch:
   schedule:
-    # UTC: 15:00, 23:00, 07:00  => JST: 00:00, 08:00, 16:00
-    - cron: "0 7,15,23 * * *"
+    # UTC基準。JST 0/8/16 に合わせるなら (JST-9h) で 15/23/7
+    - cron: '0 15,23,7 * * *'
+
+permissions:
+  contents: write
+  issues: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
         with:
-          python-version: "3.11"
+          token: ${{ secrets.GH_PAT }}
 
-      - name: Install deps
-        run: pip install -r requirements.txt
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-      - name: Run generator
-        env:
+      - run: pip install -r requirements.txt
+
+      - env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: gpt-4o-mini
-          # ここを本番URLにする（canonical と SNS投稿URL がこれになる）
-          SITE_BASE_URL: https://mikanntool.com
-
           BSKY_HANDLE: ${{ secrets.BSKY_HANDLE }}
           BSKY_PASSWORD: ${{ secrets.BSKY_PASSWORD }}
           MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
           MASTODON_API_BASE: ${{ secrets.MASTODON_API_BASE }}
+          GH_PAT: ${{ secrets.GH_PAT }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
         run: python main.py
 
-      - name: Commit & Push
-        run: |
+      - run: |
           git config --global user.name "Goliath-Bot"
-          git config --global user.email "bot@users.noreply.github.com"
+          git config --global user.email "bot@goliath.local"
           git add goliath/
-          git commit -m "Goliath: add new tool page ($(date -u +'%Y-%m-%dT%H:%M:%SZ'))" || exit 0
-          git push
+          git commit -m "goliath: auto-update $(date -u +%Y-%m-%dT%H:%M:%SZ)" || exit 0
+          git push origin "${GITHUB_REF_NAME}"
