@@ -737,6 +737,8 @@ def get_repo_pages_base() -> str:
 
 
 def update_db_and_index(entry: Dict[str, Any], all_entries: List[Dict[str, Any]]):
+    if not isinstance(all_entries, list):
+        all_entries = []
     all_entries.insert(0, entry)
     write_json(DB_PATH, all_entries)
 
