@@ -1,4 +1,5 @@
 openai>=1.10.0
 requests>=2.31.0
-atproto>=0.12.0
+atproto>=0.0.12
 Mastodon.py>=1.8.1
+requests-oauthlib>=2.0.0
