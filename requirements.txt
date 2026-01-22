@@ -1,5 +1,2 @@
 openai
-tweepy
-atproto
-mastodon-api
 requests
