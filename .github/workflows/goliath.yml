@@ -1,70 +1,46 @@
-name: Goliath Auto Tool System (safe)
+name: Goliath Auto Outreach (safe drafts)
 
 on:
   workflow_dispatch:
   schedule:
-    # UTC基準。JST 0/8/16 に合わせるなら (JST-9h) で 15/23/7
-    - cron: '0 15,23,7 * * *'
+    # UTC基準: JST 0/8/16 に合わせるなら 15/23/7
+    - cron: "0 15,23,7 * * *"
 
 permissions:
   contents: write
   issues: write
 
 jobs:
-  build:
+  run:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
         with:
-          token: ${{ secrets.GH_PAT }}
+          python-version: "3.10"
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
+      - run: pip install -r requirements.txt
 
-      - name: Install deps
-        run: pip install -r requirements.txt
-
-      - name: Run builder (generate site)
-        env:
+      - env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: gpt-4o
           GH_PAT: ${{ secrets.GH_PAT }}
           BSKY_HANDLE: ${{ secrets.BSKY_HANDLE }}
           BSKY_PASSWORD: ${{ secrets.BSKY_PASSWORD }}
           MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
           MASTODON_API_BASE: ${{ secrets.MASTODON_API_BASE }}
-          X_CONSUMER_KEY: ${{ secrets.X_CONSUMER_KEY }}
-          X_CONSUMER_SECRET: ${{ secrets.X_CONSUMER_SECRET }}
-          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
-          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
-        run: python main.py
+          # 安全上、必ず小さく始める
+          MAX_CANDIDATES: "20"
+          MAX_DRAFTS: "10"
+        run: python goliath/main.py
 
-      - name: Run outreach (find problems & auto-reply)
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: gpt-4o
-          GH_PAT: ${{ secrets.GH_PAT }}
-          BSKY_HANDLE: ${{ secrets.BSKY_HANDLE }}
-          BSKY_PASSWORD: ${{ secrets.BSKY_PASSWORD }}
-          MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
-          MASTODON_API_BASE: ${{ secrets.MASTODON_API_BASE }}
-          X_CONSUMER_KEY: ${{ secrets.X_CONSUMER_KEY }}
-          X_CONSUMER_SECRET: ${{ secrets.X_CONSUMER_SECRET }}
-          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
-          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
-          OUTREACH_MAX_REPLIES: "5"
-          OUTREACH_MIN_SCORE: "0.08"
-        run: python goliath/outreach.py
-
-      - name: Commit & push generated files
-        run: |
+      - run: |
           git config --global user.name "Goliath-Bot"
           git config --global user.email "bot@goliath.local"
           git add goliath/
-          git commit -m "goliath: auto-update $(date -u +%Y-%m-%dT%H:%M:%SZ)" || exit 0
+          git commit -m "goliath: update db $(date -u +%Y-%m-%dT%H:%M:%SZ)" || exit 0
           git push origin "${GITHUB_REF_NAME}"
+
