@@ -3,71 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BMI健康管理と理想の体型シミュレーター</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/aspect-ratio"></script>
+    <title>BMIと健康管理シミュレーター</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 text-gray-800">
-    <header class="bg-blue-900 text-white p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold">BMI健康管理と理想の体型シミュレーター</h1>
-            <div class="flex space-x-4">
-                <button class="px-3 py-1 bg-blue-700 rounded-md">JP</button>
-                <button class="px-3 py-1 bg-blue-700 rounded-md">EN</button>
-                <button class="px-3 py-1 bg-blue-700 rounded-md">FR</button>
-                <button class="px-3 py-1 bg-blue-700 rounded-md">DE</button>
-            </div>
-        </div>
+<body class="bg-gray-100">
+    <header class="bg-green-600 text-white p-6">
+        <h1 class="text-4xl font-bold">BMIと健康管理シミュレーター</h1>
     </header>
-    
-    <main class="container mx-auto mt-6 px-4">
-        <section class="bg-white p-6 shadow-md rounded-lg">
-            <h2 class="text-2xl font-bold mb-4">体型シミュレーター</h2>
-            <div class="flex flex-col mb-4">
-                <label class="mb-2" for="height">身長 (cm):</label>
-                <input class="p-2 border border-gray-300 rounded-md" type="number" id="height">
+    <main class="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-md rounded">
+        <section>
+            <h2 class="text-2xl font-semibold mb-4">BMI計算機</h2>
+            <div class="mb-4">
+                <label for="weight" class="block text-gray-700">体重 (kg):</label>
+                <input type="number" id="weight" class="mt-1 block w-full p-2 border border-gray-300 rounded" placeholder="例: 60">
             </div>
-            <div class="flex flex-col mb-4">
-                <label class="mb-2" for="weight">体重 (kg):</label>
-                <input class="p-2 border border-gray-300 rounded-md" type="number" id="weight">
+            <div class="mb-4">
+                <label for="height" class="block text-gray-700">身長 (cm):</label>
+                <input type="number" id="height" class="mt-1 block w-full p-2 border border-gray-300 rounded" placeholder="例: 170">
             </div>
-            <button id="calculateBtn" class="bg-blue-900 text-white px-4 py-2 rounded-md">BMIを計算</button>
-            <div id="result" class="mt-4 text-lg font-semibold"></div>
+            <button onclick="calculateBMI()" class="bg-green-500 text-white p-2 rounded">BMIを計算する</button>
+            <div class="mt-4">
+                <p id="result" class="text-xl"></p>
+            </div>
         </section>
-
-        <section class="bg-white p-6 shadow-md rounded-lg mt-6">
-            <h2 class="text-2xl font-bold mb-4">健康に関する記事</h2>
-            <p>
-                健康的な生活を送ることは、身体的にも精神的にも高い生活の質を維持するために欠かせません。適度な運動、バランスの取れた食事、十分な睡眠は、健康を保つための基本的な要素です。また、ストレス管理や定期的な健康診断も重要です。健康維持のためには、まず自分の健康状態を把握することが大切です...
-                <br><br>
-                健康的な食生活は、さまざまな栄養素をバランス良く摂取することが重要です。例えば、果物や野菜はビタミンやミネラルの優れた供給源であり、オメガ3脂肪酸を含む魚は心臓の健康に役立ちます。また、過度の加工食品や砂糖を避けることも、体重管理の観点から重要です。食生活の改善は、生活習慣病のリスクを減少させるのに役立ちます...
-                <br><br>
-                運動は、筋力を高めるだけでなく、ストレス解消や精神的な健康の改善にも効果的です。週に150分程度の中等度の運動が推奨されており、ウォーキングやサイクリングなど、日常生活に取り入れやすい活動を選びましょう。運動の種類や量は、自分の体力レベルや健康状態に合わせて調整することが重要です...
-                <br><br>
-                良質な睡眠は、身体の修復や記憶の定着に不可欠であり、成人は1日7〜9時間の睡眠が推奨されています。睡眠不足はストレスホルモンの増加や免疫機能の低下につながるため、良好な睡眠習慣を確立することが健康の維持にとって非常に重要です。寝る前のリラクゼーションや規則正しい就寝時間を心がけましょう...
-                <br><br>
-                ストレス管理は、心身の健全性を保つために必要です。リラクゼーションテクニックや瞑想、趣味に時間を割くことは、ストレスの軽減に役立ちます。また、社会的なサポートを受けることも、ストレス管理の重要な要素です。家族や友人とのコミュニケーションを大切にし、必要に応じて専門家の助けを求めることを検討しましょう...
-            </p>
+        <section class="mt-10">
+            <h2 class="text-2xl font-semibold mb-4">健康管理に関する記事</h2>
+            <article class="text-gray-700 space-y-4">
+                <p>
+                    健康管理は現代社会において非常に重要なテーマです。忙しい日常の中で、どのように理想的な体重を維持するか、適切な栄養を摂取するかは多くの人々にとって大きな関心事となっています。理想的な健康状態を維持するためには、自分のボディマス指数（BMI）を知ることが一つの手がかりとなるでしょう。
+                </p>
+                <p>
+                    BMIは体重(kg)を身長(m)の二乗で割ることで計算される数値であり、一般的にその範囲によって「痩せすぎ」、「普通体重」、「肥満」などのカテゴリーに分類されます。健康管理を考える上で、まずはこのBMIを知ることが大切です。
+                </p>
+                <p>
+                    BMIが25を超えると、肥満とみなされ、さまざまな健康リスクが増加します。このリスクには、心臓病、高血圧、糖尿病などがあります。逆にBMIが18.5未満の場合は、栄養不足やその結果としての健康問題が懸念されます。
+                </p>
+                <p>
+                    運動習慣もまた健康管理において重要です。適切なエクササイズは、体重管理だけでなく、ストレスの軽減、筋力の向上、心肺機能の改善など多くの効果をもたらします。時間がないと感じても、日常生活の中で小さな運動を取り入れることが、長期的な健康につながります。
+                </p>
+                <p>
+                    栄養バランスのとれた食事は、健康維持に欠かせません。可能であれば、野菜や果物、そして高品質のタンパク質を豊富に摂取し、加工食品や高脂肪、高糖分の食品を避けることを心がけましょう。これにより、健康的な体重維持と全体的なウェルビーイングが促進されます。
+                </p>
+                <p>
+                    最後に、定期的な健康診断は自身の健康状態を把握するために有効です。年に一度は専門家の意見を参考にし、必要に応じた健康管理計画を立てることが推奨されます。日々のちょっとした選択が、未来の健康に大きな影響を与えるのです。
+                </p>
+            </article>
         </section>
     </main>
-
-    <footer class="bg-blue-900 text-white p-4 mt-6">
-        <div class="container mx-auto">
-            <p class="text-center">© 2023 BMI健康管理と理想の体型シミュレーター. All rights reserved.</p>
-        </div>
+    <footer class="bg-green-600 text-white mt-10 p-4">
+        <p class="text-center">© 2023 BMIと健康管理シミュレーター</p>
     </footer>
-
     <script>
-        document.getElementById('calculateBtn').addEventListener('click', function() {
-            const height = parseFloat(document.getElementById('height').value);
+        function calculateBMI() {
             const weight = parseFloat(document.getElementById('weight').value);
-            if (height > 0 && weight > 0) {
-                const bmi = (weight / (height / 100) ** 2).toFixed(2);
-                document.getElementById('result').textContent = `あなたのBMIは ${bmi} です。`;
-            } else {
-                document.getElementById('result').textContent = '有効な身長と体重を入力してください。';
+            const height = parseFloat(document.getElementById('height').value) / 100;
+            if (!weight || !height) {
+                document.getElementById('result').textContent = "正しい値を入力してください";
+                return;
             }
-        });
+            const bmi = weight / (height * height);
+            let category = '';
+            if (bmi < 18.5) {
+                category = '痩せすぎ';
+            } else if (bmi < 24.9) {
+                category = '普通体重';
+            } else if (bmi < 29.9) {
+                category = '肥満（度1）';
+            } else {
+                category = '肥満（度2以上）';
+            }
+            document.getElementById('result').textContent = `あなたのBMIは${bmi.toFixed(1)}です。カテゴリ: ${category}`;
+        }
     </script>
 </body>
 </html>
