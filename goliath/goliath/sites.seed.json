@@ -2,6 +2,16 @@
   {
     "title": "Hub",
     "url": "https://mikann20041029.github.io/hub/",
-    "tags": ["hub", "tools", "index"]
+    "tags": ["hub", "tools"]
+  },
+  {
+    "title": "Toolbox",
+    "url": "https://mikann20041029.github.io/toolbox/",
+    "tags": ["tools", "utilities"]
+  },
+  {
+    "title": "SNS Growth Rank",
+    "url": "https://mikann20041029.github.io/sns-growth-rank/",
+    "tags": ["sns", "growth", "analytics"]
   }
 ]
