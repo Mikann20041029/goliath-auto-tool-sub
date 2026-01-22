@@ -22,11 +22,32 @@ except Exception:
     Mastodon = None
 
 
+# =========================
+# Config
+# =========================
 ROOT = "goliath"
 PAGES_DIR = f"{ROOT}/pages"
 DB_PATH = f"{ROOT}/db.json"
 INDEX_PATH = f"{ROOT}/index.html"
 SEED_SITES_PATH = f"{ROOT}/sites.seed.json"
+
+# ---- Model choices (final decision) ----
+# ツール生成: 品質優先（エラー率を落とす）
+MODEL_BUILD = os.getenv("MODEL_BUILD", "gpt-4.1-2025-04-14")
+# 返信文生成: 最安寄り（人間らしく、末尾にURL）
+MODEL_REPLY = os.getenv("MODEL_REPLY", "gpt-4.1-nano-2025-04-14")
+
+# ---- Lead count (final decision) ----
+LEADS_TOTAL = int(os.getenv("LEADS_TOTAL", "100"))  # Issuesに出す「返信候補」件数
+LEADS_PER_SOURCE = int(os.getenv("LEADS_PER_SOURCE", "60"))  # 収集は余裕持って多め→スコアで上位化
+
+# ---- Collect limits ----
+COLLECT_HN = int(os.getenv("COLLECT_HN", "50"))
+COLLECT_BSKY = int(os.getenv("COLLECT_BSKY", "50"))
+COLLECT_MASTODON = int(os.getenv("COLLECT_MASTODON", "50"))
+
+# ---- Post announce (auto) ----
+ENABLE_AUTO_POST = os.getenv("ENABLE_AUTO_POST", "1") == "1"
 
 
 def now_utc_iso() -> str:
@@ -64,11 +85,12 @@ def write_text(path: str, text: str):
 
 
 def extract_html_only(raw: str) -> str:
-    # 余計な挨拶/markdown/``` を排除して <!DOCTYPE html>..</html> のみ切り出す
+    """
+    余計な挨拶/markdown/``` を排除して <!DOCTYPE html>..</html> のみ切り出す
+    """
     m = re.search(r"(<!DOCTYPE\s+html.*?</html\s*>)", raw, flags=re.IGNORECASE | re.DOTALL)
     if m:
         return m.group(1).strip()
-    # それでも無理なら、とりあえずコードフェンス除去して返す
     raw = re.sub(r"^```[a-zA-Z]*\s*", "", raw.strip())
     raw = re.sub(r"\s*```$", "", raw.strip())
     return raw.strip()
@@ -79,303 +101,315 @@ def stable_id(*parts: str) -> str:
     return h[:16]
 
 
-# ---------------------------
-# Point-based Scoring (Top20 selection)
-# ---------------------------
-
-# 強い加点に使うキーワード（静的ツール化しやすい）
-KW_STATIC_TOOL = [
-    "convert", "converter", "calculator", "compare", "comparison", "estimate", "simulator",
-    "template", "checklist", "formatter", "format", "transform", "generate", "generator",
-    "extract", "parser", "score", "scoring", "rank", "ranking", "summarize", "summary",
-    "timezone", "time zone", "meeting overlap", "diff", "cleanup", "normalize", "markdown",
-]
-
-# 競合が強すぎて差別化しにくい（減点）
-KW_HEAVY_COMPETITION = [
-    "pdf compress", "compress pdf", "pdf compression",
-    "video compress", "compress video", "mp4 compress", "mp4 compression",
-    "video converter", "mp4 converter", "pdf editor", "edit pdf",
-    "image compressor", "jpeg compressor", "png compressor",
-]
-
-# 外部API必須/ログイン必須っぽい（減点）
-KW_NEEDS_EXTERNAL_API = [
-    "login", "oauth", "api key", "token", "authenticate", "scrape", "crawler", "browser automation",
-    "requires account", "sign in", "paywall",
-]
-
-# センシティブ/規約リスク（大幅減点）
-KW_POLICY_RISK = [
-    "dox", "doxx", "address", "phone number", "email list", "private info",
-    "stalk", "harass", "revenge", "leak", "piracy", "crack", "keygen",
-    "identity", "ip address", "track someone", "spy",
-]
-
-# 医療/法律/投資の断定が必要になりやすい（減点）
-KW_HIGH_STAKES = [
-    "diagnose", "medical", "symptom", "prescription",
-    "lawsuit", "legal advice", "contract dispute",
-    "guaranteed profit", "investment advice", "stock pick", "crypto pick",
-]
-
-# 「ただの愚痴」寄りでツール化しにくい（減点）
-KW_VAGUE_RANT = [
-    "i hate", "so annoying", "frustrated", "rant", "vent",
-    "why is", "this sucks", "mad about", "angry about",
-]
-
-# 検索語・記事化しやすい（加点）
-KW_ARTICLE_FRIENDLY = [
-    "how to", "best way", "guide", "steps", "checklist", "common mistakes",
-    "faq", "tips", "pitfalls", "examples",
-]
-
-
-def _text_norm(s: str) -> str:
-    return re.sub(r"\s+", " ", (s or "").lower()).strip()
-
-
-def _contains_any(t: str, kws: List[str]) -> bool:
-    for k in kws:
-        if k in t:
-            return True
-    return False
-
-
-def _count_hits(t: str, kws: List[str]) -> int:
-    c = 0
-    for k in kws:
-        if k in t:
-            c += 1
-    return c
-
-
-def score_item_points(text: str, url: str = "") -> Tuple[int, Dict[str, int]]:
+# =========================
+# Scoring (ポイント制)
+# =========================
+def score_item(text: str, url: str, meta: Dict[str, Any]) -> Tuple[int, Dict[str, int]]:
     """
-    100点満点のポイント制。
-    返り値: (score, breakdown_dict)
+    ポイント表（見える形）
+    - 「ツール化しやすい」ほど高得点
+    - 「既存巨大ツールが強すぎる」っぽいと減点
     """
-    t = _text_norm(text)
-    breakdown: Dict[str, int] = {}
+    t = (text or "").lower()
 
-    # A. ツール化できるか (max 40)
-    a = 0
-    # A1 入出力明確（フォーム向き）
-    # ざっくり「convert/compare/calculator/template/checklist/generate」等のヒット数で判定
-    hits = _count_hits(t, KW_STATIC_TOOL)
-    if hits >= 3:
-        a += 15
-        breakdown["A1_io_clear"] = 15
-    elif hits >= 1:
-        a += 8
-        breakdown["A1_io_clear"] = 8
-    else:
-        breakdown["A1_io_clear"] = 0
+    table = {
+        "tool_request": 0,
+        "convert_generator_calc": 0,
+        "structured_output": 0,
+        "specific_inputs": 0,
+        "how_to_code_only": 0,
+        "too_broad": 0,
+        "adult_or_sensitive": 0,
+    }
 
-    # A2 静的HTML/JSで成立しやすい（外部API不要）
-    if _contains_any(t, KW_NEEDS_EXTERNAL_API):
-        a += 0
-        breakdown["A2_static_ok"] = 0
-    else:
-        a += 15
-        breakdown["A2_static_ok"] = 15
+    # ツール欲しい系
+    if any(k in t for k in ["is there a tool", "any tool", "tool for", "looking for a tool", "need a tool"]):
+        table["tool_request"] += 8
 
-    # A3 ルール化しやすい（計算/判定/整形）
-    if _contains_any(t, ["calculate", "calculator", "estimate", "convert", "formatter", "template", "checklist", "score", "ranking"]):
-        a += 10
-        breakdown["A3_ruleable"] = 10
-    else:
-        breakdown["A3_ruleable"] = 0
+    # convert/generator/calculator は刺さりやすい
+    if any(k in t for k in ["convert", "converter", "generator", "calculate", "calculator", "format", "transform"]):
+        table["convert_generator_calc"] += 7
 
-    a = min(a, 40)
-    breakdown["A_total"] = a
+    # 出力形式が明確だと作りやすい
+    if any(k in t for k in ["json", "csv", "markdown", "notion", "template", "checklist", "table"]):
+        table["structured_output"] += 5
 
-    # B. 刺さる悩みか（max 25）
-    b = 0
-    # B1 具体で切実（時間/手作業/毎回）
-    if _contains_any(t, ["every time", "manually", "takes", "minutes", "hours", "waste", "tedious", "painful", "too much work"]):
-        b += 10
-        breakdown["B1_pain_specific"] = 10
-    elif _contains_any(t, ["need", "want", "looking for", "is there a tool", "how can i"]):
-        b += 6
-        breakdown["B1_pain_specific"] = 6
-    else:
-        breakdown["B1_pain_specific"] = 0
+    # 入力が具体的だと作りやすい
+    if any(k in t for k in ["timezone", "tax", "subscription", "plan", "pricing", "compare", "fee", "rate"]):
+        table["specific_inputs"] += 4
 
-    # B2 再現性（他人も困ってそう）
-    # “plan / checklist / compare / convert / template”など汎用っぽい要素
-    if _contains_any(t, ["plan", "template", "checklist", "compare", "converter", "calculator", "format", "markdown", "timezone"]):
-        b += 10
-        breakdown["B2_repeatable"] = 10
-    else:
-        breakdown["B2_repeatable"] = 0
+    # 「コードの書き方教えて」だけだとツール化しにくい
+    if any(k in t for k in ["how do i code", "write code", "bug in my code", "stack trace"]):
+        table["how_to_code_only"] -= 6
 
-    # B3 共有性（比較表/診断/スコア/レポート）
-    if _contains_any(t, ["compare", "comparison", "score", "report", "ranking", "summary", "checklist"]):
-        b += 5
-        breakdown["B3_shareable"] = 5
-    else:
-        breakdown["B3_shareable"] = 0
+    # 広すぎる要件
+    if any(k in t for k in ["everything", "all-in-one", "ultimate", "perfect solution"]):
+        table["too_broad"] -= 4
 
-    b = min(b, 25)
-    breakdown["B_total"] = b
+    # 変な地雷避け（最低限）
+    if any(k in t for k in ["porn", "sexual", "nude", "violence", "illegal"]):
+        table["adult_or_sensitive"] -= 20
 
-    # C. 競合・リスク（max 20）
-    c = 0
-    # C1 巨大既存サービスと被りにくい
-    if _contains_any(t, KW_HEAVY_COMPETITION):
-        c += 0
-        breakdown["C1_competition_ok"] = 0
-    else:
-        c += 10
-        breakdown["C1_competition_ok"] = 10
+    # HN points などメタ加点
+    hn_points = int(meta.get("hn_points", 0) or 0)
+    if hn_points > 0:
+        # ざっくり上限
+        table["tool_request"] += min(10, hn_points // 30)
 
-    # C2 規約/炎上リスクが低い
-    if _contains_any(t, KW_POLICY_RISK):
-        c += 0
-        breakdown["C2_policy_ok"] = 0
-    else:
-        c += 10
-        breakdown["C2_policy_ok"] = 10
-
-    c = min(c, 20)
-    breakdown["C_total"] = c
-
-    # D. 記事化・AdSense向き（max 15）
-    d = 0
-    # D1 解説が書きやすい
-    if _contains_any(t, KW_ARTICLE_FRIENDLY) or _contains_any(t, ["steps", "guide", "tips", "faq", "pitfalls", "examples"]):
-        d += 10
-        breakdown["D1_article_depth"] = 10
-    else:
-        # それでもツール系なら最低限の説明は書ける
-        if _contains_any(t, ["calculator", "compare", "convert", "template", "checklist"]):
-            d += 6
-            breakdown["D1_article_depth"] = 6
-        else:
-            breakdown["D1_article_depth"] = 0
-
-    # D2 検索語が作りやすい
-    if _contains_any(t, ["calculator", "converter", "compare", "template", "checklist", "formatter", "timezone"]):
-        d += 5
-        breakdown["D2_keywordable"] = 5
-    else:
-        breakdown["D2_keywordable"] = 0
-
-    d = min(d, 15)
-    breakdown["D_total"] = d
-
-    score = a + b + c + d
-
-    # 減点ルール（地雷回避）
-    penalties = 0
-
-    if _contains_any(t, KW_NEEDS_EXTERNAL_API):
-        penalties -= 20
-        breakdown["P_external_api"] = -20
-    else:
-        breakdown["P_external_api"] = 0
-
-    if _contains_any(t, KW_POLICY_RISK):
-        penalties -= 30
-        breakdown["P_policy_risk"] = -30
-    else:
-        breakdown["P_policy_risk"] = 0
-
-    if _contains_any(t, KW_HIGH_STAKES):
-        penalties -= 15
-        breakdown["P_high_stakes"] = -15
-    else:
-        breakdown["P_high_stakes"] = 0
-
-    # ただの愚痴寄り（かつツールキーワードが薄い）
-    if _contains_any(t, KW_VAGUE_RANT) and _count_hits(t, KW_STATIC_TOOL) == 0:
-        penalties -= 20
-        breakdown["P_vague_rant"] = -20
-    else:
-        breakdown["P_vague_rant"] = 0
-
-    # 巨大競合ど真ん中
-    if _contains_any(t, KW_HEAVY_COMPETITION):
-        penalties -= 10
-        breakdown["P_heavy_competition"] = -10
-    else:
-        breakdown["P_heavy_competition"] = 0
-
-    score = max(0, min(100, score + penalties))
-    breakdown["score_final"] = score
-    return score, breakdown
+    total = sum(table.values())
+    return total, table
 
 
-def select_top_k_by_points(items: List[Dict[str, str]], k: int = 20) -> List[Dict[str, Any]]:
+# =========================
+# Collector (Real)
+# =========================
+def hn_search(query: str, limit: int = 30) -> List[Dict[str, Any]]:
     """
-    items: [{"text": "...", "url": "...", "source": "hn|bsky|x|mastodon|reddit|stub"}]
-    return: items with added fields: score, score_breakdown
+    HN (Algolia) から検索。
     """
-    scored: List[Dict[str, Any]] = []
-    for it in items:
-        text = it.get("text", "")
-        url = it.get("url", "")
-        score, breakdown = score_item_points(text, url)
-        x = dict(it)
-        x["score"] = score
-        x["score_breakdown"] = breakdown
-        scored.append(x)
+    try:
+        url = "https://hn.algolia.com/api/v1/search_by_date"
+        params = {
+            "query": query,
+            "tags": "story",
+            "hitsPerPage": min(100, max(1, limit)),
+        }
+        r = requests.get(url, params=params, timeout=20)
+        r.raise_for_status()
+        data = r.json()
+        out = []
+        for h in data.get("hits", [])[:limit]:
+            title = h.get("title") or ""
+            story_url = h.get("url") or ""
+            hn_url = f"https://news.ycombinator.com/item?id={h.get('objectID')}"
+            points = h.get("points") or 0
+            out.append({
+                "source": "HN",
+                "text": title,
+                "url": story_url if story_url else hn_url,
+                "meta": {"hn_points": points, "hn_discuss": hn_url}
+            })
+        return out
+    except Exception:
+        return []
 
-    scored.sort(key=lambda x: x.get("score", 0), reverse=True)
-    return scored[:k]
 
-
-# ---------------------------
-# Collector / Cluster
-# ---------------------------
-
-def collector_stub() -> List[Dict[str, str]]:
-    """
-    Reddit/HN APIがまだでも動くように、今はスタブ。
-    返す形式は:
-      [{"text": "...problem...", "url": "https://...", "source":"stub"}, ...]
-    """
-    samples = [
-        ("need a simple calculator to compare subscription plans with hidden fees", "https://news.ycombinator.com/", "hn"),
-        ("how to convert a messy checklist into a clean template instantly", "https://www.reddit.com/", "reddit"),
-        ("time zone converter with meeting overlap and daylight saving awareness", "https://www.reddit.com/", "reddit"),
-        ("estimate freelance take-home pay after taxes for a specific country", "https://news.ycombinator.com/", "hn"),
-        ("compare two products with pros/cons and scoring without tracking", "https://www.reddit.com/", "reddit"),
-        ("i hate editing pdfs, need the best pdf editor", "https://news.ycombinator.com/", "hn"),
-        ("is there a tool to format markdown tables nicely", "https://www.reddit.com/", "reddit"),
-        ("need a generator that turns bullet notes into a structured checklist", "https://news.ycombinator.com/", "hn"),
-        ("video compression that beats all existing tools", "https://www.reddit.com/", "reddit"),
-        ("convert messy pricing into a clean comparison table", "https://news.ycombinator.com/", "hn"),
+def collect_hn(limit: int) -> List[Dict[str, Any]]:
+    queries = [
+        "tool for",
+        "is there a tool",
+        "convert",
+        "calculator",
+        "compare pricing",
+        "timezone",
+        "template generator",
     ]
-    random.shuffle(samples)
-    out = [{"text": t, "url": u, "source": s} for (t, u, s) in samples]
-    # スタブなので多めに返す（スコアで絞る）
-    return out
+    all_items: List[Dict[str, Any]] = []
+    per = max(5, limit // max(1, len(queries)))
+    for q in queries:
+        all_items.extend(hn_search(q, limit=per))
+    # だぶり除去（url基準）
+    seen = set()
+    uniq = []
+    for it in all_items:
+        u = it["url"]
+        if u in seen:
+            continue
+        seen.add(u)
+        uniq.append(it)
+        if len(uniq) >= limit:
+            break
+    return uniq
 
 
-def cluster_20(items: List[Dict[str, Any]]) -> Dict[str, Any]:
+def collect_bluesky(limit: int) -> List[Dict[str, Any]]:
     """
-    今は「上位20件束ねる」最小実装。
-    将来はembedding等で類似クラスタ化に差し替え。
+    Bluesky: atprotoで検索
+    必要: BSKY_HANDLE / BSKY_PASSWORD
     """
-    items = items[:20]
-    theme = items[0]["text"] if items else "useful calculator tool"
-    urls = [x.get("url", "") for x in items]
-    texts = [x.get("text", "") for x in items]
-    return {"theme": theme, "items": items, "urls": urls, "texts": texts}
+    h = os.getenv("BSKY_HANDLE", "")
+    p = os.getenv("BSKY_PASSWORD", "")
+    if not h or not p or BskyClient is None:
+        return []
+
+    queries = [
+        "need a tool",
+        "is there a tool",
+        "how can I convert",
+        "calculator",
+        "compare plans",
+        "timezone",
+        "template",
+    ]
+    out: List[Dict[str, Any]] = []
+    try:
+        c = BskyClient()
+        c.login(h, p)
+        for q in queries:
+            # atproto wrapper: search_posts
+            res = c.app.bsky.feed.search_posts({"q": q, "limit": 25})
+            posts = (res or {}).get("posts", [])
+            for post in posts:
+                rec = post.get("record", {}) or {}
+                txt = rec.get("text", "") or ""
+                uri = post.get("uri", "") or ""
+                did = post.get("author", {}).get("did", "") or ""
+                # 参照用URL（推定）
+                bsky_url = ""
+                if did and uri:
+                    # uri: at://did/app.bsky.feed.post/<rkey>
+                    m = re.search(r"/app\.bsky\.feed\.post/([^/]+)$", uri)
+                    if m:
+                        rkey = m.group(1)
+                        bsky_url = f"https://bsky.app/profile/{did}/post/{rkey}"
+                out.append({"source": "Bluesky", "text": txt[:300], "url": bsky_url or uri, "meta": {}})
+                if len(out) >= limit:
+                    return out
+        return out[:limit]
+    except Exception:
+        return out[:limit]
 
 
-# ---------------------------
+def collect_mastodon(limit: int) -> List[Dict[str, Any]]:
+    """
+    Mastodon:
+    - MASTODON_API_BASE があれば public timeline は読める
+    - トークンがあれば search を使う
+    """
+    base = os.getenv("MASTODON_API_BASE", "")
+    tok = os.getenv("MASTODON_ACCESS_TOKEN", "")
+    if not base or Mastodon is None:
+        return []
+
+    out: List[Dict[str, Any]] = []
+    try:
+        m = Mastodon(access_token=tok if tok else None, api_base_url=base)
+
+        # 1) tokenあれば検索
+        queries = [
+            "need a tool",
+            "is there a tool",
+            "convert",
+            "calculator",
+            "compare plan",
+            "timezone",
+            "template",
+        ]
+        if tok:
+            for q in queries:
+                try:
+                    res = m.search_v2(q=q, result_type="statuses", limit=25)
+                    statuses = (res or {}).get("statuses", []) or []
+                    for st in statuses:
+                        txt = re.sub(r"<[^>]+>", "", st.get("content", "") or "")
+                        url = st.get("url", "") or ""
+                        out.append({"source": "Mastodon", "text": txt[:300], "url": url, "meta": {}})
+                        if len(out) >= limit:
+                            return out
+                except Exception:
+                    pass
+
+        # 2) fallback: public timeline
+        if len(out) < limit:
+            try:
+                statuses = m.timeline_public(limit=80)
+                for st in statuses:
+                    txt = re.sub(r"<[^>]+>", "", st.get("content", "") or "")
+                    # それっぽい文だけ拾う
+                    if not any(k in txt.lower() for k in ["tool", "convert", "calculator", "compare", "timezone", "template"]):
+                        continue
+                    url = st.get("url", "") or ""
+                    out.append({"source": "Mastodon", "text": txt[:300], "url": url, "meta": {}})
+                    if len(out) >= limit:
+                        return out
+            except Exception:
+                pass
+
+        # だぶり除去
+        seen = set()
+        uniq = []
+        for it in out:
+            if it["url"] in seen:
+                continue
+            seen.add(it["url"])
+            uniq.append(it)
+        return uniq[:limit]
+    except Exception:
+        return out[:limit]
+
+
+def collector_real() -> List[Dict[str, Any]]:
+    items: List[Dict[str, Any]] = []
+    items.extend(collect_hn(COLLECT_HN))
+    items.extend(collect_bluesky(COLLECT_BSKY))
+    items.extend(collect_mastodon(COLLECT_MASTODON))
+
+    # 最低でも何か動くように、空なら軽いスタブ
+    if not items:
+        samples = [
+            ("need a simple calculator to compare subscription plans with hidden fees", "https://news.ycombinator.com/"),
+            ("how to convert a messy checklist into a clean template instantly", "https://bsky.app/"),
+            ("time zone converter with meeting overlap and daylight saving awareness", "https://mastodon.social/"),
+        ]
+        random.shuffle(samples)
+        for t, u in samples:
+            items.append({"source": "Stub", "text": t, "url": u, "meta": {}})
+
+    return items
+
+
+# =========================
+# Cluster
+# =========================
+def pick_best_theme(items: List[Dict[str, Any]]) -> Dict[str, Any]:
+    scored = []
+    for it in items:
+        s, table = score_item(it["text"], it["url"], it.get("meta", {}) or {})
+        scored.append((s, it, table))
+    scored.sort(key=lambda x: x[0], reverse=True)
+    best_score, best_item, best_table = scored[0]
+    return {
+        "theme": best_item["text"],
+        "best_item": best_item,
+        "best_score": best_score,
+        "best_table": best_table,
+        "scored": scored
+    }
+
+
+def cluster_20_around_theme(theme: str, items: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """
+    近いものを雑に集める最小実装（キーワード一致ベース）
+    """
+    t = (theme or "").lower()
+    keys = []
+    for k in ["convert", "calculator", "compare", "timezone", "template", "subscription", "pricing", "tax", "checklist"]:
+        if k in t:
+            keys.append(k)
+    if not keys:
+        keys = t.split()[:3]
+
+    def sim(x: str) -> int:
+        xl = (x or "").lower()
+        return sum(1 for k in keys if k in xl)
+
+    ranked = sorted(items, key=lambda it: sim(it["text"]), reverse=True)
+    chosen = ranked[:20]
+    return {
+        "theme": theme,
+        "items": [{"text": it["text"], "url": it["url"], "source": it["source"]} for it in chosen],
+        "urls": [it["url"] for it in chosen],
+        "texts": [it["text"] for it in chosen],
+        "keys": keys,
+    }
+
+
+# =========================
 # Related Sites Logic
-# ---------------------------
-
+# =========================
 def load_seed_sites() -> List[Dict[str, Any]]:
     """
     既存資産（hubや既存サイト）を「関連サイト候補」として入れておける。
-    形式:
-      [{"title":"Hub","url":"https://mikann20041029.github.io/hub/","tags":["hub","tools"]}, ...]
     """
     if os.path.exists(SEED_SITES_PATH):
         return read_json(SEED_SITES_PATH, [])
@@ -410,7 +444,6 @@ def pick_related(current_tags: List[str], all_entries: List[Dict[str, Any]], see
 
     candidates.sort(key=lambda x: x[0], reverse=True)
 
-    # 重複URLを落として上位k
     seen = set()
     related = []
     for _, item in candidates:
@@ -423,13 +456,12 @@ def pick_related(current_tags: List[str], all_entries: List[Dict[str, Any]], see
     return related
 
 
-# ---------------------------
+# =========================
 # Builder / Validator / Auto-fix
-# ---------------------------
-
-def build_prompt(theme: str, cluster: Dict[str, Any], base_url: str) -> str:
+# =========================
+def build_prompt(theme: str, cluster: Dict[str, Any], canonical_url: str) -> str:
     # 重要: 余計な文章禁止、HTMLのみ
-    # 重要: フッターに規約系リンク、言語切替、関連サイト欄（プレースホルダ）
+    # 重要: フッターに規約系リンク、言語切替、関連サイト欄（window.__RELATED__）
     return f"""
 You are generating a production-grade single-file HTML tool site.
 
@@ -445,22 +477,22 @@ Create a modern SaaS-style tool page to solve: "{theme}"
 - Clean SaaS UI: hero section + centered tool card + sections
 - Dark/Light mode toggle (CSS class switch)
 
-[Content]
-- Include a Japanese long-form article >= 2500 Japanese characters (not words).
-- Use clear structure with H2/H3 headings, checklist, pitfalls, FAQ(>=5).
-- Add "References" section with 8-12 reputable external links (official docs / well-known sites). Do NOT fabricate exact quotes.
-
 [Tool]
 - Implement an interactive JS mini-tool relevant to the theme (static, no server).
-- Must work offline except CDN.
+- Must work without any server.
+
+[Content]
+- Include a Japanese long-form article >= 2500 Japanese characters.
+- Use clear structure with H2/H3 headings, checklist, pitfalls, FAQ(>=5).
+- Add "References" section with 8-12 reputable external links (official docs / well-known sites).
 
 [Multi-language]
 - Provide language switcher for JA/EN/FR/DE.
-- At minimum translate: hero, tool labels, and footer pages (policy/about/contact/disclaimer/terms).
+- At minimum translate: hero, tool labels, and footer pages.
 - Article can be JA primary; provide short EN/FR/DE summary sections.
 
 [Compliance / Footer]
-- Auto-generate pages/sections for:
+- Auto-generate in-page sections for:
   - Privacy Policy (cookie/ads explanation)
   - Terms of Service
   - Disclaimer
@@ -470,13 +502,13 @@ Create a modern SaaS-style tool page to solve: "{theme}"
 
 [Related Sites]
 - Include a "Related sites" section near bottom as a list:
-  - It must be filled from a JSON embedded in the page like: window.__RELATED__ = [...]
+  - It must be filled from a JSON embedded in the page: window.__RELATED__ = [];
   - Render it into the list on load.
   - If empty, hide the section.
 
 [SEO]
 - Include title/meta description/canonical.
-- Canonical must be: {base_url}
+- Canonical must be: {canonical_url}
 
 Return ONLY the final HTML.
 """.strip()
@@ -484,7 +516,7 @@ Return ONLY the final HTML.
 
 def openai_generate_html(client: OpenAI, prompt: str) -> str:
     res = client.chat.completions.create(
-        model="gpt-4o",
+        model=MODEL_BUILD,
         messages=[{"role": "user", "content": prompt}],
     )
     raw = res.choices[0].message.content or ""
@@ -492,55 +524,43 @@ def openai_generate_html(client: OpenAI, prompt: str) -> str:
 
 
 def validate_html(html: str) -> Tuple[bool, str]:
-    if "<!doctype html" not in html.lower():
+    low = html.lower()
+    if "<!doctype html" not in low:
         return False, "missing doctype"
-    if "</html>" not in html.lower():
+    if "</html>" not in low:
         return False, "missing </html>"
-    # Tailwind CDNがないと「SaaS外装」条件を満たしにくい
-    if "tailwind" not in html.lower():
+    if "tailwind" not in low:
         return False, "tailwind not found"
-    # 関連サイトのレンダリングの最低限（window.__RELATED__）
-    if "__RELATED__" not in html:
-        return False, "related-sites placeholder window.__RELATED__ not found"
-    # 規約系アンカーの最低限
+    if "__related__" not in low:
+        return False, "missing window.__RELATED__"
     must = ["privacy", "terms", "disclaimer", "about", "contact"]
-    missing = [m for m in must if m not in html.lower()]
+    missing = [m for m in must if m not in low]
     if missing:
         return False, f"missing policy sections: {missing}"
     return True, "ok"
 
 
-def prompt_for_fix(theme: str, error: str, html: str) -> str:
+def prompt_for_fix(error: str, html: str) -> str:
     return f"""
-You must return ONLY a unified diff patch for a single file named index.html.
+Return ONLY a unified diff patch for a single file named index.html.
 
 Rules:
 - Output ONLY the diff. No markdown. No explanations.
 - The patch MUST fix this validation error: {error}
-- Do not remove required features: Tailwind CDN, SaaS layout, dark/light toggle, language switcher, footer policy sections, window.__RELATED__ rendering.
+- Do not remove required features: Tailwind CDN, SaaS layout, dark/light toggle, language switcher,
+  footer policy sections, window.__RELATED__ rendering.
 
-Here is current index.html content:
+Current index.html:
 {html}
 """.strip()
 
 
 def apply_unified_diff_to_text(original: str, diff_text: str) -> Optional[str]:
-    """
-    単一ファイル(index.html)用の最小パッチ適用。
-    OpenAIが出す一般的な unified diff を想定。
-    """
     if not diff_text.startswith("---"):
         return None
-
     lines = diff_text.splitlines()
     # find hunks
-    hunks = []
-    i = 0
-    while i < len(lines):
-        if lines[i].startswith("@@"):
-            hunks.append(i)
-        i += 1
-
+    hunks = [i for i, l in enumerate(lines) if l.startswith("@@")]
     if not hunks:
         return None
 
@@ -587,24 +607,19 @@ def apply_unified_diff_to_text(original: str, diff_text: str) -> Optional[str]:
 
 
 def infer_tags_simple(theme: str) -> List[str]:
-    # 最小の自動タグ付け（あとで強化）
-    t = theme.lower()
+    t = (theme or "").lower()
     tags = []
     rules = {
         "convert": "convert",
         "calculator": "calculator",
         "compare": "compare",
         "tax": "finance",
-        "time": "time",
         "timezone": "time",
+        "time zone": "time",
         "subscription": "pricing",
         "plan": "pricing",
         "checklist": "productivity",
         "template": "productivity",
-        "markdown": "formatting",
-        "format": "formatting",
-        "score": "scoring",
-        "ranking": "scoring",
     }
     for k, v in rules.items():
         if k in t and v not in tags:
@@ -614,32 +629,41 @@ def infer_tags_simple(theme: str) -> List[str]:
     return tags[:6]
 
 
-# ---------------------------
-# Publishing / Index / Notify / SNS
-# ---------------------------
+def inject_related_json(html: str, related: List[Dict[str, str]]) -> str:
+    rel_json = json.dumps(related, ensure_ascii=False)
+    new = re.sub(
+        r"window\.__RELATED__\s*=\s*\[[\s\S]*?\]\s*;",
+        f"window.__RELATED__ = {rel_json};",
+        html
+    )
+    # 置換できなかったら末尾scriptに追記（保険）
+    if new == html:
+        new = re.sub(r"</body>", f"<script>window.__RELATED__ = {rel_json};</script>\n</body>", html, flags=re.IGNORECASE)
+    return new
 
+
+# =========================
+# Publishing / Index / Notify / SNS
+# =========================
 def get_repo_pages_base() -> str:
-    repo = os.getenv("GITHUB_REPOSITORY", "Mikann20041029/goliath-auto-tool")
-    owner = repo.split("/")[0]
-    name = repo.split("/")[1]
+    repo = os.getenv("GITHUB_REPOSITORY", "mikann20041029/goliath-auto-tool")
+    owner, name = repo.split("/", 1)
     return f"https://{owner.lower()}.github.io/{name}/"
 
 
 def update_db_and_index(entry: Dict[str, Any], all_entries: List[Dict[str, Any]]):
-    # db.json 先頭に追加
     all_entries.insert(0, entry)
     write_json(DB_PATH, all_entries)
 
-    # index.html を更新（新着一覧）
     rows = []
-    for e in all_entries[:50]:
+    for e in all_entries[:80]:
         rows.append(f"""
-        <a class="block p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 transition"
-           href="{e['path']}/">
-          <div class="font-semibold">{e['title']}</div>
-          <div class="text-sm opacity-70">{e['created_at']} • {", ".join(e.get("tags", []))}</div>
-        </a>
-        """.strip())
+<a class="block p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 transition"
+   href="{e['path']}/">
+  <div class="font-semibold">{e['title']}</div>
+  <div class="text-sm opacity-70">{e['created_at']} • {", ".join(e.get("tags", []))}</div>
+</a>
+""".strip())
 
     html = f"""<!DOCTYPE html>
 <html lang="ja">
@@ -647,6 +671,7 @@ def update_db_and_index(entry: Dict[str, Any], all_entries: List[Dict[str, Any]]
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Goliath Tools</title>
+  <meta name="description" content="Auto-generated tools + long-form guides" />
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-50">
@@ -664,7 +689,7 @@ def update_db_and_index(entry: Dict[str, Any], all_entries: List[Dict[str, Any]]
     </div>
 
     <div class="mt-10 text-xs opacity-60">
-      <a class="underline" href="./pages/">All pages</a>
+      <span>Generated in {ROOT}/pages</span>
     </div>
   </div>
 
@@ -723,29 +748,170 @@ def post_mastodon(text: str):
         pass
 
 
-def inject_related_json(html: str, related: List[Dict[str, str]]) -> str:
-    # window.__RELATED__ = [...] を差し込む。既にある前提で置換する。
-    rel_json = json.dumps(related, ensure_ascii=False)
-    new = re.sub(
-        r"window\.__RELATED__\s*=\s*\[[\s\S]*?\]\s*;",
-        f"window.__RELATED__ = {rel_json};",
-        html
+def post_x(text: str):
+    """
+    Xは無料枠/権限/認証が可変なので、資格情報が揃っているときだけ投げる（揃ってなければ黙ってスキップ）。
+    ここは「壊れないこと優先」で最小実装（Bearerのみだと投稿できないことが多い）。
+    """
+    # 何も揃ってないなら終了
+    if not (os.getenv("X_API_KEY") and os.getenv("X_API_SECRET") and os.getenv("X_ACCESS_TOKEN") and os.getenv("X_ACCESS_TOKEN_SECRET")):
+        return
+
+    # 署名実装まで含めると長くなり事故りやすいので、ここは安全に「下書きとしてIssueに出す」運用推奨。
+    # ただし「自動投稿」を絶対に止めない条件があるため、最低限の案内としてIssueへ出す（投稿自体はここでは実施しない）。
+    create_github_issue(
+        title="[Goliath] X auto-post skipped (needs OAuth1 signing impl)",
+        body="X投稿はOAuth1署名が必要な構成が多く、簡易実装だと壊れやすいのでこの版ではスキップしています。\n"
+             "必要なら OAuth1 署名つき投稿モジュールだけを追加します（他を壊さない前提）。"
     )
-    return new
 
 
+# =========================
+# Lead collection (for manual reply) + Reply draft generation
+# =========================
+def extract_keywords(theme: str) -> List[str]:
+    t = (theme or "").lower()
+    base = []
+    for k in ["convert", "calculator", "compare", "timezone", "template", "subscription", "pricing", "tax", "checklist"]:
+        if k in t:
+            base.append(k)
+    if not base:
+        base = [w for w in re.findall(r"[a-z0-9]{4,}", t)][:5]
+    return base[:6] if base else ["tool"]
+
+
+def collect_leads(theme: str) -> List[Dict[str, Any]]:
+    """
+    ツール完成後に「そのツールで解決できそうな悩みURL」を再収集。
+    ここで Bluesky と Mastodon を必ず試みる（鍵が無い場合は空になるが、試行は行う）。
+    """
+    keys = extract_keywords(theme)
+    # HN: keysで検索
+    leads: List[Dict[str, Any]] = []
+    for k in keys:
+        leads.extend(hn_search(k, limit=20))
+
+    # Bluesky & Mastodon: collectorを再利用（検索クエリは内部で回る）
+    leads.extend(collect_bluesky(LEADS_PER_SOURCE))
+    leads.extend(collect_mastodon(LEADS_PER_SOURCE))
+
+    # だぶり除去
+    seen = set()
+    uniq = []
+    for it in leads:
+        u = it.get("url") or ""
+        if not u or u in seen:
+            continue
+        seen.add(u)
+        uniq.append(it)
+    return uniq
+
+
+def openai_generate_reply(client: OpenAI, post_text: str, tool_url: str) -> str:
+    """
+    返信文（人間らしい / 優しい / 疑問文ベース / 最後にURL）
+    """
+    prompt = f"""
+You write a short, natural, polite reply to an online post.
+Rules:
+- Tone: kind, non-spammy, helpful.
+- End with a gentle question.
+- Append the tool URL at the end on a new line.
+- Do NOT mention "AI", "automation", "bot".
+- Keep it under 280 characters if possible.
+Post:
+{post_text}
+
+Tool URL:
+{tool_url}
+
+Return ONLY the reply text.
+""".strip()
+
+    res = client.chat.completions.create(
+        model=MODEL_REPLY,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    txt = (res.choices[0].message.content or "").strip()
+    # 念のためURLを最後に強制
+    if tool_url not in txt:
+        txt = txt.rstrip() + "\n" + tool_url
+    return txt
+
+
+def build_leads_issue_body(leads: List[Dict[str, Any]], tool_url: str) -> str:
+    """
+    Issuesに「対象URL + 返信文」を100セット出す。
+    """
+    lines = []
+    lines.append("以下は「手動返信用」の候補です。\n")
+    lines.append("形式:\n- 対象の悩みURL（X/Bluesky/Mastodon/HN）\n- AI返信文（末尾にツールURL入り）\n")
+    lines.append("----\n")
+
+    for i, it in enumerate(leads, 1):
+        url = it.get("url", "")
+        txt = it.get("text", "") or ""
+        src = it.get("source", "")
+        lines.append(f"#{i} [{src}]")
+        lines.append(url)
+        lines.append("返信文:")
+        lines.append(it.get("reply", "").strip())
+        lines.append("\n----\n")
+
+    body = "\n".join(lines)
+    return body
+
+
+def chunk_and_create_issues(title_prefix: str, body: str, max_chars: int = 60000):
+    """
+    Issue本文が長すぎると事故るので、必要なら分割する。
+    """
+    if len(body) <= max_chars:
+        create_github_issue(title_prefix, body)
+        return
+
+    parts = []
+    cur = []
+    cur_len = 0
+    for block in body.split("\n----\n"):
+        blk = block + "\n----\n"
+        if cur_len + len(blk) > max_chars and cur:
+            parts.append("".join(cur))
+            cur = [blk]
+            cur_len = len(blk)
+        else:
+            cur.append(blk)
+            cur_len += len(blk)
+    if cur:
+        parts.append("".join(cur))
+
+    for idx, p in enumerate(parts, 1):
+        create_github_issue(f"{title_prefix} (part {idx}/{len(parts)})", p)
+
+
+# =========================
+# Main
+# =========================
 def main():
     ensure_dirs()
 
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", ""))
+    api_key = os.getenv("OPENAI_API_KEY", "")
+    if not api_key:
+        create_github_issue("[Goliath] Missing OPENAI_API_KEY", "OPENAI_API_KEY が未設定です。")
+        return
+    client = OpenAI(api_key=api_key)
 
-    # 1) Collector -> Score -> Top20 -> Cluster
-    raw_items = collector_stub()
-    scored_top = select_top_k_by_points(raw_items, k=20)
-    cluster = cluster_20(scored_top)
-    theme = cluster["theme"]
+    # 1) Collector (Real) -> pick best theme
+    items = collector_real()
+    best = pick_best_theme(items)
+    theme = best["theme"]
+    best_item = best["best_item"]
+    best_score = best["best_score"]
+    best_table = best["best_table"]
 
-    # 2) Identify output path (no overwrite)
+    # 2) Cluster 20 around theme (for builder context)
+    cluster = cluster_20_around_theme(theme, items)
+
     created_at = now_utc_iso()
     tags = infer_tags_simple(theme)
     slug = slugify(theme)
@@ -753,12 +919,11 @@ def main():
     page_dir = f"{PAGES_DIR}/{folder}"
     os.makedirs(page_dir, exist_ok=True)
 
-    # base url (relative-safe). public_url used for related links + notify.
     pages_base = get_repo_pages_base()
     public_url = f"{pages_base}{ROOT}/pages/{folder}/"
     canonical = public_url.rstrip("/")
 
-    # 3) Builder with Auto-fix loop
+    # 3) Build with Auto-fix loop (max 5)
     prompt = build_prompt(theme, cluster, canonical)
     html = openai_generate_html(client, prompt)
 
@@ -766,15 +931,15 @@ def main():
     attempts = 0
     while not ok and attempts < 5:
         attempts += 1
-        fix_prompt = prompt_for_fix(theme, msg, html)
+        fix_prompt = prompt_for_fix(msg, html)
         diff = client.chat.completions.create(
-            model="gpt-4o",
+            model=MODEL_BUILD,
             messages=[{"role": "user", "content": fix_prompt}],
         ).choices[0].message.content or ""
 
         patched = apply_unified_diff_to_text(html, diff.strip())
         if patched is None:
-            regen_prompt = build_prompt(theme, cluster, canonical) + f"\n\n[Fix needed]\nValidation error: {msg}\nReturn ONLY corrected HTML.\n"
+            regen_prompt = build_prompt(theme, cluster, canonical) + f"\n\nFix validation error: {msg}\nReturn ONLY corrected HTML.\n"
             html = openai_generate_html(client, regen_prompt)
         else:
             html = patched
@@ -784,16 +949,16 @@ def main():
     if not ok:
         create_github_issue(
             title=f"[Goliath] Build failed after 5 fixes: {slug}",
-            body=f"- theme: {theme}\n- error: {msg}\n- created_at: {created_at}\n"
+            body=f"- theme: {theme}\n- best_source: {best_item.get('source')}\n- best_url: {best_item.get('url')}\n"
+                 f"- best_score: {best_score}\n- score_breakdown: {json.dumps(best_table, ensure_ascii=False)}\n"
+                 f"- error: {msg}\n- created_at: {created_at}\n"
         )
         return
 
-    # 4) Related sites list generation
+    # 4) Related sites (existing + seed) and inject JSON
     all_entries = read_json(DB_PATH, [])
     seed_sites = load_seed_sites()
     related = pick_related(tags, all_entries, seed_sites, k=8)
-
-    # Ensure page has a window.__RELATED__ assignment filled
     html = inject_related_json(html, related)
 
     # 5) Save page
@@ -810,39 +975,61 @@ def main():
         "tags": tags,
         "source_urls": cluster.get("urls", [])[:20],
         "related": related,
-        "top20_scored": scored_top,  # スコア結果を丸ごと保存（後で見返せる）
+        "best_source": best_item.get("source"),
+        "best_url": best_item.get("url"),
+        "best_score": best_score,
+        "best_score_breakdown": best_table,
+        "score_keys": cluster.get("keys", []),
     }
     update_db_and_index(entry, all_entries)
 
-    # 7) Notify (Issuesに「上位20件のスコア」を載せる)
-    # ここはあなたが後で手動返信しやすいように、URLとテキストとスコアを並べる
-    lines = []
-    for i, it in enumerate(scored_top, 1):
-        lines.append(
-            f"{i}. score={it.get('score')} source={it.get('source','')}\n"
-            f"   url: {it.get('url','')}\n"
-            f"   text: {it.get('text','')}\n"
-        )
-    issue_body = (
-        f"- theme: {theme}\n"
-        f"- url: {public_url}\n"
-        f"- tags: {', '.join(tags)}\n"
-        f"- related_count: {len(related)}\n"
-        f"- created_at: {created_at}\n\n"
-        f"---\nTop 20 candidates (point-based):\n\n" + "\n".join(lines)
-    )
+    # 7) Auto-post (announce)
+    if ENABLE_AUTO_POST:
+        post_text = f"New tool published: {theme[:90]}\n{public_url}"
+        post_bluesky(post_text)
+        post_mastodon(post_text)
+        post_x(post_text)
 
-    create_github_issue(
-        title=f"[Goliath] New tool published: {slug}",
-        body=issue_body
-    )
+    # 8) Lead collection for manual reply + draft replies (100)
+    leads = collect_leads(theme)
 
-    # 8) SNS (optional)
-    post_text = f"New tool: {theme}\n{public_url}"
-    post_bluesky(post_text)
-    post_mastodon(post_text)
+    # スコア付けして上位を優先（post_textに対して）
+    scored = []
+    for it in leads:
+        s, _tbl = score_item(it.get("text", ""), it.get("url", ""), it.get("meta", {}) or {})
+        scored.append((s, it))
+    scored.sort(key=lambda x: x[0], reverse=True)
+    top = [it for _s, it in scored[:max(LEADS_TOTAL, 10)]]
+
+    # 返信文を生成（100）
+    final = []
+    for it in top[:LEADS_TOTAL]:
+        txt = it.get("text", "") or ""
+        reply = openai_generate_reply(client, txt, public_url)
+        it2 = dict(it)
+        it2["reply"] = reply
+        final.append(it2)
+
+    # 9) Notify issue: new tool + reply candidates
+    header = []
+    header.append(f"Tool URL: {public_url}")
+    header.append(f"Theme: {theme}")
+    header.append(f"Picked from: {best_item.get('source')} / {best_item.get('url')}")
+    header.append(f"Best score: {best_score} / breakdown: {json.dumps(best_table, ensure_ascii=False)}")
+    header.append(f"Tags: {', '.join(tags)}")
+    header.append(f"Related sites count: {len(related)}")
+    header.append("")
+    header.append("")
+
+    body = "\n".join(header) + build_leads_issue_body(final, public_url)
+
+    # 100セットは長くなりがちなので自動分割（必要な時だけ）
+    chunk_and_create_issues(
+        title_prefix=f"[Goliath] Reply candidates ({LEADS_TOTAL}) + new tool: {slug}",
+        body=body,
+        max_chars=60000
+    )
 
 
 if __name__ == "__main__":
     main()
-
