@@ -544,56 +544,215 @@ def pick_related(current_tags: Any, all_entries: Any, seed_sites: Any, k: int = 
 def build_prompt(theme: str, cluster: Dict[str, Any], canonical_url: str) -> str:
     # 重要: 余計な文章禁止、HTMLのみ
     # 重要: フッターに規約系リンク、言語切替、関連サイト欄（window.__RELATED__）
-    return f"""
-You are generating a production-grade single-file HTML tool site.
+    *** a/goliath/main.py
+--- b/goliath/main.py
+***************
+*** 1,10 ****
+--- 1,10 ----
+  import os
+  import re
+  import json
+  import time
+  import random
+  import hashlib
+  import datetime
+  from typing import List, Dict, Any, Tuple, Optional
+***************
+*** 300,380 ****
+  def build_prompt(theme: str, cluster: Dict[str, Any], canonical_url: str) -> str:
+      # 重要: 余計な文章禁止、HTMLのみ
+      # 重要: フッターに規約系リンク、言語切替、関連サイト欄（window.__RELATED__）
+      return f"""
+  You are generating a production-grade single-file HTML tool site.
+  
+  STRICT OUTPUT RULE:
+  - Output ONLY raw HTML that starts with <!DOCTYPE html> and ends with </html>.
+  - No markdown, no backticks, no explanations.
+  
+  [Goal]
+  Create a modern SaaS-style tool page to solve: "{theme}"
+  
+  [Design]
+  - Use Tailwind CSS via CDN
+  - Clean SaaS UI: hero section + centered tool card + sections
+  - Dark/Light mode toggle (CSS class switch)
+  
+  [Tool]
+  - Implement an interactive JS mini-tool relevant to the theme (static, no server).
+  - Must work without any server.
+  
+  [Content]
+  - Include a Japanese long-form article >= 2500 Japanese characters.
+  - Use clear structure with H2/H3 headings, checklist, pitfalls, FAQ(>=5).
+  - Add "References" section with 8-12 reputable external links (official docs / well-known sites).
+  
+  [Multi-language]
+- - Provide language switcher for JA/EN/FR/DE.
+- - At minimum translate: hero, tool labels, and footer pages.
+- - Article can be JA primary; provide short EN/FR/DE summary sections.
++ - Provide a WORKING language switcher for JA/EN/FR/DE (must work on mobile).
++ - The switcher MUST be a <select> with id="langSelect" and options: ja,en,fr,de.
++ - Any translatable UI text MUST use data-i18n keys. Example: <span data-i18n="hero.title"></span>
++ - Provide a JS dictionary exactly as: window.__I18N__ = { ja:{...}, en:{...}, fr:{...}, de:{...} }
++ - Provide a JS initializer that:
++   - reads saved language from localStorage key "goliath_lang" (fallback to "ja")
++   - sets <html lang="..">
++   - fills all [data-i18n] elements from window.__I18N__[lang][key]
++   - wires change event on #langSelect to re-render
++ - Article can be JA primary; provide short EN/FR/DE summary sections.
+  
+  [Compliance / Footer]
+  - Auto-generate in-page sections for:
+    - Privacy Policy (cookie/ads explanation)
+    - Terms of Service
+    - Disclaimer
+    - About / Operator info
+    - Contact
+  - These must be accessible via footer links using in-page anchors.
+  
+  [Related Sites]
+  - Include a "Related sites" section near bottom as a list:
+    - It must be filled from a JSON embedded in the page: window.__RELATED__ = [];
+    - Render it into the list on load.
+    - If empty, hide the section.
+  
+  [SEO]
+  - Include title/meta description/canonical.
+  - Canonical must be: {canonical_url}
+  
+  Return ONLY the final HTML.
+  """.strip()
+***************
+*** 380,430 ****
+  def validate_html(html: str) -> Tuple[bool, str]:
+      low = html.lower()
+      if "<!doctype html" not in low:
+          return False, "missing doctype"
+      if "</html>" not in low:
+          return False, "missing </html>"
+      if "tailwind" not in low:
+          return False, "tailwind not found"
+      if "__related__" not in low:
+          return False, "missing window.__RELATED__"
+      must = ["privacy", "terms", "disclaimer", "about", "contact"]
+      missing = [m for m in must if m not in low]
+      if missing:
+          return False, f"missing policy sections: {missing}"
++     # ---- language switcher must be functional (A/B) ----
++     if 'id="langselect"' not in low:
++         return False, "missing #langSelect"
++     if "__i18n__" not in low:
++         return False, "missing window.__I18N__"
++     if "data-i18n" not in low:
++         return False, "missing data-i18n bindings"
++     if "goliath_lang" not in low:
++         return False, "missing localStorage key goliath_lang handling"
+      return True, "ok"
+***************
+*** 430,520 ****
+- def pick_related(tags, all_entries, seed_sites, k=8):
+-     # --- normalize inputs (防御コード) ---
+-     if isinstance(tags, str):
+-         tags = [tags]
+- 
+-     # seed_sites が dict でも list でも吸収して map を作る
+-     seed_map = {}
+-     if isinstance(seed_sites, dict):
+-         seed_map = seed_sites
+-     elif isinstance(seed_sites, list):
+-         for s in seed_sites:
+-             if isinstance(s, dict) and "slug" in s:
+-                 seed_map[s["slug"]] = s
+- 
+-     normalized = []
+-     for e in all_entries:
+-         if isinstance(e, dict):
+-             normalized.append(e)
+-             continue
+-         if isinstance(e, str):
+-             # 文字列なら seed_map から引けるなら辞書に戻す / 無理なら捨てる
+-             if e in seed_map and isinstance(seed_map[e], dict):
+-                 normalized.append(seed_map[e])
+-             else:
+-                 # ここで捨てる（落ちるより100倍マシ）
+-                 continue
+-         else:
+-             continue
+- 
+-     all_entries = normalized
+-     # --- ここから下は既存ロジック ---
+-     ...
++ def pick_related(current_tags: List[str], all_entries: List[Dict[str, Any]], seed_sites: List[Dict[str, Any]], k: int = 8) -> List[Dict[str, str]]:
++     """
++     (C) Relatedが0件にならないようにする:
++     1) タグ類似で候補作成
++     2) 0件なら、新着(all_entries先頭) + seed_sites から埋める
++     """
++     # normalize tags
++     if isinstance(current_tags, str):
++         current_tags = [current_tags]
++     current_tags = [t for t in (current_tags or []) if isinstance(t, str)]
++ 
++     # normalize entries
++     a = [e for e in (all_entries or []) if isinstance(e, dict)]
++     ssites = [s for s in (seed_sites or []) if isinstance(s, dict)]
++ 
++     candidates: List[Tuple[float, Dict[str, str]]] = []
++ 
++     # 1) similarity candidates from generated pages
++     for e in a:
++         tags = e.get("tags", []) or []
++         tags = [t for t in tags if isinstance(t, str)]
++         score = jaccard(current_tags, tags)
++         if score <= 0:
++             continue
++         candidates.append((score, {"title": e.get("title", ""), "url": e.get("public_url", "")}))
++ 
++     # 2) similarity candidates from seed sites
++     for s in ssites:
++         tags = s.get("tags", []) or []
++         tags = [t for t in tags if isinstance(t, str)]
++         score = jaccard(current_tags, tags)
++         if score <= 0:
++             continue
++         candidates.append((score, {"title": s.get("title", ""), "url": s.get("url", "")}))
++ 
++     candidates.sort(key=lambda x: x[0], reverse=True)
++ 
++     seen = set()
++     related: List[Dict[str, str]] = []
++     for _, item in candidates:
++         u = (item.get("url") or "").strip()
++         if not u or u in seen:
++             continue
++         seen.add(u)
++         related.append(item)
++         if len(related) >= k:
++             return related
++ 
++     # ---- fallback: ensure at least k items (C) ----
++     # fill from recent generated pages
++     for e in a:
++         u = (e.get("public_url") or "").strip()
++         if not u or u in seen:
++             continue
++         seen.add(u)
++         related.append({"title": e.get("title", ""), "url": u})
++         if len(related) >= k:
++             return related
++ 
++     # fill from seed sites
++     for s in ssites:
++         u = (s.get("url") or "").strip()
++         if not u or u in seen:
++             continue
++         seen.add(u)
++         related.append({"title": s.get("title", ""), "url": u})
++         if len(related) >= k:
++             break
++ 
++     return related[:k]
 
-STRICT OUTPUT RULE:
-- Output ONLY raw HTML that starts with <!DOCTYPE html> and ends with </html>.
-- No markdown, no backticks, no explanations.
-
-[Goal]
-Create a modern SaaS-style tool page to solve: "{theme}"
-
-[Design]
-- Use Tailwind CSS via CDN
-- Clean SaaS UI: hero section + centered tool card + sections
-- Dark/Light mode toggle (CSS class switch)
-
-[Tool]
-- Implement an interactive JS mini-tool relevant to the theme (static, no server).
-- Must work without any server.
-
-[Content]
-- Include a Japanese long-form article >= 2500 Japanese characters.
-- Use clear structure with H2/H3 headings, checklist, pitfalls, FAQ(>=5).
-- Add "References" section with 8-12 reputable external links (official docs / well-known sites).
-
-[Multi-language]
-- Provide language switcher for JA/EN/FR/DE.
-- At minimum translate: hero, tool labels, and footer pages.
-- Article can be JA primary; provide short EN/FR/DE summary sections.
-
-[Compliance / Footer]
-- Auto-generate in-page sections for:
-  - Privacy Policy (cookie/ads explanation)
-  - Terms of Service
-  - Disclaimer
-  - About / Operator info
-  - Contact
-- These must be accessible via footer links using in-page anchors.
-
-[Related Sites]
-- Include a "Related sites" section near bottom as a list:
-  - It must be filled from a JSON embedded in the page: window.__RELATED__ = [];
-  - Render it into the list on load.
-  - If empty, hide the section.
-
-[SEO]
-- Include title/meta description/canonical.
-- Canonical must be: {canonical_url}
-
-Return ONLY the final HTML.
-""".strip()
 
 
 def openai_generate_html(client: OpenAI, prompt: str) -> str:
