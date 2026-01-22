@@ -1,9 +1,100 @@
-{
-  "items": [
-    {
-      "title": "Sleep cycle calculator",
-      "created_at": "2026-01-22T15:12:18Z",
-      "path": "/goliath/pages/20260122-151218-sleep-cycle-calculator/"
-    }
-  ]
-}
+[
+  {
+    "id": "4d622c9d62744d26",
+    "title": "Show HN: GoGen – A simple template-based file generator written in Go",
+    "created_at": "2026-01-22T21:09:44Z",
+    "path": "./pages/1769116184-show-hn-gogen-a-simple-template-based-file-generator-written",
+    "public_url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769116184-show-hn-gogen-a-simple-template-based-file-generator-written/",
+    "tags": [
+      "productivity"
+    ],
+    "source_urls": [
+      "https://github.com/zaheershaikh936/gogen",
+      "https://news.ycombinator.com/item?id=46725158",
+      "https://demo.chatter.plus/",
+      "https://news.ycombinator.com/item?id=46725025",
+      "https://meepr.co/",
+      "https://github.com/outerreaches/talkcad",
+      "https://news.ycombinator.com/item?id=46724812",
+      "https://www.goldmansachs.com/static-libs/pdf-redirect/prod/index.html?path=/images/migrated/insights/pages/gs-research/gen-ai--too-much-spend,-too-little-benefit-/TOM_AI%202.0_ForRedaction.pdf&originalQuery=&referrer=",
+      "https://figr.design/",
+      "https://marketplace.visualstudio.com/items?itemName=NeoResearchInc.heyneo",
+      "https://textwisely.ai/directory",
+      "https://backwater.systems/finance/",
+      "https://github.com/chebykinn/browser-code",
+      "https://www.similarweb.com/corp/wp-content/uploads/2026/01/attachment-Global-AI-Tracker-7.pdf",
+      "https://www.mdpi.com/1996-1073/19/1/64",
+      "https://nexuswaitlist.framer.website/",
+      "https://www.ft.com/content/9b2f8903-4350-45a5-a915-a58b6f9b35fb",
+      "https://github.com/vl3c/MatHud",
+      "https://constellation-io.com/",
+      "https://news.ycombinator.com/item?id=46721426"
+    ],
+    "related": [],
+    "best_source": "HN",
+    "best_url": "https://github.com/zaheershaikh936/gogen",
+    "best_score": 12,
+    "best_score_breakdown": {
+      "tool_request": 0,
+      "convert_generator_calc": 7,
+      "structured_output": 5,
+      "specific_inputs": 0,
+      "how_to_code_only": 0,
+      "too_broad": 0,
+      "adult_or_sensitive": 0
+    },
+    "score_keys": [
+      "template"
+    ]
+  },
+  {
+    "id": "91b8795d55d1aca6",
+    "title": "Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly",
+    "created_at": "2026-01-22T21:05:45Z",
+    "path": "./pages/1769115945-show-hn-pta-tax-calculator-calculate-pakistan-mobile-import-",
+    "public_url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769115945-show-hn-pta-tax-calculator-calculate-pakistan-mobile-import-/",
+    "tags": [
+      "calculator",
+      "finance"
+    ],
+    "source_urls": [
+      "https://ptataxcalculator.org",
+      "https://github.com/vl3c/MatHud",
+      "https://brightgrade.app",
+      "https://news.ycombinator.com/item?id=46725025",
+      "https://meepr.co/",
+      "https://github.com/outerreaches/talkcad",
+      "https://news.ycombinator.com/item?id=46724812",
+      "https://www.goldmansachs.com/static-libs/pdf-redirect/prod/index.html?path=/images/migrated/insights/pages/gs-research/gen-ai--too-much-spend,-too-little-benefit-/TOM_AI%202.0_ForRedaction.pdf&originalQuery=&referrer=",
+      "https://figr.design/",
+      "https://github.com/schappim/ekctl",
+      "https://marketplace.visualstudio.com/items?itemName=NeoResearchInc.heyneo",
+      "https://textwisely.ai/directory",
+      "https://backwater.systems/finance/",
+      "https://twitter.com/serafimcloud/status/2014266928853110862",
+      "https://www.swishfinance.app/",
+      "https://github.com/chebykinn/browser-code",
+      "https://www.similarweb.com/corp/wp-content/uploads/2026/01/attachment-Global-AI-Tracker-7.pdf",
+      "https://www.mdpi.com/1996-1073/19/1/64",
+      "https://nexuswaitlist.framer.website/",
+      "https://www.ft.com/content/9b2f8903-4350-45a5-a915-a58b6f9b35fb"
+    ],
+    "related": [],
+    "best_source": "HN",
+    "best_url": "https://ptataxcalculator.org",
+    "best_score": 11,
+    "best_score_breakdown": {
+      "tool_request": 0,
+      "convert_generator_calc": 7,
+      "structured_output": 0,
+      "specific_inputs": 4,
+      "how_to_code_only": 0,
+      "too_broad": 0,
+      "adult_or_sensitive": 0
+    },
+    "score_keys": [
+      "calculator",
+      "tax"
+    ]
+  }
+]
