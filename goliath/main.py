@@ -422,6 +422,38 @@ def jaccard(a: List[str], b: List[str]) -> float:
         return 0.0
     return len(sa & sb) / len(sa | sb)
 
+def pick_related(tags, all_entries, seed_sites, k=8):
+    # --- normalize inputs (防御コード) ---
+    if isinstance(tags, str):
+        tags = [tags]
+
+    # seed_sites が dict でも list でも吸収して map を作る
+    seed_map = {}
+    if isinstance(seed_sites, dict):
+        seed_map = seed_sites
+    elif isinstance(seed_sites, list):
+        for s in seed_sites:
+            if isinstance(s, dict) and "slug" in s:
+                seed_map[s["slug"]] = s
+
+    normalized = []
+    for e in all_entries:
+        if isinstance(e, dict):
+            normalized.append(e)
+            continue
+        if isinstance(e, str):
+            # 文字列なら seed_map から引けるなら辞書に戻す / 無理なら捨てる
+            if e in seed_map and isinstance(seed_map[e], dict):
+                normalized.append(seed_map[e])
+            else:
+                # ここで捨てる（落ちるより100倍マシ）
+                continue
+        else:
+            continue
+
+    all_entries = normalized
+    # --- ここから下は既存ロジック ---
+    ...
 
 def pick_related(current_tags: List[str], all_entries: List[Dict[str, Any]], seed_sites: List[Dict[str, Any]], k: int = 8) -> List[Dict[str, str]]:
     candidates: List[Tuple[float, Dict[str, str]]] = []
