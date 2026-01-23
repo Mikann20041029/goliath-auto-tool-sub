@@ -1,5 +1,80 @@
 [
   {
+    "id": "217cd5a9fd23a855",
+    "title": "Show HN: GoGen – A simple template-based file generator written in Go",
+    "search_title": "template template tool",
+    "created_at": "2026-01-23T15:17:51Z",
+    "path": "./pages/1769181471-template-template-tool",
+    "public_url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769181471-template-template-tool/",
+    "tags": [
+      "productivity"
+    ],
+    "source_urls": [
+      "https://github.com/zaheershaikh936/gogen",
+      "https://sorax.io/",
+      "https://mas.to/@gkmizuno/115945076177789516",
+      "https://flipboard.com/@thehindu/the-hindu-f6nlh2c8z/-/a-dftpUmHVS4e4PdHs_XkbAg%3Aa%3A2437248393-%2F0",
+      "https://infosec.exchange/@thenexusofprivacy/115945076033610081",
+      "https://keen-spot.lovable.app",
+      "https://news.ycombinator.com/item?id=46733315",
+      "https://ig-profile-viewer.com",
+      "https://github.com/kpetridis24/lobsim",
+      "https://freemotion.dev",
+      "https://github.com/darkamenosa/ahoy_analytics",
+      "https://www.codnaut.com/en",
+      "https://news.ycombinator.com/item?id=46731531",
+      "https://news.ycombinator.com/item?id=46731498",
+      "https://fortune.com/2026/01/21/neurips-ai-conferences-research-papers-hallucinations/",
+      "https://news.ycombinator.com/item?id=46733063",
+      "https://www.ft.com/content/b4d2c7a3-587d-440f-a7a9-7e5e85b93a88",
+      "https://github.com/Prism-Shadow/AgentHub",
+      "https://www.ft.com/content/2a29cbc9-7183-4f68-a1d2-bc88189672e6",
+      "https://whatsmydepreciation.co/"
+    ],
+    "related": [
+      {
+        "title": "Show HN: GoGen – A simple template-based file generator written in Go",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769141611-template-template-tool/"
+      },
+      {
+        "title": "Show HN: GoGen – A simple template-based file generator written in Go",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769138429-template-template-tool/"
+      },
+      {
+        "title": "Show HN: GoGen – A simple template-based file generator written in Go",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769116184-show-hn-gogen-a-simple-template-based-file-generator-written/"
+      },
+      {
+        "title": "Show HN: I built a MACRS calculator because TurboTax was overkill",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769158606-tax-calculator/"
+      },
+      {
+        "title": "Show HN: I built a MACRS calculator because TurboTax was overkill",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769155768-tax-calculator/"
+      },
+      {
+        "title": "Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769115945-show-hn-pta-tax-calculator-calculate-pakistan-mobile-import-/"
+      }
+    ],
+    "best_source": "HN",
+    "best_url": "https://github.com/zaheershaikh936/gogen",
+    "best_score": 12,
+    "best_score_breakdown": {
+      "tool_request": 0,
+      "convert_generator_calc": 7,
+      "structured_output": 5,
+      "specific_inputs": 0,
+      "how_to_code_only": 0,
+      "too_broad": 0,
+      "adult_or_sensitive": 0,
+      "duplicate_penalty": 0
+    },
+    "score_keys": [
+      "template"
+    ]
+  },
+  {
     "id": "ae9de37599f13863",
     "title": "Show HN: I built a MACRS calculator because TurboTax was overkill",
     "search_title": "tax calculator",
