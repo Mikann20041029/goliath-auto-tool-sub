@@ -378,9 +378,23 @@ def collect_mastodon(limit: int) -> List[Dict[str, Any]]:
 
 def collector_real() -> List[Dict[str, Any]]:
     items: List[Dict[str, Any]] = []
-    items.extend(collect_hn(COLLECT_HN))
-    items.extend(collect_bluesky(COLLECT_BSKY))
-    items.extend(collect_mastodon(COLLECT_MASTODON))
+
+    b = collect_bluesky(COLLECT_BSKY)
+    m = collect_mastodon(COLLECT_MASTODON)
+    h = collect_hn(COLLECT_HN)
+
+    items.extend(b)
+    items.extend(m)
+    items.extend(h)
+
+    if len(b) == 0 or len(m) == 0:
+        notes = []
+        notes.append("If Bluesky/Mastodon are 0, likely causes:")
+        notes.append("- missing requirements: atproto / Mastodon.py")
+        notes.append("- missing secrets: BSKY_HANDLE/BSKY_PASSWORD/MASTODON_API_BASE/MASTODON_ACCESS_TOKEN")
+        notes.append("- MASTODON_API_BASE should be like https://mastodon.social")
+        notes.append(f"env_present: {json.dumps(_env_present(['BSKY_HANDLE','BSKY_PASSWORD','MASTODON_API_BASE','MASTODON_ACCESS_TOKEN']), ensure_ascii=False)}")
+        report_source_counts({"Bluesky": len(b), "Mastodon": len(m), "HN": len(h)}, "\n".join(notes))
 
     if not items:
         samples = [
@@ -393,6 +407,7 @@ def collector_real() -> List[Dict[str, Any]]:
             items.append({"source": "Stub", "text": t, "url": u, "meta": {}})
 
     return items
+
 
 
 # =========================
