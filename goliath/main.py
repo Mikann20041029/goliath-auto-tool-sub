@@ -496,16 +496,28 @@ queries = [
         if len(out) < limit:
             try:
                 statuses = m.timeline_public(limit=80)
-                for st in statuses:
-                    txt = re.sub(r"<[^>]+>", "", st.get("content", "") or "")
-                    if not any(k in txt.lower() for k in ["tool", "convert", "calculator", "compare", "timezone", "template"]):
-                        continue
-                    url = st.get("url", "") or ""
-                    out.append({"source": "Mastodon", "text": txt[:300], "url": url, "meta": {}})
-                    if len(out) >= limit:
-                        return out
+                keywords = [
+                    "help","need help","anyone know","how do i","how to","stuck","blocked",
+                    "error","bug","issue","problem","failed","broken","crash","exception","traceback",
+                    "deploy","build failed","github actions","workflow","docker","npm","pip",
+                    "api","oauth","convert","converter","calculator","template","compare","timezone",
+            ]
+
+            for st in statuses:
+                txt = re.sub(r"<[^>]+>", "", st.get("content", "") or "")
+                t = txt.lower()
+                if not any(k in t for k in keywords):
+                    continue
+
+                url = st.get("url", "") or ""
+                out.append({"source": "Mastodon", "text": txt[:300], "url": url, "meta": {}})
+                if len(out) >= limit:
+                    return out
+
             except Exception:
                 pass
+
+
 
         seen = set()
         uniq = []
