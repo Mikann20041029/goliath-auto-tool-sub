@@ -21,6 +21,9 @@ try:
 except Exception:
     Mastodon = None
 
+def _env_present(keys):
+    import os
+    return {k: bool(os.getenv(k, "")) for k in keys}
 
 # =========================
 # Config
@@ -393,7 +396,6 @@ def collector_real() -> List[Dict[str, Any]]:
         notes.append("- missing requirements: atproto / Mastodon.py")
         notes.append("- missing secrets: BSKY_HANDLE/BSKY_PASSWORD/MASTODON_API_BASE/MASTODON_ACCESS_TOKEN")
         notes.append("- MASTODON_API_BASE should be like https://mastodon.social")
-        notes.append(f"env_present: {json.dumps(_env_present(['BSKY_HANDLE','BSKY_PASSWORD','MASTODON_API_BASE','MASTODON_ACCESS_TOKEN']), ensure_ascii=False)}")
         report_source_counts({"Bluesky": len(b), "Mastodon": len(m), "HN": len(h)}, "\n".join(notes))
 
     if not items:
