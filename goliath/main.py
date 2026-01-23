@@ -1003,7 +1003,7 @@ Create a modern SaaS-style tool page to solve: "{theme}"
 - For placeholders use data-i18n-placeholder.
 - For title attributes use data-i18n-title.
 - For aria-label use data-i18n-aria.
-- Provide a JS dictionary exactly as: window.__I18N__ = { en:{...}, ja:{...}, fr:{...}, de:{...} }
+- Provide a JS dictionary exactly as: window.__I18N__ = {{ en:{{...}}, ja:{{...}}, fr:{{...}}, de:{{...}} }}
 - Provide a JS initializer that:
   - reads saved language from localStorage key "goliath_lang" (fallback to "en")
   - sets <html lang="..">
