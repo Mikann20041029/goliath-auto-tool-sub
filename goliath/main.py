@@ -14,20 +14,24 @@ from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 def existing_tool_slugs() -> set:
-    seen = existing_tool_slugs()
-if tool_slug in seen:
-    # 既に作ったことがあるなら今回スキップ（重複量産防止）
-
+    """
+    pages/ 配下に既に作られている tool_slug を集めて set で返す
+    例: pages/1769181471-template-template-tool/ -> "template-template-tool"
+    """
     root = os.path.join(os.path.dirname(__file__), "pages")
     slugs = set()
+
     if not os.path.isdir(root):
         return slugs
+
     for name in os.listdir(root):
-        # 例: 1769181471-template-template-tool
+        # 例: "1769181471-template-template-tool"
         m = re.match(r"^\d+-(.+)$", name)
         if m:
             slugs.add(m.group(1))
+
     return slugs
+
 
 
 KEYWORDS = [
