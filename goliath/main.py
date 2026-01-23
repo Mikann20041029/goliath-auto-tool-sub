@@ -441,6 +441,30 @@ def bsky_uri_to_url(uri: str, did: str = "") -> str:
     except Exception:
         return ""
 
+# --- add: atproto return normalization ---
+def _to_dict(x):
+    if x is None:
+        return {}
+    if isinstance(x, dict):
+        return x
+    try:
+        if hasattr(x, "model_dump"):
+            return x.model_dump()
+    except Exception:
+        pass
+    try:
+        if hasattr(x, "dict"):
+            return x.dict()
+    except Exception:
+        pass
+    return {}
+
+def _to_list(x):
+    if x is None:
+        return []
+    if isinstance(x, list):
+        return x
+    return []
 
 def collect_bluesky(limit: int) -> List[Dict[str, Any]]:
     """
