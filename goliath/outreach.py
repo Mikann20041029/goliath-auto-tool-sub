@@ -585,3 +585,145 @@ def collect_social_only_days(query: str, limit_per_source: int = 30, days: int =
         seen.add(u)
         uniq.append(it)
     return uniq
+def _cutoff_iso(days: int) -> str:
+    from datetime import datetime, timedelta, timezone
+    dt = datetime.now(timezone.utc) - timedelta(days=max(1, days))
+    return dt.isoformat()
+
+def bluesky_search(query: str, limit: int = 20, days: int = 730) -> list[dict]:
+    """
+    Bluesky: app.bsky.feed.searchPosts を使う（atproto Clientが入ってる前提）
+    """
+    import os
+    try:
+        from atproto import Client as BlueskyClient
+    except Exception:
+        return []
+
+    handle = os.getenv("BSKY_HANDLE", "")
+    pw = os.getenv("BSKY_PASSWORD", "")
+    if not handle or not pw:
+        return []
+
+    try:
+        c = BlueskyClient()
+        c.login(handle, pw)
+
+        # Blueskyは検索APIが時期で微妙に変わるので、安全に dict で叩く
+        # 取れたものを日付フィルタする方針
+        res = c.app.bsky.feed.search_posts({"q": query, "limit": min(100, max(1, limit))})
+        posts = res.get("posts", []) if isinstance(res, dict) else getattr(res, "posts", [])
+        cutoff = _cutoff_iso(days)
+
+        out = []
+        for p in posts:
+            # indexedAt / createdAt があれば使う
+            t = (p.get("indexedAt") or p.get("createdAt") or "") if isinstance(p, dict) else ""
+            if t and t < cutoff:
+                continue
+            url = ""
+            # 可能なら web URL を組み立て
+            if isinstance(p, dict):
+                uri = p.get("uri", "")
+                # uri例: at://did:.../app.bsky.feed.post/xxx
+                if "/app.bsky.feed.post/" in uri:
+                    post_id = uri.split("/app.bsky.feed.post/")[-1]
+                    # ハンドルが取れないケースもあるので、URLは無理せずuriでもOK
+                    url = f"at://{post_id}"
+            out.append({"source": "Bluesky", "text": query, "url": url or "bluesky://search", "meta": {"q": query}})
+        return out[:limit]
+    except Exception:
+        return []
+
+def mastodon_search_wrap(query: str, limit: int = 20, days: int = 730) -> list[dict]:
+    """
+    Mastodon: search APIで拾って、created_at で days フィルタ
+    """
+    import os
+    try:
+        from mastodon import Mastodon
+    except Exception:
+        return []
+
+    api_base = (os.getenv("MASTODON_API_BASE", "") or "").strip().rstrip("/")
+    token = (os.getenv("MASTODON_ACCESS_TOKEN", "") or "").strip()
+    if not api_base or not token:
+        return []
+
+    try:
+        m = Mastodon(access_token=token, api_base_url=api_base)
+        results = m.search_v2(q=query, limit=min(40, max(1, limit)))
+        statuses = results.get("statuses", []) if isinstance(results, dict) else []
+        cutoff = _cutoff_iso(days)
+
+        out = []
+        for s in statuses:
+            created = (s.get("created_at") or "")
+            # created_at がdatetimeの場合があるので str に寄せる
+            try:
+                created_iso = created.isoformat() if hasattr(created, "isoformat") else str(created)
+            except Exception:
+                created_iso = ""
+            if created_iso and created_iso < cutoff:
+                continue
+            url = s.get("url") or ""
+            content = s.get("content") or ""
+            out.append({"source": "Mastodon", "text": content[:120], "url": url, "meta": {"q": query}})
+        return out[:limit]
+    except Exception:
+        return []
+
+def x_search_wrap(query: str, limit: int = 10, days: int = 730) -> list[dict]:
+    """
+    X: 標準は recent search（直近7日）が基本。
+    730日指定でも、まずは7日に丸めて安全運用。
+    """
+    import os
+    try:
+        import tweepy
+    except Exception:
+        return []
+
+    # “無料枠”が不確実なので、1回の実行あたりのAPI呼び出し数を極小に制限する
+    # 3回/日なら 月≈90回。reads=100/月を仮定しても超えにくい運用。
+    max_req = int(os.getenv("X_MAX_REQUESTS_PER_RUN", "1"))
+    per_req = int(os.getenv("X_RESULTS_PER_REQUEST", str(min(10, max(1, limit)))))
+
+    # recent searchの都合で days は最大7に丸める（フルアーカイブあるなら拡張）
+    full_archive = os.getenv("X_FULL_ARCHIVE", "0") == "1"
+    if not full_archive:
+        days = min(days, 7)
+
+    consumer_key = os.getenv("X_API_KEY", "")
+    consumer_secret = os.getenv("X_API_SECRET", "")
+    access_token = os.getenv("X_ACCESS_TOKEN", "")
+    access_token_secret = os.getenv("X_ACCESS_SECRET", "")
+    if not (consumer_key and consumer_secret and access_token and access_token_secret):
+        return []
+
+    try:
+        client = tweepy.Client(
+            consumer_key=consumer_key,
+            consumer_secret=consumer_secret,
+            access_token=access_token,
+            access_token_secret=access_token_secret,
+            wait_on_rate_limit=False,
+        )
+
+        out = []
+        # recent search
+        for _ in range(max_req):
+            resp = client.search_recent_tweets(
+                query=query,
+                max_results=min(10, max(10, per_req)),  # API都合で10固定近い
+                tweet_fields=["created_at", "author_id"],
+            )
+            if not resp or not resp.data:
+                break
+            for t in resp.data:
+                url = f"https://x.com/i/web/status/{t.id}"
+                out.append({"source": "X", "text": query, "url": url, "meta": {"q": query}})
+            break  # 1回で十分（上限守る）
+        return out[:limit]
+    except Exception:
+        return []
