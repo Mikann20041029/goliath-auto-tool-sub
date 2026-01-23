@@ -389,13 +389,21 @@ def collect_hn(limit: int) -> List[Dict[str, Any]]:
     seen = set()
     uniq = []
     for it in all_items:
-        u = it.get("url", "")
-        if not u or u in seen:
-            continue
-        seen.add(u)
-        uniq.append(it)
-        if len(uniq) >= limit:
-            break
+    u = it.get("url", "")
+    if not u or u in seen:
+        continue
+
+    # ★ここに入れる（template系を弾く）
+    title = (it.get("title", "") or "").lower()
+    ulow  = (u or "").lower()
+    if ("template" in title) or ("template" in ulow):
+        continue
+
+    seen.add(u)
+    uniq.append(it)
+    if len(uniq) >= limit:
+        break
+
     return uniq
 
 
