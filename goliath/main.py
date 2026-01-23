@@ -425,15 +425,59 @@ def collect_mastodon(limit: int) -> List[Dict[str, Any]]:
     try:
         m = Mastodon(access_token=tok if tok else None, api_base_url=base)
 
-        queries = [
-            "need a tool",
-            "is there a tool",
-            "convert",
-            "calculator",
-            "compare plan",
-            "timezone",
-            "template",
-        ]
+        # 強めの検索語（“悩み”っぽい文を拾いやすくする）
+queries = [
+    # help/issue系
+    "help",
+    "need help",
+    "anyone know",
+    "how do i",
+    "how to",
+    "what should i do",
+    "can someone",
+    "please help",
+    "stuck",
+    "blocked",
+
+    # error/bug系
+    "error",
+    "bug",
+    "issue",
+    "problem",
+    "failed",
+    "broken",
+    "crash",
+    "exception",
+    "traceback",
+    "stack trace",
+
+    # dev/ops寄り
+    "deploy",
+    "build failed",
+    "github actions",
+    "workflow",
+    "docker",
+    "npm",
+    "pip",
+    "python",
+    "javascript",
+    "typescript",
+    "api",
+    "oauth",
+
+    # tool request / convert / calculator
+    "need a tool",
+    "is there a tool",
+    "looking for a tool",
+    "tool for",
+    "convert",
+    "converter",
+    "calculator",
+    "template",
+    "compare",
+    "timezone",
+]
+
 
         if tok:
             for q in queries:
