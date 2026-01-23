@@ -1505,7 +1505,13 @@ def collect_leads(theme: str) -> List[Dict[str, Any]]:
     try:
         leads.extend(collect_mastodon(min(LEADS_PER_SOURCE, LEADS_TOTAL)))
     except Exception:
+        pass   
+        
+    try:
+        leads.extend(collect_reddit(min(LEADS_PER_SOURCE, LEADS_TOTAL)))
+    except Exception:
         pass
+
 
     # Xは無料枠100 reads/月が厳しいので「軽く」だけ
     try:
