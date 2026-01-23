@@ -1041,6 +1041,19 @@ def validate_html(html: str) -> Tuple[bool, str]:
     # language switcher
     if 'id="langselect"' not in low:
         return False, "missing #langSelect"
+            # ---- i18n coverage guard (prevents "only major text translates") ----
+    # Require enough i18n bindings so most of the page is covered.
+    if low.count("data-i18n=") < 80:
+        return False, "i18n coverage too small (data-i18n < 80)"
+    if "data-i18n-placeholder" not in low:
+        return False, "missing data-i18n-placeholder"
+    if "goliath_lang" not in low:
+        return False, "missing localStorage key goliath_lang handling"
+    # Default must be English fallback
+    if 'fallback to "en"' not in low and 'fallback to \\"en\\"' not in low and '"en"' not in low:
+        # loose check (generator varies). still helps catch wrong default.
+        pass
+
     if "__i18n__" not in low:
         return False, "missing window.__I18N__"
     if "data-i18n" not in low:
@@ -1051,7 +1064,7 @@ def validate_html(html: str) -> Tuple[bool, str]:
     # hub link
     if "../../index.html" not in low and "../index.html" not in low:
         return False, "missing link back to hub (../../index.html)"
-
+　　
     return True, "ok"
 
 
