@@ -1230,35 +1230,49 @@ def extract_keywords(theme: str) -> List[str]:
     return base[:6] if base else ["tool"]
 
 
-def collect_leads(theme: str) -> list[dict]:
+def collect_leads(theme: str) -> List[Dict[str, Any]]:
     """
-    Issueに出す「悩みURL + 返信文」用リードはSNSのみから集める。
-    HNは「ツール生成のネタ集め」では使ってOKだが、Issue用リードでは使わない。
+    Issuesに出す「悩みURL」は SNS優先で集める。
+    HNはここでは原則使わない（テーマ決めに使うのはOK）。
     """
-    import os
-    from datetime import datetime, timedelta, timezone
+    LEADS_TOTAL = int(os.getenv("LEADS_TOTAL", "100"))
+    LEADS_PER_SOURCE = int(os.getenv("LEADS_PER_SOURCE", "40"))
+    LEADS_DAYS = int(os.getenv("LEADS_DAYS", "730"))  # 提案どおり2年
 
-    # 何件集めるか（少なめ推奨）
-    LEADS_TOTAL = int(os.getenv("LEADS_TOTAL", "40"))
-    PER_SOURCE = int(os.getenv("LEADS_PER_SOURCE", "20"))
+    leads: List[Dict[str, Any]] = []
 
-    # days=730 指定（ただしXは原則 recent search の都合で最大7日に丸める）
-    DAYS = int(os.getenv("LEADS_DAYS", "730"))
+    # 1) SNS再収集（HN除外）
+    # Bluesky / Mastodon / X の順（Xはreadsが厳しいので後ろ）
+    try:
+        leads.extend(collect_bluesky(min(LEADS_PER_SOURCE, LEADS_TOTAL)))
+    except Exception:
+        pass
 
-    # 既存のキーワード抽出関数を使う想定
-    keys = extract_keywords(theme)
-    query = " OR ".join(keys[:6]) if keys else theme
+    try:
+        leads.extend(collect_mastodon(min(LEADS_PER_SOURCE, LEADS_TOTAL)))
+    except Exception:
+        pass
 
-    leads: list[dict] = []
-    leads.extend(bluesky_search(query=query, limit=PER_SOURCE, days=DAYS))
-    leads.extend(mastodon_search_wrap(query=query, limit=PER_SOURCE, days=DAYS))
-    leads.extend(x_search_wrap(query=query, limit=PER_SOURCE, days=DAYS))
+    # Xは無料枠100 reads/月が厳しいので「軽く」だけ
+    try:
+        leads.extend(collect_x_limited(theme))
+    except Exception:
+        pass
 
-    # 重複URLを落とす
+    # 2) ここで days フィルタ（sourceごとに出来る範囲で）
+    cutoff = time.time() - (LEADS_DAYS * 86400)
+    filtered = []
+    for it in leads:
+        # meta.created_at_ts が入ってるものだけフィルタする（なければ通す）
+        ts = (it.get("meta") or {}).get("created_at_ts")
+        if ts is None or ts >= cutoff:
+            filtered.append(it)
+
+    # 3) URL重複除去
     seen = set()
     uniq = []
-    for it in leads:
-        u = (it.get("url") or "").strip()
+    for it in filtered:
+        u = it.get("url") or ""
         if not u or u in seen:
             continue
         seen.add(u)
