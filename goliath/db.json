@@ -1,5 +1,74 @@
 [
   {
+    "id": "a123b981222ad44d",
+    "title": "Show HN: I built a MACRS calculator because TurboTax was overkill",
+    "search_title": "tax calculator",
+    "created_at": "2026-01-23T08:09:28Z",
+    "path": "./pages/1769155768-tax-calculator",
+    "public_url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769155768-tax-calculator/",
+    "tags": [
+      "calculator",
+      "finance"
+    ],
+    "source_urls": [
+      "https://whatsmydepreciation.co/",
+      "https://ptataxcalculator.org",
+      "https://github.com/vl3c/MatHud",
+      "https://brightgrade.app",
+      "https://news.ycombinator.com/item?id=46729734",
+      "https://news.ycombinator.com/item?id=46729684",
+      "https://github.com/playdate-go/pdgo",
+      "https://freyavideo.com/create/ad-generator",
+      "https://news.ycombinator.com/item?id=46729086",
+      "https://news.ycombinator.com/item?id=46728841",
+      "https://albertsikkema.com/ai/development/tools/reverse-engineering/2026/01/23/reverse-engineering-figma-make-files.html",
+      "https://news.ycombinator.com/item?id=46726016",
+      "https://studio.nimblebrain.ai/",
+      "https://www.fomometer.ai",
+      "https://news.ycombinator.com/item?id=46725196",
+      "https://news.ycombinator.com/item?id=46725158",
+      "https://demo.chatter.plus/",
+      "https://meepr.co/",
+      "https://koreajoongangdaily.joins.com/news/2026-01-22/business/tech/Koreas-groundbreaking-AI-law-requires-watermarks-on-generated-content-but-enforcement-gaps-remain/2506349",
+      "https://dbushell.com/2026/01/22/proton-spam/"
+    ],
+    "related": [
+      {
+        "title": "Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769115945-show-hn-pta-tax-calculator-calculate-pakistan-mobile-import-/"
+      },
+      {
+        "title": "Show HN: GoGen – A simple template-based file generator written in Go",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769141611-template-template-tool/"
+      },
+      {
+        "title": "Show HN: GoGen – A simple template-based file generator written in Go",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769138429-template-template-tool/"
+      },
+      {
+        "title": "Show HN: GoGen – A simple template-based file generator written in Go",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769116184-show-hn-gogen-a-simple-template-based-file-generator-written/"
+      }
+    ],
+    "best_source": "HN",
+    "best_url": "https://whatsmydepreciation.co/",
+    "best_score": 11,
+    "best_score_breakdown": {
+      "tool_request": 0,
+      "convert_generator_calc": 7,
+      "structured_output": 0,
+      "specific_inputs": 4,
+      "how_to_code_only": 0,
+      "too_broad": 0,
+      "adult_or_sensitive": 0,
+      "duplicate_penalty": 0
+    },
+    "score_keys": [
+      "calculator",
+      "tax"
+    ]
+  },
+  {
     "id": "4c1ece6c8b308c5e",
     "title": "Show HN: GoGen – A simple template-based file generator written in Go",
     "search_title": "template template tool",
