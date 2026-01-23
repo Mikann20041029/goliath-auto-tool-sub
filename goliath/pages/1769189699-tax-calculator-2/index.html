@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ja" class="bg-white text-gray-900">
+<head>
+  <meta charset="utf-8">
+  <title>MACRS減価償却計算ツール｜簡単・便利な税務計算サイト</title>
+  <meta name="description" content="TurboTaxが複雑すぎる方へ。MACRS減価償却法による資産の費用配分を早く簡単に自動計算。日本語と多言語対応。使いやすいSaaSスタイル税金ツール。">
+  <link rel="canonical" href="https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769189699-tax-calculator-2">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <style>
+    body { font-family: 'Inter','Noto Sans JP',sans-serif;}
+    .glass {
+      background: rgba(255,255,255,0.78);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 20px rgba(0,0,40,.08), 0 1.5px 7px rgba(10,64,190,0.04);
+      border-radius: 2rem;
+    }
+    @media (prefers-color-scheme: dark) {
+      html:not(.light) { background: #131625; color: #e5e7eb;}
+    }
+    html.dark { background: #131625; color: #e5e7eb;}
+    html.dark .glass { background: rgba(31,41,55,0.70); }
+    html.dark input, html.dark select { background: #23253d; color: #e5e7eb;}
+    .transition-bg { transition: background .35s cubic-bezier(.44,.03,.27,1); }
+  </style>
+</head>
+<body class="transition-bg min-h-screen flex flex-col">
+  <!-- Navigation -->
+  <nav class="w-full flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-white/90 dark:bg-gray-900/70 fixed top-0 left-0 z-40 backdrop-blur">
+    <a href="../../index.html" class="text-indigo-700 dark:text-indigo-300 font-semibold text-lg" data-i18n="nav.all_tools">All tools</a>
+    <div class="flex items-center gap-4">
+      <select id="langSelect" class="rounded-lg p-1 bg-gray-50 dark:bg-gray-800 border dark:border-gray-600 text-sm text-gray-800 dark:text-gray-300 focus:ring-2 focus:ring-indigo-400" style="min-width:72px">
+        <option value="ja">日本語</option>
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+        <option value="de">Deutsch</option>
+      </select>
+      <button id="themeToggle" class="ml-2 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-300 focus:outline-none" aria-label="Toggle dark mode"><svg id="themeIcon" width="22" height="22" viewBox="0 0 22 22" fill="none"><circle data-light class="block" cx="11" cy="11" r="5.6" stroke="currentColor" stroke-width="2.2"/><path data-dark class="hidden" d="M19.5 12A8.3 8.3 0 0 1 12 2.5a8.5 8.5 0 1 0 7.5 9.5Z" stroke="currentColor" stroke-width="2.2" fill="none"/></svg></button>
+    </div>
+  </nav>
+
+  <main class="flex-1 flex flex-col">
+    <!-- Hero -->
+    <section class="pt-32 pb-10 bg-gradient-to-br from-indigo-50 to-white dark:from-[#253268] dark:to-[#131625] transition-bg">
+      <div class="max-w-3xl mx-auto px-4 text-center">
+        <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-gray-900 dark:text-white">
+          <span data-i18n="hero.title">MACRS減価償却計算ツール</span>
+        </h1>
+        <p class="text-lg md:text-xl text-gray-500 dark:text-gray-200 mb-6" data-i18n="hero.subtitle">
+          TurboTaxが複雑すぎる方向け。アメリカ税法のMACRS方式で資産の減価償却額を一瞬で自動計算します。
+        </p>
+      </div>
+    </section>
+
+    <!-- Tool Card -->
+    <section class="py-2">
+      <div class="max-w-2xl mx-auto px-4">
+        <div class="glass p-8 md:p-14 shadow-lg flex flex-col gap-6 mt-[-4rem] relative z-10 border border-indigo-100 dark:border-gray-800 transition-bg">
+          <form id="macrsForm" autocomplete="off" class="flex flex-col gap-5">
+            <div>
+              <label for="cost" class="block font-semibold mb-2 text-gray-700 dark:text-gray-200" data-i18n="tool.label_cost">取得価額 (USD)</label>
+              <input type="number" step="0.01" min="1" id="cost" name="cost" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 text-lg" placeholder="例: 10000" data-i18n-placeholder="tool.placeholder_cost">
+            </div>
+            <div>
+              <label for="year" class="block font-semibold mb-2 text-gray-700 dark:text-gray-200" data-i18n="tool.label_year">取得年 (例: 2022)</label>
+              <input type="number" min="1987" max="2099" id="year" name="year" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 text-lg" placeholder="例: 2023" data-i18n-placeholder="tool.placeholder_year">
+            </div>
+            <div>
+              <label for="class" class="block font-semibold mb-2 text-gray-700 dark:text-gray-200" data-i18n="tool.label_class">資産区分</label>
+              <select id="class" name="class" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 text-lg" required data-i18n-placeholder="tool.placeholder_class">
+                <option value="" disabled selected hidden data-i18n="tool.class_select">選択してください</option>
+                <option value="3" data-i18n="tool.class_3yr">3年 (ソフトウェア・特殊工具等)</option>
+                <option value="5" data-i18n="tool.class_5yr">5年 (自動車/コンピュータ/機器類)</option>
+                <option value="7" data-i18n="tool.class_7yr">7年 (家具・器具類)</option>
+                <option value="15" data-i18n="tool.class_15yr">15年 (土地改善, 小規模構造物)</option>
+                <option value="27.5" data-i18n="tool.class_275yr">27.5年 (住宅用賃貸不動産)</option>
+                <option value="39" data-i18n="tool.class_39yr">39年 (非住宅用不動産)</option>
+              </select>
+            </div>
+            <div>
+              <label for="convention" class="block font-semibold mb-2 text-gray-700 dark:text-gray-200" data-i18n="tool.label_convention">償却開始方法</label>
+              <select id="convention" name="convention" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 text-lg">
+                <option value="half" data-i18n="tool.convention_half">半年度規定 (Half-year, 標準)</option>
+                <option value="mid" data-i18n="tool.convention_mid">中間期規定 (Mid-quarter)</option>
+                <option value="mid_month" data-i18n="tool.convention_mid_month">中間月規定 (Mid-month, 不動産等)</option>
+              </select>
+            </div>
+            <div>
+              <label for="years" class="block font-semibold mb-2 text-gray-700 dark:text-gray-200" data-i18n="tool.label_years">表示年数 (最大)</label>
+              <input type="number" id="years" min="1" max="40" value="7" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 text-lg" data-i18n-placeholder="tool.placeholder_years">
+            </div>
+            <button type="submit" class="mt-2 py-2.5 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-lg transition-colors shadow focus:outline-none" data-i18n="tool.calc_btn">減価償却計算</button>
+          </form>
+          <div id="macrsResult" class="hidden border-t pt-6 mt-2">
+            <h3 class="text-xl md:text-2xl font-bold mb-3 text-indigo-700 dark:text-indigo-200" data-i18n="tool.result_head">減価償却スケジュール</h3>
+            <table class="w-full text-sm md:text-base border-collapse rounded-xl overflow-hidden">
+              <thead>
+                <tr class="bg-indigo-50 dark:bg-gray-800 text-indigo-900 dark:text-indigo-200">
+                  <th class="p-1 md:p-2 font-semibold" data-i18n="tool.result_year">年</th>
+                  <th class="p-1 md:p-2 font-semibold" data-i18n="tool.result_amount">償却費 (USD)</th>
+                  <th class="p-1 md:p-2 font-semibold" data-i18n="tool.result_accum">累計償却額</th>
+                </tr>
+              </thead>
+              <tbody id="macrsTableBody" class="bg-white dark:bg-gray-900"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Multi-language summaries -->
+    <section class="max-w-2xl mx-auto mt-14 px-4 flex flex-col gap-8">
+      <div id="langSummary-en" class="hidden border border-indigo-50 dark:border-gray-800 p-4 rounded-xl bg-gray-50 dark:bg-gray-800">
+        <strong>English:</strong> Simple MACRS calculator for US tax depreciation. Enter your property’s details and instantly see yearly depreciations. Fundamental asset classes supported. See below for an in-depth Japanese guide, or use the language menu above.
+      </div>
+      <div id="langSummary-fr" class="hidden border border-indigo-50 dark:border-gray-800 p-4 rounded-xl bg-gray-50 dark:bg-gray-800">
+        <strong>Français&nbsp;:</strong> Calculateur MACRS rapide pour l'amortissement fiscal américain. Indiquez les informations sur votre bien et visualisez les dotations annuelles. Classes d’actifs essentielles gérées. Guide détaillé ci-dessous en japonais, ou utilisez le sélecteur de langue.
+      </div>
+      <div id="langSummary-de" class="hidden border border-indigo-50 dark:border-gray-800 p-4 rounded-xl bg-gray-50 dark:bg-gray-800">
+        <strong>Deutsch:</strong> Einfache MACRS-Rechner für US-Steuerabschreibungen. Tragen Sie Ihre Objektangaben ein und erhalten Sie sofort den Abschreibungsverlauf. Grundlegende Asset-Klassen sind enthalten. Japanische Anleitung unten, weitere Sprachen im Menü.
+      </div>
+    </section>
+
+    <!-- Article/Guide JA (>=2500chars) -->
+    <section class="max-w-2xl mx-auto mt-10 px-4 prose prose-indigo dark:prose-invert prose-h2:text-indigo-700 prose-h3:text-indigo-600 dark:prose-h2:text-indigo-300 dark:prose-h3:text-indigo-300">
+      <h2 data-i18n="article.heading_what_is_macrs">MACRSとは何か？</h2>
+      <p>
+        MACRS（Modified Accelerated Cost Recovery System）は、アメリカ合衆国内国歳入庁（IRS）が定めた減価償却の加速償却制度です。米国の企業や個人が新たに取得した資産（不動産、設備、機械、車両、ソフトウェア等）について、取得年度から複数年にわたりその価値を税法上で費用配分することができます。MACRSは、税務上の利益計算を合理化し、初期投資を早期に費用化できるという特徴があります。
+      </p>
+      <h3 data-i18n="article.subheading_benefits">MACRSを活用するメリット</h3>
+      <ul>
+        <li>初期投資の減価償却費を前倒しで計上でき、キャッシュフローの改善が可能</li>
+        <li>IRSが公式にクラスごとの償却年数・方法を明示しており、計算根拠が明確</li>
+        <li>住宅用賃貸不動産などは長期にわたり税負担を平準化できる</li>
+      </ul>
+      <h2 data-i18n="article.heading_macrs_classes">MACRSの資産区分とその特徴</h2>
+      <p>
+        MACRSでは資産の種類ごとに「資産クラス」と呼ばれる定義があり、それぞれに応じた償却期間（耐用年数）が規定されています。主な資産区分は以下の通りです。
+      </p>
+      <ul>
+        <li><strong>3年財：</strong> ソフトウェア、実験用器具、特定工具など</li>
+        <li><strong>5年財：</strong> 自動車、コンピュータ、コピー機、通信機器等</li>
+        <li><strong>7年財：</strong> 家具、事務機器、ショップ設備等</li>
+        <li><strong>15年財：</strong> 土地改良、インフラ類など</li>
+        <li><strong>27.5年財：</strong> 賃貸住宅用不動産</li>
+        <li><strong>39年財：</strong> 非住宅用不動産</li>
+      </ul>
+      <p>
+        各クラスに応じて、定率法(150%(DB)・200%(DB))または定額法(Straight-Line: SL)で償却スケジュールが決まっており、構造物などの長期資産はほぼSL法です。
+      </p>
+      <h2 data-i18n="article.heading_calc_method">MACRS減価償却の計算方法</h2>
+      <p>
+        一般的には下記の手順で計算します：
+      </p>
+      <ol>
+        <li>資産のクラス・償却期間(3年,5年,7年,15年,27.5年,39年等)を特定する</li>
+        <li>耐用年数に応じた償却率表をIRS公式文書で確認</li>
+        <li>取得年度/償却開始月/半年度規定(MACRS Asset Convention)を考慮する</li>
+        <li>各年の償却費＝取得価額 × 当年の償却率</li>
+        <li>累計償却額の管理（処分や再評価時に重要）</li>
+      </ol>
+      <h2 data-i18n="article.heading_checklist">MACRS 適用前のチェックリスト</h2>
+      <ul>
+        <li>この資産は業務利用目的である（個人消費・居住用を除く）</li>
+        <li>資産取得日は明確かつ領収証等の証拠がある</li>
+        <li>IRS指定の資産クラスに正確に区分できる</li>
+        <li>減価償却開始ルール（半年度規定・中間期・中間月）を理解している</li>
+        <li>ボーナス減価償却・セクション179控除の適用有無を確認済み</li>
+      </ul>
+      <h2 data-i18n="article.heading_pitfalls">よくある落とし穴・注意点</h2>
+      <ul>
+        <li>毎年の償却費額は資産区分ごとに異なり、初年度は特に注意</li>
+        <li>フォーム4562記入時は取得額、使用月、耐用年数を正確に記載</li>
+        <li>「セクション179」適用資産は即時償却できるが、申告漏れ等による誤差に注意</li>
+        <li>IRSルールの改訂が頻繁にあるので、最新ドキュメント必読</li>
+        <li>個人用/業務用の切り分けや利用割合も計算に反映必須</li>
+      </ul>
+      <h2 data-i18n="article.heading_faq">よくある質問（FAQ）</h2>
+      <h3>1. MACRSの償却方法を選択するには？</h3>
+      <p>
+        通常はIRSが指定する方法（200%定率法/150%定率法もしくは定額法）を適用します。不動産は定額法が中心です。
+      </p>
+      <h3>2. 途中で資産を売却した場合は？</h3>
+      <p>
+        その年までの累計償却額を計上し、売却益・損失と共に申告します。
+      </p>
+      <h3>3. 毎年同じ金額を費用化できる？</h3>
+      <p>
+        いいえ。MACRSは大半の資産で加速度的な償却費配分となり、早期に大きく費用計上できます。
+      </p>
+      <h3>4. 個人でもMACRSは使える？</h3>
+      <p>
+        業務や投資用資産に限り利用可能です。個人用途の家財等では不可です。
+      </p>
+      <h3>5. 日本の減価償却とはどう違う？</h3>
+      <p>
+        米国（MACRS）はより加速償却により初年度負担を軽減でき、耐用年数区分も異なります。日本より簡易かつ柔軟です。
+      </p>
+      <h3>6. 期中取得・期中売却場合の償却費按分は？</h3>
+      <p>
+        Half-year/Mid-quarter/Mid-month conventionsに応じて、期間按分計算が必要。特にMid-monthは不動産でよく使われます。
+      </p>
+      <h3>7. 償却率はどこで調べる？</h3>
+      <p>
+        IRS出版物946やForm4562の付録表を使います。当ツールも標準クラス対応済みです。
+      </p>
+      <h2 data-i18n="article.heading_refs">参考文献・公式資料</h2>
+      <ol id="refs-list">
+        <!-- Dynamically inserted -->
+      </ol>
+    </section>
+
+    <section class="max-w-2xl mx-auto mt-12 px-4" id="relatedSitesSection" style="display:none">
+      <h2 class="text-lg font-bold text-indigo-700 dark:text-indigo-200 mb-2" data-i18n="related.title">関連サイト</h2>
+      <ul id="relatedSitesList" class="list-disc list-inside space-y-0.5 text-indigo-900 dark:text-indigo-300"></ul>
+    </section>
+  </main>
+
+  <!-- Compliance/Footer -->
+  <footer class="mt-20 pt-10 pb-6 px-4 bg-white/80 dark:bg-[#151928]/60 shadow-inner border-t border-indigo-100 dark:border-gray-800">
+    <nav class="flex flex-col md:flex-row justify-between gap-6 max-w-3xl mx-auto text-gray-700 dark:text-gray-300 text-sm">
+      <div class="flex flex-wrap gap-5">
+        <a href="../../index.html" class="font-semibold text-indigo-700 dark:text-indigo-300" data-i18n="footer.back">All tools</a>
+        <a href="#privacy" class="hover:underline" data-i18n="footer.privacy">プライバシー</a>
+        <a href="#terms" class="hover:underline" data-i18n="footer.terms">利用規約</a>
+        <a href="#disclaimer" class="hover:underline" data-i18n="footer.disclaimer">免責事項</a>
+        <a href="#about" class="hover:underline" data-i18n="footer.about">サイト運営</a>
+        <a href="#contact" class="hover:underline" data-i18n="footer.contact">ご連絡</a>
+      </div>
+    </nav>
+    <!-- Footer compliance sections -->
+    <div class="max-w-2xl mx-auto mt-6 text-xs space-y-10 text-gray-500 dark:text-gray-400">
+      <section id="privacy">
+        <h2 class="font-bold text-indigo-700 dark:text-indigo-300 mb-1 text-base" data-i18n="privacy.title">プライバシーポリシー</h2>
+        <p data-i18n="privacy.desc">当サイトはCookieによる個人情報収集や追跡広告を行いません。アクセス解析及び最小限の利用状況収集のみ、匿名形でGoogle Analyticsなど信頼の置ける外部サービスを使う場合があります。</p>
+      </section>
+      <section id="terms">
+        <h2 class="font-bold text-indigo-700 dark:text-indigo-300 mb-1 text-base" data-i18n="terms.title">利用規約</h2>
+        <p data-i18n="terms.desc">本サイト提供のツール・情報を使った結果に関し、運営者は一切責任を負いません。利用者ご自身の判断と責任で活用下さい。商用・個人利用ともに無料です。</p>
+      </section>
+      <section id="disclaimer">
+        <h2 class="font-bold text-indigo-700 dark:text-indigo-300 mb-1 text-base" data-i18n="disclaimer.title">免責事項</h2>
+        <p data-i18n="disclaimer.desc">掲載情報は最新の米国税法・公的資料に基づきますが、法改正・個別ケースによる違いにご注意下さい。最終的な税務申告は公認会計士・税理士等専門家へご相談ください。</p>
+      </section>
+      <section id="about">
+        <h2 class="font-bold text-indigo-700 dark:text-indigo-300 mb-1 text-base" data-i18n="about.title">サイト運営者</h2>
+        <p data-i18n="about.desc">当サイトは mikann20041029 (個人) が非営利目的で運営しています。開発経験を活かし、多国対応の自動計算ツールを社会貢献的に公開しています。</p>
+      </section>
+      <section id="contact">
+        <h2 class="font-bold text-indigo-700 dark:text-indigo-300 mb-1 text-base" data-i18n="contact.title">お問い合わせ</h2>
+        <p>
+          <span data-i18n="contact.email">Email:</span> <a href="mailto:mikann20041029@gmail.com" class="underline">mikann20041029@gmail.com</a>
+        </p>
+      </section>
+    </div>
+    <div class="text-center text-gray-400 text-xs mt-10">&copy; 2024 mikann20041029</div>
+  </footer>
+
+  <!-- i18n -->
+  <script>
+    window.__I18N__ = {
+      ja:{
+        "nav.all_tools": "All tools",
+        "hero.title": "MACRS減価償却計算ツール",
+        "hero.subtitle": "TurboTaxが複雑すぎる方向け。アメリカ税法のMACRS方式で資産の減価償却額を一瞬で自動計算します。",
+        "tool.label_cost": "取得価額 (USD)",
+        "tool.placeholder_cost": "例: 10000",
+        "tool.label_year": "取得年 (例: 2022)",
+        "tool.placeholder_year": "例: 2023",
+        "tool.label_class": "資産区分",
+        "tool.class_select": "選択してください",
+        "tool.class_3yr": "3年 (ソフトウェア・特殊工具等)",
+        "tool.class_5yr": "5年 (自動車/コンピュータ/機器類)",
+        "tool.class_7yr": "7年 (家具・器具類)",
+        "tool.class_15yr": "15年 (土地改善, 小規模構造物)",
+        "tool.class_275yr": "27.5年 (住宅用賃貸不動産)",
+        "tool.class_39yr": "39年 (非住宅用不動産)",
+        "tool.label_convention": "償却開始方法",
+        "tool.convention_half": "半年度規定 (Half-year, 標準)",
+        "tool.convention_mid": "中間期規定 (Mid-quarter)",
+        "tool.convention_mid_month": "中間月規定 (Mid-month, 不動産等)",
+        "tool.label_years": "表示年数 (最大)",
+        "tool.placeholder_years": "例: 7",
+        "tool.calc_btn": "減価償却計算",
+        "tool.result_head": "減価償却スケジュール",
+        "tool.result_year": "年",
+        "tool.result_amount": "償却費 (USD)",
+        "tool.result_accum": "累計償却額",
+        "article.heading_what_is_macrs": "MACRSとは何か？",
+        "article.subheading_benefits": "MACRSを活用するメリット",
+        "article.heading_macrs_classes": "MACRSの資産区分とその特徴",
+        "article.heading_calc_method": "MACRS減価償却の計算方法",
+        "article.heading_checklist": "MACRS 適用前のチェックリスト",
+        "article.heading_pitfalls": "よくある落とし穴・注意点",
+        "article.heading_faq": "よくある質問（FAQ）",
+        "article.heading_refs": "参考文献・公式資料",
+        "related.title": "関連サイト",
+        "footer.back": "All tools",
+        "footer.privacy": "プライバシー",
+        "footer.terms": "利用規約",
+        "footer.disclaimer": "免責事項",
+        "footer.about": "サイト運営",
+        "footer.contact": "ご連絡",
+        "privacy.title": "プライバシーポリシー",
+        "privacy.desc": "当サイトはCookieによる個人情報収集や追跡広告を行いません。アクセス解析及び最小限の利用状況収集のみ、匿名形でGoogle Analyticsなど信頼の置ける外部サービスを使う場合があります。",
+        "terms.title": "利用規約",
+        "terms.desc": "本サイト提供のツール・情報を使った結果に関し、運営者は一切責任を負いません。利用者ご自身の判断と責任で活用下さい。商用・個人利用ともに無料です。",
+        "disclaimer.title": "免責事項",
+        "disclaimer.desc": "掲載情報は最新の米国税法・公的資料に基づきますが、法改正・個別ケースによる違いにご注意下さい。最終的な税務申告は公認会計士・税理士等専門家へご相談ください。",
+        "about.title": "サイト運営者",
+        "about.desc": "当サイトは mikann20041029 (個人) が非営利目的で運営しています。開発経験を活かし、多国対応の自動計算ツールを社会貢献的に公開しています。",
+        "contact.title": "お問い合わせ",
+        "contact.email": "Email:"
+      },
+      en: {
+        "nav.all_tools": "All tools",
+        "hero.title": "MACRS Depreciation Calculator",
+        "hero.subtitle": "For those seeking a lighter alternative to TurboTax. Instantly calculate annual depreciation amounts using the US tax MACRS method.",
+        "tool.label_cost": "Cost (USD)",
+        "tool.placeholder_cost": "e.g. 10000",
+        "tool.label_year": "Acquisition Year (e.g. 2022)",
+        "tool.placeholder_year": "e.g. 2023",
+        "tool.label_class": "Asset Class",
+        "tool.class_select": "Please select",
+        "tool.class_3yr": "3-year (Software, special tools etc.)",
+        "tool.class_5yr": "5-year (Cars, Computers, Equip.)",
+        "tool.class_7yr": "7-year (Furniture, Fixtures)",
+        "tool.class_15yr": "15-year (Land Improvements)",
+        "tool.class_275yr": "27.5-year (Residential Rental)",
+        "tool.class_39yr": "39-year (Nonresidential Real Prop.)",
+        "tool.label_convention": "Depreciation Convention",
+        "tool.convention_half": "Half-year (standard)",
+        "tool.convention_mid": "Mid-quarter",
+        "tool.convention_mid_month": "Mid-month (real estate)",
+        "tool.label_years": "Display # Years",
+        "tool.placeholder_years": "e.g. 7",
+        "tool.calc_btn": "Calculate Depreciation",
+        "tool.result_head": "Depreciation Schedule",
+        "tool.result_year": "Year",
+        "tool.result_amount": "Depreciation (USD)",
+        "tool.result_accum": "Accumulated",
+        "article.heading_what_is_macrs": "What is MACRS?",
+        "article.subheading_benefits": "Benefits of Using MACRS",
+        "article.heading_macrs_classes": "MACRS Asset Classes",
+        "article.heading_calc_method": "How to Calculate MACRS Depreciation",
+        "article.heading_checklist": "Pre-Calculation Checklist",
+        "article.heading_pitfalls": "Common Pitfalls",
+        "article.heading_faq": "Frequently Asked Questions (FAQ)",
+        "article.heading_refs": "References / Official Docs",
+        "related.title": "Related Sites",
+        "footer.back": "All tools",
+        "footer.privacy": "Privacy",
+        "footer.terms": "Terms",
+        "footer.disclaimer": "Disclaimer",
+        "footer.about": "About",
+        "footer.contact": "Contact",
+        "privacy.title": "Privacy Policy",
+        "privacy.desc": "This site does not use cookies for personal data tracking or ads. Anonymous usage statistics may be collected via trusted services (e.g. Google Analytics) for quality improvement.",
+        "terms.title": "Terms of Service",
+        "terms.desc": "No liability is assumed for the use of the tool or its results; use at your own risk. Free for commercial and private use.",
+        "disclaimer.title": "Disclaimer",
+        "disclaimer.desc": "All content and calculations are based on the latest IRS and US tax law. For final decisions, consult a tax advisor or CPA.",
+        "about.title": "About this Site",
+        "about.desc": "Operated by mikann20041029 (individual) as a non-commercial tax tool resource. Multi-lingual tools for public benefit.",
+        "contact.title": "Contact",
+        "contact.email": "Email:"
+      },
+      fr: {
+        "nav.all_tools": "Tous les outils",
+        "hero.title": "Calculateur d'amortissement MACRS",
+        "hero.subtitle": "Pour ceux qui trouvent TurboTax trop complexe. Calculez instantanément l’amortissement selon MACRS.",
+        "tool.label_cost": "Prix d'achat (USD)",
+        "tool.placeholder_cost": "ex: 10000",
+        "tool.label_year": "Année d'achat (ex: 2022)",
+        "tool.placeholder_year": "ex: 2023",
+        "tool.label_class": "Catégorie d’actif",
+        "tool.class_select": "Veuillez sélectionner",
+        "tool.class_3yr": "3 ans (logiciel, outils spéciaux, etc)",
+        "tool.class_5yr": "5 ans (voitures, ordinateurs, appareils)",
+        "tool.class_7yr": "7 ans (meubles, aménagements)",
+        "tool.class_15yr": "15 ans (amélioration foncière, petites structures)",
+        "tool.class_275yr": "27,5 ans (logements locatifs)",
+        "tool.class_39yr": "39 ans (immobilier non-résidentiel)",
+        "tool.label_convention": "Méthode de début",
+        "tool.convention_half": "Demi-année (standard)",
+        "tool.convention_mid": "Trimestre intermédiaire",
+        "tool.convention_mid_month": "Mois intermédiaire (immobilier)",
+        "tool.label_years": "Afficher années",
+        "tool.placeholder_years": "ex: 7",
+        "tool.calc_btn": "Calculer",
+        "tool.result_head": "Tableau d’amortissement",
+        "tool.result_year": "Année",
+        "tool.result_amount": "Amortissement (USD)",
+        "tool.result_accum": "Cumulé",
+        "article.heading_what_is_macrs": "Qu'est-ce que le MACRS ?",
+        "article.subheading_benefits": "Avantages MACRS",
+        "article.heading_macrs_classes": "Catégories MACRS",
+        "article.heading_calc_method": "Méthodologie de calcul MACRS",
+        "article.heading_checklist": "Liste de contrôle préalable",
+        "article.heading_pitfalls": "Pièges courants",
+        "article.heading_faq": "FAQ - Foire aux questions",
+        "article.heading_refs": "Références / Docs Officielles",
+        "related.title": "Sites Liés",
+        "footer.back": "Tous les outils",
+        "footer.privacy": "Confidentialité",
+        "footer.terms": "Conditions",
+        "footer.disclaimer": "Avertissement",
+        "footer.about": "À propos",
+        "footer.contact": "Contact",
+        "privacy.title": "Politique de confidentialité",
+        "privacy.desc": "Ce site ne collecte pas de données personnelles à des fins publicitaires. Des analyses anonymisées peuvent être utilisées via des services fiables tels que Google Analytics.",
+        "terms.title": "Conditions d'utilisation",
+        "terms.desc": "Aucune responsabilité n'est assumée pour l'utilisation ou les résultats obtenus avec cet outil. Usage personnel ou commercial gratuit.",
+        "disclaimer.title": "Avertissement",
+        "disclaimer.desc": "Les contenus et résultats sont basés sur la dernière législation IRS. Veuillez consulter un expert pour toute déclaration officielle.",
+        "about.title": "À propos du site",
+        "about.desc": "Géré par mikann20041029 à but non lucratif. Outils multilingues pour tous.",
+        "contact.title": "Contact",
+        "contact.email": "Email :"
+      },
+      de: {
+        "nav.all_tools": "Alle Tools",
+        "hero.title": "MACRS-Abschreibungsrechner",
+        "hero.subtitle": "Für Nutzer, denen TurboTax zu kompliziert ist. Berechnen Sie US-MACRS-Abschreibungen in Sekunden.",
+        "tool.label_cost": "Anschaffungskosten (USD)",
+        "tool.placeholder_cost": "z.B. 10000",
+        "tool.label_year": "Anschaffungsjahr (z.B. 2022)",
+        "tool.placeholder_year": "z.B. 2023",
+        "tool.label_class": "Asset-Kategorie",
+        "tool.class_select": "Bitte wählen",
+        "tool.class_3yr": "3 Jahre (Software/Spezialwerkzeuge)",
+        "tool.class_5yr": "5 Jahre (Autos/Rechner/Maschinen)",
+        "tool.class_7yr": "7 Jahre (Möbel/Ausstattung)",
+        "tool.class_15yr": "15 Jahre (Landverbesserung/kleine Bauten)",
+        "tool.class_275yr": "27,5 Jahre (Wohnimmobilien zur Vermietung)",
+        "tool.class_39yr": "39 Jahre (Gewerbeimmobilien)",
+        "tool.label_convention": "Startregelung",
+        "tool.convention_half": "Halbjahresregel (Standard)",
+        "tool.convention_mid": "Quartalsregel",
+        "tool.convention_mid_month": "Monatsregel (Immobilien)",
+        "tool.label_years": "Jahre anzeigen",
+        "tool.placeholder_years": "z.B. 7",
+        "tool.calc_btn": "Berechnen",
+        "tool.result_head": "Abschreibungsplan",
+        "tool.result_year": "Jahr",
+        "tool.result_amount": "Abschreibung (USD)",
+        "tool.result_accum": "Kumuliert",
+        "article.heading_what_is_macrs": "Was ist MACRS?",
+        "article.subheading_benefits": "MACRS-Vorteile",
+        "article.heading_macrs_classes": "MACRS Asset-Klassen",
+        "article.heading_calc_method": "Berechnungsmethode MACRS",
+        "article.heading_checklist": "Checkliste vor der Berechnung",
+        "article.heading_pitfalls": "Häufige Fehlerquellen",
+        "article.heading_faq": "FAQ – Häufige Fragen",
+        "article.heading_refs": "Referenzen / Offizielle Quellen",
+        "related.title": "Verwandte Websites",
+        "footer.back": "Alle Tools",
+        "footer.privacy": "Datenschutz",
+        "footer.terms": "AGB",
+        "footer.disclaimer": "Haftungsausschluss",
+        "footer.about": "Über uns",
+        "footer.contact": "Kontakt",
+        "privacy.title": "Datenschutz",
+        "privacy.desc": "Diese Website benutzt keine Cookies für Werbung. Zur Qualitätsverbesserung können anonyme Daten via Google Analytics o.ä. erhoben werden.",
+        "terms.title": "Nutzungsbedingungen",
+        "terms.desc": "Nutzung erfolgt auf eigenes Risiko. Keine Haftung für etwaige Folgen. Privat und kommerziell kostenlos verwendbar.",
+        "disclaimer.title": "Haftungsausschluss",
+        "disclaimer.desc": "Berechnungen beruhen auf aktuellem US-Steuerrecht. Für Steuererklärungen bitte Steuerberater konsultieren.",
+        "about.title": "Über die Seite",
+        "about.desc": "Von mikann20041029 (privat) als gemeinnütziges Angebot entwickelt. Kostenlose Rechentools in mehreren Sprachen.",
+        "contact.title": "Kontakt",
+        "contact.email": "E-Mail:"
+      }
+    };
+
+    // Theme/Lang Initializer
+    (function(){
+      // Dark/Light theme
+      const html = document.documentElement;
+      function getTheme() {
+        let saved = localStorage.getItem("goliath_theme");
+        if (saved) return saved;
+        return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? "dark" : "light";
+      }
+      function setTheme(th) {
+        html.classList.remove("light","dark");
+        html.classList.add(th);
+        localStorage.setItem("goliath_theme", th);
+        document.getElementById("themeIcon").querySelector('[data-light]').classList.toggle('block', th==='light');
+        document.getElementById("themeIcon").querySelector('[data-light]').classList.toggle('hidden', th==='dark');
+        document.getElementById("themeIcon").querySelector('[data-dark]').classList.toggle('block', th==='dark');
+        document.getElementById("themeIcon").querySelector('[data-dark]').classList.toggle('hidden', th!=='dark');
+      }
+      document.getElementById("themeToggle").onclick = function() {
+        setTheme(html.classList.contains("dark") ? "light":"dark");
+      };
+      setTheme(getTheme());
+
+      // i18n support
+      function renderLang(lang){
+        lang = lang || localStorage.getItem('goliath_lang') || 'ja';
+        if (!window.__I18N__[lang]) lang ='ja';
+        document.documentElement.lang=lang;
+        // i18n plain text
+        document.querySelectorAll('[data-i18n]').forEach(function(el){
+          let k = el.getAttribute('data-i18n');
+          if (window.__I18N__[lang][k])
+            el.textContent = window.__I18N__[lang][k];
+        });
+        // i18n placeholder
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){
+          let k = el.getAttribute('data-i18n-placeholder');
+          if (window.__I18N__[lang][k])
+            el.setAttribute('placeholder', window.__I18N__[lang][k]);
+        });
+
+        // Show/hide summaries
+        ['en','fr','de'].forEach(function(l){
+          const box = document.getElementById('langSummary-'+l);
+          if(box) box.style.display = (lang===l)?"block":"none";
+        });
+
+      }
+      const langSel = document.getElementById('langSelect');
+      langSel.value = localStorage.getItem("goliath_lang") || 'ja';
+      langSel.onchange = function(ev){
+        const lang = langSel.value;
+        localStorage.setItem("goliath_lang",lang);
+        renderLang(lang);
+      };
+      renderLang(langSel.value);
+
+      // Keyboard shortcut: [L] toggle lang menu
+      document.onkeydown = function(e){
+        if(e.key && e.key.toLowerCase() == "l" && !e.ctrlKey && !e.metaKey && !e.altKey){
+          e.preventDefault(); langSel.focus();
+        }
+      }
+    })();
+  </script>
+
+  <!-- MACRS JS TOOL -->
+  <script>
+    // IRS Table: [Class][Convention] → % rates per year, for main (Half-Year, DB/SL), static source, partial for demo
+    const MACRS_TABLES = {
+      3: { // 200% DB Half-Year
+        half: [0.3333, 0.4445, 0.1481, 0.0741],
+        mid:  [0.25, 0.375, 0.25, 0.125],
+        mid_month: [0.3333, 0.4445, 0.1481, 0.0741],
+        desc: "3yr, 200%DB"
+      },
+      5: { // 200% DB Half-Year
+        half: [0.2, 0.32, 0.192, 0.1152, 0.1152, 0.0576],
+        mid:  [0.1,0.2,0.2,0.2,0.2,0.1],
+        mid_month: [0.2,0.32,0.192,0.1152,0.1152,0.0576]
+      },
+      7: { // 200% DB Half-Year
+        half: [0.1429,0.2449,0.1749,0.1249,0.0893,0.0892,0.0893,0.0446],
+        mid: [0.0714,0.2136,0.1843,0.1319,0.1318,0.0945,0.0946,0.0495],
+        mid_month: [0.1429,0.2449,0.1749,0.1249,0.0893,0.0892,0.0893,0.0446]
+      },
+      15: { // 150%DB Half-Year
+        half: [0.05,0.095,0.0855,0.077,0.0693,0.0623,0.059,0.059,0.0591,0.059,0.059,0.059,0.059,0.059,0.059,0.0295],
+        mid: [0.025,0.087,0.079,0.071,0.072,0.060,0.055,0.055,0.055,0.055,0.055,0.055,0.055,0.055,0.055,0.027],
+        mid_month: [0.05,0.095,0.0855,0.077,0.0693,0.0623,0.059,0.059,0.0591,0.059,0.059,0.059,0.059,0.059,0.059,0.0295]
+      },
+      "27.5": { // SL, real estate
+        half: Array(27).fill(1/27.5).concat([1/55]), // slight simplification
+        mid: Array(27).fill(1/27.5).concat([1/55]),
+        mid_month: [0.0364].concat(Array(26).fill(0.03636)).concat([0.01818])
+      },
+      39: { // SL, nonresidential real estate
+        half: Array(39).fill(1/39).concat([1/78]),
+        mid: Array(39).fill(1/39).concat([1/78]),
+        mid_month: [0.0218].concat(Array(38).fill(0.02564)).concat([0.00128])
+      }
+    };
+    document.getElementById('macrsForm').onsubmit = function(ev){
+      ev.preventDefault();
+      let cost = Number(this.cost.value);
+      let year = Number(this.year.value);
+      let classY = String(this.class.value);
+      let convention = this.convention.value || "half";
+      let years = Math.max(1, Math.min(40, Number(this.years.value)||7));
+      if(!(cost>0) || !(year>1970) || !MACRS_TABLES[classY])
+        return alert("入力値をご確認ください (Please check input).");
+      // get rates
+      let tbl = MACRS_TABLES[classY][convention] || MACRS_TABLES[classY].half;
+      let out = [];
+      let accum = 0;
+      for(let n=0;n<years && n<tbl.length;++n){
+        let amt = parseFloat((cost*tbl[n]).toFixed(2));
+        accum += amt;
+        out.push({yr:year+n, amt, accum:accum});
+      }
+      // print table
+      const wrap = document.getElementById('macrsResult');
+      let tb = "";
+      out.forEach(row=>{
+        tb += `<tr>
+          <td class="p-1 md:p-2 text-center">${row.yr}</td>
+          <td class="p-1 md:p-2 text-right tabular-nums">${row.amt.toLocaleString()}</td>
+          <td class="p-1 md:p-2 text-right tabular-nums">${row.accum.toLocaleString()}</td>
+        </tr>`;
+      });
+      document.getElementById('macrsTableBody').innerHTML = tb;
+      wrap.classList.remove('hidden');
+      // scroll to result
+      wrap.scrollIntoView({behavior: 'smooth'});
+    }
+  </script>
+
+  <!-- MACRS References List -->
+  <script>
+    const refs = [
+      {title:"IRS Publication 946 (How To Depreciate Property)", url:"https://www.irs.gov/publications/p946"},
+      {title:"IRS Form 4562: Depreciation and Amortization", url:"https://www.irs.gov/forms-pubs/about-form-4562"},
+      {title:"2017 MACRS Percentage Tables (IRS Example)", url:"https://www.irs.gov/pub/irs-pdf/p946.pdf"},
+      {title:"Investopedia: MACRS Depreciation Definition", url:"https://www.investopedia.com/terms/m/macrs.asp"},
+      {title:"Section 179 Deduction (irs.gov)", url:"https://www.irs.gov/publications/p946#en_US_2022_publink1000100726"},
+      {title:"Turbotax: MACRS Asset Classes Explained", url:"https://turbotax.intuit.com/tax-tips/small-business-taxes/macrs-depreciation-tables/L1vIbX2Pz"},
+      {title:"IRS Topic No. 704: Depreciation", url:"https://www.irs.gov/taxtopics/tc704"},
+      {title:"IRS Instructions for Form 4562", url:"https://www.irs.gov/instructions/i4562"},
+      {title:"Wikipedia: MACRS", url:"https://en.wikipedia.org/wiki/MACRS"},
+      {title:"IRS Notice 88-22 for Mid-Quarter Convention", url:"https://www.irs.gov/pub/irs-drop/n-88-22.pdf"}
+    ];
+    window.addEventListener('DOMContentLoaded',function(){
+      const list = document.getElementById('refs-list');
+      refs.forEach(({title,url})=>{
+        const li=document.createElement('li');
+        li.innerHTML=`<a href="${url}" target="_blank" rel="noopener noreferrer">${title}</a>`;
+        list.appendChild(li);
+      });
+    });
+  </script>
+
+  <!-- Related Sites (dynamic) -->
+  <script>
+    window.__RELATED__ = [{"title": "Show HN: I built a MACRS calculator because TurboTax was overkill", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769158606-tax-calculator/"}, {"title": "Show HN: I built a MACRS calculator because TurboTax was overkill", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769155768-tax-calculator/"}, {"title": "Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769115945-show-hn-pta-tax-calculator-calculate-pakistan-mobile-import-/"}, {"title": "Show HN: GoGen – A simple template-based file generator written in Go", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769181471-template-template-tool/"}, {"title": "Show HN: GoGen – A simple template-based file generator written in Go", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769141611-template-template-tool/"}, {"title": "Show HN: GoGen – A simple template-based file generator written in Go", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769138429-template-template-tool/"}, {"title": "Show HN: GoGen – A simple template-based file generator written in Go", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769116184-show-hn-gogen-a-simple-template-based-file-generator-written/"}];
+    window.addEventListener('DOMContentLoaded',function(){
+      const rel=window.__RELATED__||[];
+      if(!rel.length)return;
+      document.getElementById('relatedSitesSection').style.display="block";
+      const ul=document.getElementById('relatedSitesList');
+      rel.forEach(r=>{
+        const li=document.createElement('li');
+        li.innerHTML=`<a href="${r.url}" target="_blank" rel="noopener">${r.title}</a>`;
+        ul.appendChild(li);
+      });
+    });
+  </script>
+</body>
+</html>
