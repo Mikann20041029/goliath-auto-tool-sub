@@ -11,7 +11,17 @@ import requests
 from openai import OpenAI
 import os, json, time, re, hashlib
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, TupleKEYWORDS = [
+    "help","need help","anyone know","any idea","how do i","how to","can't","cannot","won't",
+    "stuck","blocked","error","bug","issue","problem","failed","failure","broken","crash",
+    "exception","traceback","deploy","build failed","github actions","workflow","docker","npm","pip",
+    "api","oauth","convert","converter","calculator","template","compare","timezone"
+]
+
+def hit_keywords(text: str) -> bool:
+    t = (text or "").lower()
+    return any(k in t for k in KEYWORDS)
+
 
 STATE_DIR = Path("goliath/state")
 STATE_DIR.mkdir(parents=True, exist_ok=True)
