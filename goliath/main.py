@@ -376,6 +376,18 @@ def collect_hn(limit: int) -> List[Dict[str, Any]]:
 
 
 def collect_bluesky(limit: int) -> List[Dict[str, Any]]:
+    def bsky_uri_to_url(uri: str) -> str:
+    # at://did:plc:xxxx/app.bsky.feed.post/3k... -> https://bsky.app/profile/did:plc:xxxx/post/3k...
+    try:
+        if not uri.startswith("at://"):
+            return ""
+        parts = uri[5:].split("/")
+        did = parts[0]
+        rkey = parts[-1]
+        return f"https://bsky.app/profile/{did}/post/{rkey}"
+    except Exception:
+        return ""
+
     """
     Bluesky: atprotoで検索
     必要: BSKY_HANDLE / BSKY_PASSWORD
