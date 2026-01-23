@@ -379,7 +379,7 @@ def collect_hn(limit: int) -> List[Dict[str, Any]]:
         "calculator",
         "compare pricing",
         "timezone",
-        "template generator",
+        
     ]
     all_items: List[Dict[str, Any]] = []
     per = max(5, limit // max(1, len(queries)))
