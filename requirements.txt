@@ -3,3 +3,4 @@ requests>=2.32.0
 atproto>=0.0.55
 Mastodon.py>=1.8.1
 tweepy
+praw>=7.7.1
