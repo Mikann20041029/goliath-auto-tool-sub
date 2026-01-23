@@ -24,6 +24,41 @@ except Exception:
 def _env_present(keys):
     import os
     return {k: bool(os.getenv(k, "")) for k in keys}
+import os, re, glob, json
+from difflib import SequenceMatcher
+from typing import Tuple
+
+def _normalize_text(s: str) -> str:
+    s = (s or "").lower()
+    s = re.sub(r"\d{10,}", "TS", s)     # timestamps
+    s = re.sub(r"https?://\S+", "URL", s)
+    s = re.sub(r"\s+", " ", s).strip()
+    return s
+
+def _read_existing_page_signatures() -> list[str]:
+    sigs = []
+    for path in glob.glob("goliath/pages/*/index.html"):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                html = f.read()
+            sigs.append(_normalize_text(html))
+        except Exception:
+            continue
+    return sigs
+
+def duplication_penalty(new_index_html: str, threshold: float = 0.88) -> Tuple[int, float]:
+    """
+    Returns (penalty, best_similarity). If too similar: -200.
+    """
+    new_sig = _normalize_text(new_index_html)
+    best = 0.0
+    for old in _read_existing_page_signatures():
+        r = SequenceMatcher(a=new_sig, b=old).ratio()
+        if r > best:
+            best = r
+    if best >= threshold:
+        return (-200, best)
+    return (0, best)
 
 # =========================
 # Config
