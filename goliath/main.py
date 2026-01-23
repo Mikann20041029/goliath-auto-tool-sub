@@ -430,6 +430,63 @@ def collect_bluesky(limit: int) -> List[Dict[str, Any]]:
         return out[:limit]
     except Exception:
         return out[:limit]
+        
+def collect_reddit(limit: int) -> List[Dict[str, Any]]:
+    cid = os.getenv("REDDIT_CLIENT_ID", "")
+    csec = os.getenv("REDDIT_CLIENT_SECRET", "")
+    user = os.getenv("REDDIT_USERNAME", "")
+    pw = os.getenv("REDDIT_PASSWORD", "")
+    ua = os.getenv("REDDIT_USER_AGENT", "")
+
+    if not (cid and csec and user and pw and ua):
+        return []
+
+    try:
+        import praw
+    except Exception:
+        return []
+
+    out: List[Dict[str, Any]] = []
+    try:
+        r = praw.Reddit(
+            client_id=cid,
+            client_secret=csec,
+            username=user,
+            password=pw,
+            user_agent=ua,
+        )
+
+        queries = [
+            "help", "how to", "error", "bug", "issue", "failed", "broken",
+            "convert", "calculator", "timezone", "template"
+        ]
+
+        for q in queries:
+            for s in r.subreddit("all").search(q, sort="new", time_filter="day", limit=80):
+                title = (getattr(s, "title", "") or "")
+                body = (getattr(s, "selftext", "") or "")
+                txt = (title + "\n" + body).strip()
+                if not hit_keywords(txt):
+                    continue
+                url = "https://www.reddit.com" + (getattr(s, "permalink", "") or "")
+                if not url:
+                    continue
+                out.append({"source": "Reddit", "text": txt[:300], "url": url, "meta": {}})
+                if len(out) >= limit:
+                    return out
+    except Exception:
+        pass
+
+    # dedupe
+    seen = set()
+    uniq = []
+    for it in out:
+        u = it.get("url","")
+        if not u or u in seen:
+            continue
+        seen.add(u)
+        uniq.append(it)
+    return uniq[:limit]
 
 
 def collect_mastodon(limit: int) -> List[Dict[str, Any]]:
