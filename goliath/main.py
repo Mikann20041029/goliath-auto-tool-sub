@@ -289,7 +289,7 @@ def score_item(text: str, url: str, meta: Dict[str, Any]) -> Tuple[int, Dict[str
             dup_penalty -= 200
             break
 
-    score += dup_penalty
+   
     table["duplicate_penalty"] = dup_penalty
 
     total = sum(table.values())
