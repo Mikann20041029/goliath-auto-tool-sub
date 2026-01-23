@@ -52,12 +52,46 @@ STATE_DIR.mkdir(parents=True, exist_ok=True)
 TOOL_HISTORY_PATH = STATE_DIR / "tool_history.json"
 
 def _load_tool_history() -> List[Dict[str, Any]]:
-    if TOOL_HISTORY_PATH.exists():
-        try:
+    try:
+        if TOOL_HISTORY_PATH.exists():
             return json.loads(TOOL_HISTORY_PATH.read_text(encoding="utf-8"))
-        except Exception:
-            return []
+    except Exception:
+        pass
     return []
+
+def _existing_slugs_from_pages() -> set:
+    slugs = set()
+    pages_dir = Path(__file__).resolve().parent / "pages"
+    if not pages_dir.is_dir():
+        return slugs
+    for name in os.listdir(pages_dir):
+        # 例: 1769181471-template-template-tool
+        m = re.match(r"^\d+-(.+)$", name)
+        if m:
+            slugs.add(m.group(1))
+    return slugs
+
+def existing_tool_slugs() -> set:
+    slugs = set()
+    # 1) pages/ に既にあるslug
+    slugs |= _existing_slugs_from_pages()
+
+    # 2) tool_history に既にあるslug
+    hist = _load_tool_history()
+    for it in hist:
+        s = it.get("tool_slug") or it.get("slug")
+        if isinstance(s, str) and s:
+            slugs.add(s)
+    return slugs
+
+def ensure_unique_slug(base: str, seen: set) -> str:
+    if base not in seen:
+        return base
+    i = 2
+    while f"{base}-{i}" in seen:
+        i += 1
+    return f"{base}-{i}"
+
 
 def _save_tool_history(hist: List[Dict[str, Any]]) -> None:
     # 最新200件だけ保持
