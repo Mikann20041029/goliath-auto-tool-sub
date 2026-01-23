@@ -272,6 +272,25 @@ def score_item(text: str, url: str, meta: Dict[str, Any]) -> Tuple[int, Dict[str
     hn_points = int(meta.get("hn_points", 0) or 0)
     if hn_points > 0:
         table["tool_request"] += min(10, hn_points // 30)
+    # ===== anti-duplicate penalty =====
+    hist = _load_tool_history()
+
+    # ここで「過去のテーマ/タグと被り」を見る
+    theme_now = meta.get("theme") or text or ""
+    tags_now = meta.get("tags") or []
+    fp_now = _fingerprint(theme_now, tags_now)
+
+    dup_penalty = 0
+    for h in hist:
+        if h.get("fp") == fp_now:
+            dup_penalty -= 200
+            break
+        if _too_similar(h.get("theme", ""), theme_now):
+            dup_penalty -= 200
+            break
+
+    score += dup_penalty
+    table["duplicate_penalty"] = dup_penalty
 
     total = sum(table.values())
     return total, table
