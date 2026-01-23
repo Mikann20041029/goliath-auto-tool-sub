@@ -1281,6 +1281,21 @@ Post:
 
 Tool URL:
 {tool_url}
+    # ===== record history =====
+    try:
+        hist = _load_tool_history()
+        theme_now = theme
+        tags_now = tags if isinstance(tags, list) else []
+        hist.append({
+            "ts": int(time.time()),
+            "theme": theme_now,
+            "tags": tags_now,
+            "fp": _fingerprint(theme_now, tags_now),
+            "tool_url": tool_url,
+        })
+        _save_tool_history(hist)
+    except Exception:
+        pass
 
 Return ONLY the reply text.
 """.strip()
