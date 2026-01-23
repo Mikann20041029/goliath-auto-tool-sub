@@ -3,39 +3,95 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Goliath Tools</title>
+  <title>Goliath Tools Hub</title>
+  <meta name="description" content="Auto-generated tools + long-form guides. Browse by purpose, popular tools, and newest releases." />
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-50">
-  <div class="max-w-4xl mx-auto p-6">
+  <div class="max-w-5xl mx-auto p-6">
     <div class="flex items-center justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-bold">Goliath Tools</h1>
-        <p class="opacity-70">Auto-generated tools + long-form guides</p>
+        <div class="text-xl font-bold">Goliath Tools Hub</div>
+        <div class="text-sm opacity-70 mt-1">発見（SEO）と回遊（内部リンク）を強化するための上位ページ</div>
       </div>
       <button id="themeBtn" class="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-800">Dark/Light</button>
     </div>
 
-    <div class="mt-6 grid gap-3">
-      <a class="block p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 transition" href="./pages/1769116184-show-hn-gogen-a-simple-template-based-file-generator-written/"><div class="font-semibold">Show HN: GoGen – A simple template-based file generator written in Go</div><div class="text-sm opacity-70">2026-01-22T21:09:44Z • productivity</div></a>
-<a class="block p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 transition" href="./pages/1769115945-show-hn-pta-tax-calculator-calculate-pakistan-mobile-import-/"><div class="font-semibold">Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly</div><div class="text-sm opacity-70">2026-01-22T21:05:45Z • calculator, finance</div></a>
+    <div class="mt-6">
+      <div class="text-sm font-semibold opacity-80">目的別（カテゴリ）</div>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <button class="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-800 text-sm" onclick="filterByTag('productivity')">productivity <span class="opacity-60">(2)</span></button>
+<button class="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-800 text-sm" onclick="filterByTag('calculator')">calculator <span class="opacity-60">(1)</span></button>
+<button class="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-800 text-sm" onclick="filterByTag('finance')">finance <span class="opacity-60">(1)</span></button>
+      </div>
     </div>
 
-    <div class="mt-10 text-xs opacity-60">
-      <a class="underline" href="./pages/">All pages</a>
+    <div class="mt-8 grid md:grid-cols-2 gap-6">
+      <div>
+        <div class="text-sm font-semibold opacity-80">人気ツール（暫定：スコア上位）</div>
+        <div class="mt-3 grid gap-3">
+          <a class="block p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 transition" href="./pages/1769138429-template-template-tool/"><div class="font-semibold">template template tool</div><div class="text-sm opacity-70 mt-1">2026-01-23T03:20:29Z • productivity</div></a>
+<a class="block p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 transition" href="./pages/1769116184-show-hn-gogen-a-simple-template-based-file-generator-written/"><div class="font-semibold">Show HN: GoGen – A simple template-based file generator written in Go</div><div class="text-sm opacity-70 mt-1">2026-01-22T21:09:44Z • productivity</div></a>
+<a class="block p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 transition" href="./pages/1769115945-show-hn-pta-tax-calculator-calculate-pakistan-mobile-import-/"><div class="font-semibold">Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly</div><div class="text-sm opacity-70 mt-1">2026-01-22T21:05:45Z • calculator, finance</div></a>
+        </div>
+      </div>
+      <div>
+        <div class="text-sm font-semibold opacity-80">新着</div>
+        <div class="mt-3 grid gap-3">
+          <a class="block p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 transition" href="./pages/1769138429-template-template-tool/"><div class="font-semibold">template template tool</div><div class="text-sm opacity-70 mt-1">2026-01-23T03:20:29Z • productivity</div></a>
+<a class="block p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 transition" href="./pages/1769116184-show-hn-gogen-a-simple-template-based-file-generator-written/"><div class="font-semibold">Show HN: GoGen – A simple template-based file generator written in Go</div><div class="text-sm opacity-70 mt-1">2026-01-22T21:09:44Z • productivity</div></a>
+<a class="block p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 transition" href="./pages/1769115945-show-hn-pta-tax-calculator-calculate-pakistan-mobile-import-/"><div class="font-semibold">Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly</div><div class="text-sm opacity-70 mt-1">2026-01-22T21:05:45Z • calculator, finance</div></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-10">
+      <div class="flex items-center justify-between gap-3">
+        <div class="text-sm font-semibold opacity-80">全ツール（フィルタ/検索）</div>
+        <input id="q" class="w-56 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-transparent text-sm"
+               placeholder="search..." />
+      </div>
+      <div id="allList" class="mt-3 grid gap-3">
+        <a class="block p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 transition" href="./pages/1769138429-template-template-tool/"><div class="font-semibold">template template tool</div><div class="text-sm opacity-70 mt-1">2026-01-23T03:20:29Z • productivity</div></a>
+<a class="block p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 transition" href="./pages/1769116184-show-hn-gogen-a-simple-template-based-file-generator-written/"><div class="font-semibold">Show HN: GoGen – A simple template-based file generator written in Go</div><div class="text-sm opacity-70 mt-1">2026-01-22T21:09:44Z • productivity</div></a>
+<a class="block p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 transition" href="./pages/1769115945-show-hn-pta-tax-calculator-calculate-pakistan-mobile-import-/"><div class="font-semibold">Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly</div><div class="text-sm opacity-70 mt-1">2026-01-22T21:05:45Z • calculator, finance</div></a>
+      </div>
+      <div class="mt-10 text-xs opacity-60">
+        <a class="underline" href="./pages/">All pages</a>
+      </div>
     </div>
   </div>
 
   <script>
+    // theme
     const root = document.documentElement;
     const k = "goliath_theme";
     const saved = localStorage.getItem(k);
     if (saved === "dark") root.classList.add("dark");
-
     document.getElementById("themeBtn").onclick = () => {
       root.classList.toggle("dark");
       localStorage.setItem(k, root.classList.contains("dark") ? "dark" : "light");
     };
+
+    // filter/search
+    const allCards = Array.from(document.querySelectorAll("#allList > a"));
+    function applyFilter(tag, q) {
+      const qq = (q || "").toLowerCase().trim();
+      allCards.forEach(a => {
+        const text = a.innerText.toLowerCase();
+        const okTag = !tag || text.includes(tag.toLowerCase());
+        const okQ = !qq || text.includes(qq);
+        a.style.display = (okTag && okQ) ? "" : "none";
+      });
+    }
+    window.filterByTag = (tag) => {
+      document.getElementById("q").value = "";
+      applyFilter(tag, "");
+      window.scrollTo({ top: document.getElementById("allList").offsetTop - 20, behavior: "smooth" });
+    };
+    document.getElementById("q").addEventListener("input", (e) => {
+      applyFilter("", e.target.value);
+    });
   </script>
 </body>
 </html>

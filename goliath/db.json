@@ -1,5 +1,63 @@
 [
   {
+    "id": "c32c6762d7e4ab42",
+    "title": "Show HN: GoGen – A simple template-based file generator written in Go",
+    "search_title": "template template tool",
+    "created_at": "2026-01-23T03:20:29Z",
+    "path": "./pages/1769138429-template-template-tool",
+    "public_url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769138429-template-template-tool/",
+    "tags": [
+      "productivity"
+    ],
+    "source_urls": [
+      "https://github.com/zaheershaikh936/gogen",
+      "https://github.com/aalsanie/shamash",
+      "https://github.com/TheZemmouri/CleanAF",
+      "https://benjaminshoemaker.github.io/ai_coding_project_base/",
+      "https://gitlab.com/theblackdon/dcli",
+      "https://www.replyraptor.com/llm-ready/checker",
+      "https://news.ycombinator.com/item?id=46726016",
+      "https://studio.nimblebrain.ai/",
+      "https://www.fomometer.ai",
+      "https://news.ycombinator.com/item?id=46725196",
+      "https://news.ycombinator.com/item?id=46725158",
+      "https://demo.chatter.plus/",
+      "https://meepr.co/",
+      "https://thenewstack.io/how-precog-adds-business-context-to-make-enterprise-data-ai-ready/",
+      "https://news.ycombinator.com/item?id=46727071",
+      "https://news.ycombinator.com/item?id=46726962",
+      "https://stackoverflow.blog/2026/01/21/is-that-allowed-authentication-and-authorization-in-model-context-protocol/",
+      "https://www.cell.com/patterns/fulltext/S2666-3899(25)00299-5",
+      "https://www.nature.com/articles/d41586-025-04064-7",
+      "https://www.docker.com/blog/fips-dependencies-and-prebuilt-binaries/"
+    ],
+    "related": [
+      {
+        "title": "Show HN: GoGen – A simple template-based file generator written in Go",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769116184-show-hn-gogen-a-simple-template-based-file-generator-written/"
+      },
+      {
+        "title": "Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769115945-show-hn-pta-tax-calculator-calculate-pakistan-mobile-import-/"
+      }
+    ],
+    "best_source": "HN",
+    "best_url": "https://github.com/zaheershaikh936/gogen",
+    "best_score": 12,
+    "best_score_breakdown": {
+      "tool_request": 0,
+      "convert_generator_calc": 7,
+      "structured_output": 5,
+      "specific_inputs": 0,
+      "how_to_code_only": 0,
+      "too_broad": 0,
+      "adult_or_sensitive": 0
+    },
+    "score_keys": [
+      "template"
+    ]
+  },
+  {
     "id": "4d622c9d62744d26",
     "title": "Show HN: GoGen – A simple template-based file generator written in Go",
     "created_at": "2026-01-22T21:09:44Z",
