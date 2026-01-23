@@ -547,62 +547,63 @@ def collect_mastodon(limit: int) -> List[Dict[str, Any]]:
         return []
 
     out: List[Dict[str, Any]] = []
-try:
-    m = Mastodon(access_token=tok if tok else None, api_base_url=base)
+    try:
+        m = Mastodon(access_token=tok if tok else None, api_base_url=base)
 
-    # 強めの検索語（悩みっぽい文を拾いやすくする）
-    queries = [
-        "help",
-        "need help",
-        "anyone know",
-        "how do i",
-        "how to",
-        "what should i do",
-        "can someone",
-        "please help",
-        "stuck",
-        "blocked",
+        # 強めの検索語（悩みっぽい文を拾いやすくする）
+        queries = [
+            # help/issue系
+            "help",
+            "need help",
+            "anyone know",
+            "how do i",
+            "how to",
+            "what should i do",
+            "can someone",
+            "please help",
+            "stuck",
+            "blocked",
 
-    # error/bug系
-        "error",
-        "bug",
-        "issue",
-        "problem",
-        "failed",
-        "broken",
-        "crash",
-        "exception",
-        "traceback",
-        "stack trace",
+            # error/bug系
+            "error",
+            "bug",
+            "issue",
+            "problem",
+            "failed",
+            "broken",
+            "crash",
+            "exception",
+            "traceback",
+            "stack trace",
 
-    # dev/ops寄り
-        "deploy",
-        "build failed",
-        "github actions",
-        "workflow",
-        "docker",
-        "npm",
-        "pip",
-        "python",
-        "javascript",
-        "typescript",
-        "api",
-        "oauth",
+            # dev/ops寄り
+            "deploy",
+            "build failed",
+            "github actions",
+            "workflow",
+            "docker",
+            "npm",
+            "pip",
+            "python",
+            "javascript",
+            "typescript",
+            "api",
+            "oauth",
 
-    # tool request / convert / calculator
-        "need a tool",
-        "is there a tool",
-        "looking for a tool",
-        "tool for",
-        "convert",
-        "converter",
-        "calculator",
-        "template",
-        "compare",
-        "timezone",
-    ]
+            # tool request / convert / calculator
+            "need a tool",
+            "is there a tool",
+            "looking for a tool",
+            "tool for",
+            "convert",
+            "converter",
+            "calculator",
+            "template",
+            "compare",
+            "timezone",
+        ]
 
-
+        # tokenがある時だけ検索（ないならtimeline fallbackへ）
         if tok:
             for q in queries:
                 try:
@@ -613,33 +614,36 @@ try:
                         url = st.get("url", "") or ""
                         out.append({"source": "Mastodon", "text": txt[:300], "url": url, "meta": {}})
                         if len(out) >= limit:
-                            return out
+                            return out[:limit]
                 except Exception:
                     pass
 
+        # 検索だけだと薄い場合、public timelineで拾う（軽いキーワードフィルタ）
         if len(out) < limit:
             try:
                 statuses = m.timeline_public(limit=80)
                 keywords = [
-                    "help","need help","anyone know","how do i","how to","stuck","blocked",
-                    "error","bug","issue","problem","failed","broken","crash","exception","traceback",
-                    "deploy","build failed","github actions","workflow","docker","npm","pip",
-                    "api","oauth","convert","converter","calculator","template","compare","timezone",
-            ]
-
-            for st in statuses:
-                txt = re.sub(r"<[^>]+>", "", st.get("content", "") or "")
-                t = txt.lower()
-                if not any(k in t for k in keywords):
-                    continue
-
-                url = st.get("url", "") or ""
-                out.append({"source": "Mastodon", "text": txt[:300], "url": url, "meta": {}})
-                if len(out) >= limit:
-                    return out
-
+                    "help", "need help", "anyone know", "how do i", "how to", "stuck", "blocked",
+                    "error", "bug", "issue", "problem", "failed", "broken", "crash", "exception", "traceback",
+                    "deploy", "build failed", "github actions", "workflow", "docker", "npm", "pip",
+                    "api", "oauth", "convert", "converter", "calculator", "template", "compare", "timezone",
+                ]
+                for st in statuses:
+                    txt = re.sub(r"<[^>]+>", "", st.get("content", "") or "")
+                    t = txt.lower()
+                    if not any(k in t for k in keywords):
+                        continue
+                    url = st.get("url", "") or ""
+                    out.append({"source": "Mastodon", "text": txt[:300], "url": url, "meta": {}})
+                    if len(out) >= limit:
+                        return out[:limit]
             except Exception:
                 pass
+
+        return out[:limit]
+    except Exception:
+        return out[:limit]
+
 
 
 
