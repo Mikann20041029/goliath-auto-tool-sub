@@ -1088,7 +1088,7 @@ def validate_html(html: str) -> Tuple[bool, str]:
     # hub link
     if "../../index.html" not in low and "../index.html" not in low:
         return False, "missing link back to hub (../../index.html)"
-　　
+        
     return True, "ok"
 
 
