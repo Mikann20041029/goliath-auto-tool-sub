@@ -54,7 +54,7 @@ def _load_json(path, default):
      with open(path, "r", encoding="utf-8") as f:
          return json.load(f)
  except Exception:
- return default
+     return default
 
 def ensure_affiliates_keys():
  data = _load_json(AFFILIATES_PATH, {})
