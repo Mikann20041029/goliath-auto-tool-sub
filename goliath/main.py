@@ -73,15 +73,41 @@ ENABLE_AUTO_POST = os.getenv("ENABLE_AUTO_POST", "0") == "1"
 # Per-source minimum leads (YOUR ORDER)
 # - Guarantee "try to collect >= these numbers", then filter
 # ============================================================
+def _env_int(name: str, default: int) -> int:
+    v = os.getenv(name, None)
+    if v is None:
+        return default
+    v = str(v).strip()
+    if v == "":
+        return default
+    try:
+        return int(v)
+    except Exception:
+        return default
+
+def _env_float(name: str, default: float) -> float:
+    v = os.getenv(name, None)
+    if v is None:
+        return default
+    v = str(v).strip()
+    if v == "":
+        return default
+    try:
+        return float(v)
+    except Exception:
+        return default
+
 LEADS_TARGETS = {
-    "Bluesky": int(os.getenv("LEADS_TARGET_BSKY", "50")),
-    "X": int(os.getenv("LEADS_TARGET_X", "3")),
-    "Reddit": int(os.getenv("LEADS_TARGET_REDDIT", "20")),
-    "Mastodon": int(os.getenv("LEADS_TARGET_MASTODON", "100")),
+    "Bluesky": _env_int("LEADS_TARGET_BSKY", 50),
+    "X": _env_int("LEADS_TARGET_X", 3),
+    "Reddit": _env_int("LEADS_TARGET_REDDIT", 20),
+    "Mastodon": _env_int("LEADS_TARGET_MASTODON", 100),
 }
-LEADS_TOTAL = int(os.getenv("LEADS_TOTAL", str(sum(LEADS_TARGETS.values()))))  # default 173
-LEADS_OVERSAMPLE_MULT = float(os.getenv("LEADS_OVERSAMPLE_MULT", "3.0"))       # collect >= target*3 then rank
-LEADS_MAX_OUTPUT = int(os.getenv("LEADS_MAX_OUTPUT", str(max(LEADS_TOTAL, 180))))
+
+LEADS_TOTAL = _env_int("LEADS_TOTAL", sum(LEADS_TARGETS.values()))  # default 173
+LEADS_OVERSAMPLE_MULT = _env_float("LEADS_OVERSAMPLE_MULT", 3.0)   # default 3.0
+LEADS_MAX_OUTPUT = _env_int("LEADS_MAX_OUTPUT", max(LEADS_TOTAL, 180))
+
 
 # Collector base sizes (independent from leads; used for tool theme picking)
 COLLECT_HN = int(os.getenv("COLLECT_HN", "60"))
