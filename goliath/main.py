@@ -1497,11 +1497,11 @@ def collect_leads(theme: str) -> List[Dict[str, Any]]:
 
     try:
         _tmp_bsky = collect_bluesky(min(LEADS_PER_SOURCE, LEADS_TOTAL))
-    print(f"[counts] bluesky={len(_tmp_bsky)}")
-    leads.extend(_tmp_bsky)
+        print(f"[counts] bluesky={len(_tmp_bsky)}")
+        leads.extend(_tmp_bsky)
 
     except Exception as e:
-    print(f"[counts] bluesky error: {type(e).__name__}: {e}")
+        print(f"[counts] bluesky error: {type(e).__name__}: {e}")
 
 
     try:
