@@ -1347,7 +1347,7 @@ block = f"""
 out = html
 
     # Placeholder marker preferred
-    if "AFF_SLOT" in out:
+if "AFF_SLOT" in out:
         out = out.replace("<!-- AFF_SLOT -->", block)
     else:
         # Inject after first <main> or after body start if main missing
