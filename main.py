@@ -49,7 +49,7 @@ KEYWORDS = [
 
 def _load_json(path, default):
  if not os.path.exists(path):
- return default
+     return default
  try:
  with open(path, "r", encoding="utf-8") as f:
  return json.load(f)
