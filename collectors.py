@@ -22,13 +22,14 @@ def _days_ago_ts(days: int) -> int:
 
 def _dedup(items: List[Dict[str, str]]) -> List[Dict[str, str]]:
     seen = set()
-    out = []
+    out: List[Dict[str, str]] = []
     for it in items:
         text = (it.get("text") or "").strip()
         url = (it.get("url") or "").strip()
-        if not text or not url:
+        platform = (it.get("platform") or "").strip()
+        if not text or not url or not platform:
             continue
-        key = url + "|" + text[:160]
+        key = url + "|" + platform + "|" + text[:160]
         if key in seen:
             continue
         seen.add(key)
@@ -39,8 +40,8 @@ def _dedup(items: List[Dict[str, str]]) -> List[Dict[str, str]]:
 def collect_hn(queries: List[str], days_back: int, limit_per_query: int) -> List[Dict[str, str]]:
     session = requests.Session()
     session.headers.update({"User-Agent": UA})
-    min_ts = _days_ago_ts(days_back)
 
+    min_ts = _days_ago_ts(days_back)
     out: List[Dict[str, str]] = []
     api = "https://hn.algolia.com/api/v1/search_by_date"
 
@@ -63,25 +64,17 @@ def collect_hn(queries: List[str], days_back: int, limit_per_query: int) -> List
             story_title = (h.get("story_title") or "").strip()
             comment_text = (h.get("comment_text") or "").strip()
             text = title or story_title or comment_text
-        if not text:
-            continue
+            if not text:
+                continue
 
-    object_id = h.get("objectID")
-    if not object_id:
-        continue
+            object_id = h.get("objectID")
+            if not object_id:
+                continue
 
-    hn_url = f"https://news.ycombinator.com/item?id={object_id}"
-    acct = ((st.get("account") or {}).get("acct") or "").lower()
-    url_l = (url or "").lower()
+            hn_url = f"https://news.ycombinator.com/item?id={object_id}"
+            out.append({"text": text, "url": hn_url, "platform": "hn"})
 
-    if acct == "mikann20041029" or (acct.endswith("@mastodon.social") and acct.startswith("mikann20041029")):
-        continue
-    if "/@mikann20041029/" in url_l:
-        continue
-
-    out.append({"text": text, "url": hn_url, "platform": "hn"})
-    time.sleep(0.2)
-
+        time.sleep(0.2)
 
     return _dedup(out)
 
@@ -111,6 +104,7 @@ def collect_bluesky(queries: List[str], limit_per_query: int) -> List[Dict[str, 
             uri = p.get("uri") or ""
             author = p.get("author") or {}
             handle = author.get("handle") or ""
+
             rkey = ""
             if uri and "/app.bsky.feed.post/" in uri:
                 rkey = uri.split("/app.bsky.feed.post/")[-1]
@@ -140,7 +134,12 @@ def collect_mastodon(queries: List[str], limit_per_query: int) -> List[Dict[str,
 
     for q in queries:
         url = f"{api_base}/api/v2/search"
-        params = {"q": q, "type": "statuses", "limit": str(limit_per_query), "resolve": "false"}
+        params = {
+            "q": q,
+            "type": "statuses",
+            "limit": str(limit_per_query),
+            "resolve": "false",
+        }
         try:
             r = session.get(url, params=params, timeout=TIMEOUT)
             r.raise_for_status()
@@ -181,7 +180,11 @@ def collect_x(queries: List[str], limit_per_query: int) -> List[Dict[str, str]]:
     api = "https://api.x.com/2/tweets/search/recent"
 
     for q in queries:
-        params = {"query": q, "max_results": str(min(limit_per_query, 100)), "tweet.fields": "created_at"}
+        params = {
+            "query": q,
+            "max_results": str(min(limit_per_query, 100)),
+            "tweet.fields": "created_at",
+        }
         try:
             r = session.get(api, params=params, timeout=TIMEOUT)
             r.raise_for_status()
@@ -204,7 +207,8 @@ def collect_x(queries: List[str], limit_per_query: int) -> List[Dict[str, str]]:
 def collect_items(days_back: int = 365, total_limit: int = 60, per_query: int = 15) -> List[Dict[str, str]]:
     """
     返す形式:
-      [{"text": "...problem...", "url": "https://...", "platform": "hn|bluesky|mastodon|x"}, ...]
+      [{"text": "...", "url": "https://...", "platform": "hn|bluesky|mastodon|x"}, ...]
+
     設定:
       - COLLECT_SOURCES = "hn,bluesky,mastodon,x"
       - COLLECT_QUERIES = "how to,error,issue,can't"
@@ -229,3 +233,4 @@ def collect_items(days_back: int = 365, total_limit: int = 60, per_query: int = 
 
     items = _dedup(items)
     return items[:total_limit]
+
