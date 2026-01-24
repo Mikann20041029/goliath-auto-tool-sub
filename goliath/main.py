@@ -563,20 +563,18 @@ def _to_list(x):
     # ===== [/bsky] DEBUG BLOCK =====
 
 
-        # 3) dedupe
-        seen = set()
-        uniq: List[Dict[str, Any]] = []
-        for it in out:
-            u = it.get("url", "")
-            if not u or u in seen:
-                continue
-            seen.add(u)
-            uniq.append(it)
+            # 3) dedupe
+    seen = set()
+    uniq: List[Dict[str, Any]] = []
+    for it in out:
+        u = it.get("url", "")
+        if not u or u in seen:
+            continue
+        seen.add(u)
+        uniq.append(it)
 
-        return uniq[:limit]
-    except Exception as e:
-    print(f"[bsky] EXC err={e!r}")
-    return []
+    return uniq[:limit]
+
 
 
 
