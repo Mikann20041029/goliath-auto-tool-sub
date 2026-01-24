@@ -1,10 +1,9 @@
-name: Goliath Auto Tool System (safe)
+name: goliath
 
 on:
   workflow_dispatch:
   schedule:
-    # UTC基準。JST 0/8/16 に合わせるなら (JST-9h) で 15/23/7
-    - cron: '0 15,23,7 * * *'
+    - cron: "0 */8 * * *"
 
 permissions:
   contents: write
@@ -16,69 +15,56 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GH_PAT }}
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.11"
 
       - name: Install deps
-        run: pip install -r requirements.txt
-
-      - name: Debug cwd
         run: |
-          echo "PWD:"
-          pwd
-          echo "LS:"
-          ls -la
-          echo "LS goliath:"
-          ls -la goliath || true
-          echo "LS goliath/goliath:"
-          ls -la goliath/goliath || true
+          python -m pip install --upgrade pip
+          pip install requests openai atproto Mastodon.py tweepy praw || true
 
-      # ここが超重要：実際に動かすのは /goliath/main.py
-      - name: Run goliath/main.py
-        working-directory: .
+      # 1) クリック集計→affiliates.json priority更新（なければスキップ動作）
+      - name: Update affiliate priorities
+        env:
+          CLICK_STATS_ENDPOINT: ${{ secrets.CLICK_STATS_ENDPOINT }}   # 例: https://xxx.workers.dev/stats
+          CLICK_STATS_TOKEN: ${{ secrets.CLICK_STATS_TOKEN }}
+          CLICK_STATS_DAYS: "7"
+        run: |
+          python goliath/scripts/update_affiliate_priorities.py
+
+      # 2) 8時間ごとの新規ページ生成
+      - name: Run generator
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: "gpt-4o-mini"
+          MAX_OUTPUT_TOKENS_REPLY: "300"
+          MAX_OUTPUT_TOKENS_BUILD: "3000"
+          # Click log endpoint（ページ側が叩く先）
+          CLICK_LOG_ENDPOINT: ${{ secrets.CLICK_LOG_ENDPOINT }}       # 例: https://xxx.workers.dev/log
+          # Unsplash
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+          # SNS系（必要なら）
           BSKY_HANDLE: ${{ secrets.BSKY_HANDLE }}
           BSKY_PASSWORD: ${{ secrets.BSKY_PASSWORD }}
-          MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
           MASTODON_API_BASE: ${{ secrets.MASTODON_API_BASE }}
-          GH_PAT: ${{ secrets.GH_PAT }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_REF_NAME: ${{ github.ref_name }}
-          GH_TOKEN: ${{ github.token }}
-          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
-          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
-          REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
-          REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
-          REDDIT_USER_AGENT: ${{ secrets.REDDIT_USER_AGENT }}
-
-          # 追加で入れてるやつ（使わなくてもOK）
-          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
-          X_API_KEY: ${{ secrets.X_API_KEY }}
-          X_API_SECRET: ${{ secrets.X_API_SECRET }}
-          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
-          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
-          LEADS_TOTAL: "40"
-          LEADS_PER_SOURCE: "20"
-          LEADS_DAYS: "730"
-
-          # Xを安全運用（3回/日なら月≈90回）
-          X_MAX_REQUESTS_PER_RUN: "1"
-          X_RESULTS_PER_REQUEST: "10"
-          X_FULL_ARCHIVE: "0"
-
-        run: python -m goliath.main
-
-
-      - name: Commit and push changes
+          MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
+          # 投稿はデフォルトOFFのまま
+          ENABLE_AUTO_POST: "0"
         run: |
-          git config --global user.name "Goliath-Bot"
-          git config --global user.email "bot@goliath.local"
-          git add goliath/
-          git commit -m "goliath: auto-update $(date -u +%Y-%m-%dT%H:%M:%SZ)" || exit 0
-          git push origin "${GITHUB_REF_NAME}"
+          python main.py
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name "goliath-bot"
+          git config user.email "goliath-bot@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "no changes"
+            exit 0
+          fi
+          git commit -m "chore: auto update (priorities + new tool)"
+          git push
+
