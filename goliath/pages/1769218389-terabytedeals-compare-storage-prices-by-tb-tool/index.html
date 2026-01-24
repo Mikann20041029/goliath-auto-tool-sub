@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-white transition-colors">
+<head>
+  <meta charset="UTF-8">
+  <title>Terabyte Storage Price Comparison Tool | $/TB Calculator &amp; Guide 2024</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Compare storage device prices by cost per terabyte ($/TB). Use this interactive tool to make informed storage buying decisions across HDD, SSD, and cloud providers.">
+  <link rel="canonical" href="https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769218389-terabytedeals-compare-storage-prices-by-tb-tool">
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+  <style>
+    body { font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif; }
+    .glass {
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 4px 32px 0 rgba(0,42,90,0.08);
+      border-radius: 1.25rem;
+      border: 1px solid rgba(42,60,102,0.1);
+    }
+    .dark .glass {
+      background: rgba(23,34,46,0.56);
+      color: #f3f4f6;
+      border: 1px solid rgba(80,95,140,0.22);
+    }
+    .dark { background-color: #1e2530 !important; color: #e5e7eb; }
+    .dark .bg-white { background-color: #232b38 !important; }
+    .i18n-hide { display:none !important; }
+  </style>
+</head>
+<body class="bg-white text-gray-900 dark:bg-[#1e2530] dark:text-gray-100 min-h-screen flex flex-col">
+  <!-- Top Navigation -->
+  <nav class="w-full border-b border-gray-100 dark:border-gray-800 shadow-sm bg-white/95 dark:bg-[#222c3b]/95 sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <a href="../../index.html" class="font-bold text-indigo-700 hover:text-indigo-600 dark:text-blue-200 dark:hover:text-indigo-400 transition" data-i18n="nav.hub"></a>
+        <span class="text-gray-300 dark:text-gray-700 px-2">|</span>
+        <span class="text-xl font-semibold" data-i18n="nav.current"></span>
+      </div>
+      <div class="flex items-center space-x-3">
+        <!-- Language Switcher -->
+        <label for="langSelect" class="sr-only" data-i18n="nav.lang"></label>
+        <select id="langSelect" class="rounded-lg border-gray-300 dark:border-[#34495e] bg-gray-50 dark:bg-[#252c3a] text-sm px-2 py-1 focus:ring-indigo-500 focus:border-indigo-500">
+          <option value="en">EN</option>
+          <option value="ja">JA</option>
+          <option value="fr">FR</option>
+          <option value="de">DE</option>
+        </select>
+        <!-- Dark/Light Toggle -->
+        <button id="themeToggle" type="button" class="rounded-full p-2 bg-indigo-100 dark:bg-[#232b38] hover:bg-indigo-200 dark:hover:bg-indigo-700 transition" aria-label="Toggle dark mode">
+          <svg id="themeToggleIconLight" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"></circle>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M17.66 17.66l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M17.66 6.34l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+          </svg>
+          <svg id="themeToggleIconDark" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- HERO -->
+  <header class="w-full bg-gradient-to-b from-indigo-50 to-white dark:from-blue-950 dark:to-[#1e2530] pt-10 pb-14">
+    <div class="max-w-3xl mx-auto px-4">
+      <h1 class="text-4xl md:text-5xl font-bold mb-3 text-indigo-800 dark:text-blue-200 drop-shadow-sm" data-i18n="hero.title"></h1>
+      <p class="text-lg md:text-xl text-gray-700 dark:text-gray-200 mb-5" data-i18n="hero.subtitle"></p>
+    </div>
+  </header>
+
+  <!-- TOOL CARD -->
+  <main class="flex-1 flex flex-col items-center justify-start -mt-24 pb-8">
+    <section class="glass w-full max-w-lg mx-auto p-8 shadow-lg flex flex-col items-stretch">
+      <h2 class="text-2xl font-semibold mb-4 text-indigo-700 dark:text-blue-200" data-i18n="tool.header"></h2>
+      <form id="tbtool-form" class="space-y-5">
+        <div>
+          <label for="storagePrice" class="block font-medium mb-1" data-i18n="tool.price_label"></label>
+          <div class="flex items-center">
+            <input id="storagePrice" name="price" type="number" step="0.01" min="0" class="flex-1 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#232b38] p-2 focus:ring-indigo-500 focus:border-indigo-500" data-i18n-placeholder="tool.price_ph" required>
+            <span class="ml-2 font-bold text-gray-600 dark:text-gray-400">$</span>
+          </div>
+        </div>
+        <div>
+          <label for="storageSize" class="block font-medium mb-1" data-i18n="tool.size_label"></label>
+          <div class="flex items-center">
+            <input id="storageSize" name="size" type="number" step="0.01" min="0.01" class="flex-1 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#232b38] p-2 focus:ring-indigo-500 focus:border-indigo-500" data-i18n-placeholder="tool.size_ph" required>
+            <select id="storageUnit" class="ml-2 rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-[#232b38] p-2 text-gray-800 dark:text-gray-100">
+              <option value="TB">TB</option>
+              <option value="GB">GB</option>
+              <option value="MB">MB</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition" data-i18n="tool.calc_btn"></button>
+        </div>
+      </form>
+      <div id="tbtool-result" class="mt-4 py-2 text-center text-lg font-bold text-indigo-800 dark:text-blue-200 hidden"></div>
+      <div id="tbtool-hint" class="mt-2 text-sm text-gray-600 dark:text-gray-300 italic" data-i18n="tool.tip"></div>
+    </section>
+
+    <!-- Article Section -->
+    <article class="mt-16 w-full max-w-2xl bg-white dark:bg-[#232b38] rounded-2xl p-7 shadow-lg transition" style="scroll-margin-top:80px">
+      <h2 class="text-2xl font-bold mb-4 text-indigo-700 dark:text-blue-200" data-i18n="article.hdr_intro"></h2>
+      <p class="mb-4" data-i18n="article.intro"></p>
+      <!-- Table of Contents -->
+      <nav class="mb-8">
+        <h3 class="font-semibold text-lg mb-2 text-gray-900 dark:text-gray-100" data-i18n="article.toc"></h3>
+        <ul class="list-disc list-inside space-y-1">
+          <li><a href="#whatis" class="text-indigo-600 hover:underline dark:text-indigo-300" data-i18n="article.toc_whatis"></a></li>
+          <li><a href="#whycompare" class="text-indigo-600 hover:underline dark:text-indigo-300" data-i18n="article.toc_whycompare"></a></li>
+          <li><a href="#howtouse" class="text-indigo-600 hover:underline dark:text-indigo-300" data-i18n="article.toc_howtouse"></a></li>
+          <li><a href="#checklist" class="text-indigo-600 hover:underline dark:text-indigo-300" data-i18n="article.toc_checklist"></a></li>
+          <li><a href="#pitfalls" class="text-indigo-600 hover:underline dark:text-indigo-300" data-i18n="article.toc_pitfalls"></a></li>
+          <li><a href="#faq" class="text-indigo-600 hover:underline dark:text-indigo-300" data-i18n="article.toc_faq"></a></li>
+          <li><a href="#refs" class="text-indigo-600 hover:underline dark:text-indigo-300" data-i18n="article.toc_refs"></a></li>
+        </ul>
+      </nav>
+      <section id="whatis" class="mb-8">
+        <h3 class="text-xl font-semibold mb-2" data-i18n="article.h3_whatis"></h3>
+        <p class="mb-3" data-i18n="article.desc_whatis"></p>
+      </section>
+      <section id="whycompare" class="mb-8">
+        <h3 class="text-xl font-semibold mb-2" data-i18n="article.h3_whycompare"></h3>
+        <p class="mb-3" data-i18n="article.desc_whycompare"></p>
+      </section>
+      <section id="howtouse" class="mb-8">
+        <h3 class="text-xl font-semibold mb-2" data-i18n="article.h3_howtouse"></h3>
+        <p class="mb-3" data-i18n="article.desc_howtouse"></p>
+      </section>
+      <section id="checklist" class="mb-8">
+        <h3 class="text-xl font-semibold mb-2" data-i18n="article.h3_checklist"></h3>
+        <ul class="list-check list-inside pl-1 space-y-1">
+          <li data-i18n="article.checklist.price"></li>
+          <li data-i18n="article.checklist.capacity"></li>
+          <li data-i18n="article.checklist.type"></li>
+          <li data-i18n="article.checklist.warranty"></li>
+          <li data-i18n="article.checklist.reliability"></li>
+          <li data-i18n="article.checklist.brand"></li>
+          <li data-i18n="article.checklist.performance"></li>
+        </ul>
+      </section>
+      <section id="pitfalls" class="mb-8">
+        <h3 class="text-xl font-semibold mb-2" data-i18n="article.h3_pitfalls"></h3>
+        <ul class="list-disc list-inside space-y-1">
+          <li data-i18n="article.pitfalls.1"></li>
+          <li data-i18n="article.pitfalls.2"></li>
+          <li data-i18n="article.pitfalls.3"></li>
+          <li data-i18n="article.pitfalls.4"></li>
+        </ul>
+      </section>
+      <section id="faq" class="mb-8">
+        <h3 class="text-xl font-semibold mb-2" data-i18n="article.h3_faq"></h3>
+        <div class="divide-y divide-gray-200 dark:divide-gray-700">
+          <details class="py-2">
+            <summary class="font-semibold cursor-pointer" data-i18n="article.faq.1.q"></summary>
+            <p class="mt-2" data-i18n="article.faq.1.a"></p>
+          </details>
+          <details class="py-2">
+            <summary class="font-semibold cursor-pointer" data-i18n="article.faq.2.q"></summary>
+            <p class="mt-2" data-i18n="article.faq.2.a"></p>
+          </details>
+          <details class="py-2">
+            <summary class="font-semibold cursor-pointer" data-i18n="article.faq.3.q"></summary>
+            <p class="mt-2" data-i18n="article.faq.3.a"></p>
+          </details>
+          <details class="py-2">
+            <summary class="font-semibold cursor-pointer" data-i18n="article.faq.4.q"></summary>
+            <p class="mt-2" data-i18n="article.faq.4.a"></p>
+          </details>
+          <details class="py-2">
+            <summary class="font-semibold cursor-pointer" data-i18n="article.faq.5.q"></summary>
+            <p class="mt-2" data-i18n="article.faq.5.a"></p>
+          </details>
+        </div>
+      </section>
+
+      <section id="refs" class="mb-8">
+        <h3 class="text-xl font-semibold mb-2" data-i18n="article.h3_refs"></h3>
+        <ul class="list-disc list-inside space-y-1" id="refs-list">
+          <li><a href="https://www.backblaze.com/blog/hard-drive-stats/" target="_blank" rel="noopener" class="text-indigo-700 hover:underline dark:text-indigo-200" data-i18n="refs.1"></a></li>
+          <li><a href="https://www.tomshardware.com/reviews/storage-buying-guide" target="_blank" rel="noopener" class="text-indigo-700 hover:underline dark:text-indigo-200" data-i18n="refs.2"></a></li>
+          <li><a href="https://www.hddmag.com/best-hard-drives/" target="_blank" rel="noopener" class="text-indigo-700 hover:underline dark:text-indigo-200" data-i18n="refs.3"></a></li>
+          <li><a href="https://www.anandtech.com/tag/storage" target="_blank" rel="noopener" class="text-indigo-700 hover:underline dark:text-indigo-200" data-i18n="refs.4"></a></li>
+          <li><a href="https://www.techradar.com/news/best-ssds" target="_blank" rel="noopener" class="text-indigo-700 hover:underline dark:text-indigo-200" data-i18n="refs.5"></a></li>
+          <li><a href="https://en.wikipedia.org/wiki/Hard_disk_drive" target="_blank" rel="noopener" class="text-indigo-700 hover:underline dark:text-indigo-200" data-i18n="refs.6"></a></li>
+          <li><a href="https://www.pcgamer.com/best-hard-drive/" target="_blank" rel="noopener" class="text-indigo-700 hover:underline dark:text-indigo-200" data-i18n="refs.7"></a></li>
+          <li><a href="https://www.storagecraft.com/blog/understanding-hard-drive-specifications/" target="_blank" rel="noopener" class="text-indigo-700 hover:underline dark:text-indigo-200" data-i18n="refs.8"></a></li>
+          <li><a href="https://www.digitaltrends.com/computing/ssd-vs-hdd/" target="_blank" rel="noopener" class="text-indigo-700 hover:underline dark:text-indigo-200" data-i18n="refs.9"></a></li>
+          <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html" target="_blank" rel="noopener" class="text-indigo-700 hover:underline dark:text-indigo-200" data-i18n="refs.10"></a></li>
+        </ul>
+      </section>
+    </article>
+
+    <!-- Related Sites (hidden if none) -->
+    <section id="related-section" class="w-full max-w-2xl rounded-2xl bg-white dark:bg-[#232b38] p-6 shadow-md mt-12 mb-6 transition" style="display:none;scroll-margin-top:80px">
+      <h3 class="font-semibold text-xl mb-3 text-indigo-700 dark:text-blue-200" data-i18n="related.header"></h3>
+      <ul id="related-list" class="list-disc list-inside space-y-2"></ul>
+    </section>
+  </main>
+  
+  <!-- Compliance & About Sections -->
+  <footer class="bg-gray-50 dark:bg-[#222c3b] border-t border-gray-200 dark:border-gray-800 mt-10 pt-7 pb-6">
+    <div class="max-w-4xl mx-auto px-4 flex flex-col md:flex-row md:justify-between md:items-center space-y-3 md:space-y-0">
+      <div>
+        <a href="../../index.html" class="font-semibold text-indigo-700 hover:underline dark:text-indigo-200" data-i18n="footer.backhub"></a>
+      </div>
+      <ul class="flex flex-wrap space-x-4 text-sm mt-2 md:mt-0">
+        <li><a href="#privacy" class="hover:underline text-gray-700 dark:text-gray-200" data-i18n="footer.privacy"></a></li>
+        <li><a href="#terms" class="hover:underline text-gray-700 dark:text-gray-200" data-i18n="footer.terms"></a></li>
+        <li><a href="#disclaim" class="hover:underline text-gray-700 dark:text-gray-200" data-i18n="footer.disclaimer"></a></li>
+        <li><a href="#about" class="hover:underline text-gray-700 dark:text-gray-200" data-i18n="footer.about"></a></li>
+        <li><a href="#contact" class="hover:underline text-gray-700 dark:text-gray-200" data-i18n="footer.contact"></a></li>
+      </ul>
+    </div>
+    <!-- In-page compliance/other anchors -->
+    <div class="max-w-2xl mx-auto px-4 mt-8 space-y-10 text-sm leading-relaxed text-gray-700 dark:text-gray-200">
+      <section id="privacy">
+        <h3 class="font-semibold mb-1 text-indigo-700 dark:text-blue-200" data-i18n="compliance.privacy_title"></h3>
+        <p data-i18n="compliance.privacy_body"></p>
+      </section>
+      <section id="terms">
+        <h3 class="font-semibold mb-1 text-indigo-700 dark:text-blue-200" data-i18n="compliance.terms_title"></h3>
+        <p data-i18n="compliance.terms_body"></p>
+      </section>
+      <section id="disclaim">
+        <h3 class="font-semibold mb-1 text-indigo-700 dark:text-blue-200" data-i18n="compliance.disclaimer_title"></h3>
+        <p data-i18n="compliance.disclaimer_body"></p>
+      </section>
+      <section id="about">
+        <h3 class="font-semibold mb-1 text-indigo-700 dark:text-blue-200" data-i18n="compliance.about_title"></h3>
+        <p data-i18n="compliance.about_body"></p>
+      </section>
+      <section id="contact">
+        <h3 class="font-semibold mb-1 text-indigo-700 dark:text-blue-200" data-i18n="compliance.contact_title"></h3>
+        <p data-i18n="compliance.contact_body"></p>
+      </section>
+    </div>
+    <div class="max-w-2xl mx-auto mt-8 text-xs text-gray-400 text-center">
+      <span>&copy; 2024 <span data-i18n="footer.operator"></span></span>
+    </div>
+  </footer>
+
+  <script>
+  window.__I18N__ = {
+    en: {
+      "nav.hub": "← Back to Tool Hub",
+      "nav.current": "TerabyteDeals: $/TB Price Comparison",
+      "nav.lang": "Language",
+      "hero.title": "Compare Storage Prices by $/TB",
+      "hero.subtitle": "Quickly calculate the true cost per terabyte for any storage device or cloud provider. Buy smarter – compare, calculate, decide.",
+      "tool.header": "Storage Price per TB Calculator",
+      "tool.price_label": "Device Price",
+      "tool.price_ph": "Enter total price",
+      "tool.size_label": "Capacity",
+      "tool.size_ph": "Enter size",
+      "tool.calc_btn": "Calculate $/TB",
+      "tool.tip": "Tip: Lower $/TB indicates better value, but double-check performance and reliability before buying.",
+      "tool.result": "Price per terabyte:",
+      "tool.invalid": "Please enter valid numbers for both price and capacity.",
+      "tool.zero": "Capacity must be greater than zero.",
+      "article.hdr_intro": "Understanding Storage Costs: A Guide to $/TB Comparison",
+      "article.intro": "When it comes to buying a new hard disk drive (HDD), solid-state drive (SSD), or even cloud storage space, it can be surprisingly tricky to judge real value. Retailers tend to highlight features like speed and brand, but the one factor everyone should calculate is the cost per terabyte ($/TB). This metric translates the price into a direct measure of how much you're truly paying for each terabyte of usable storage. This guide and our interactive tool will help you master $/TB, avoid traps, and buy with confidence.",
+      "article.toc": "Table of Contents",
+      "article.toc_whatis": "What is $/TB and Why It Matters",
+      "article.toc_whycompare": "Why Compare Storage Devices by $/TB?",
+      "article.toc_howtouse": "How to Use the $/TB Calculator",
+      "article.toc_checklist": "Checklist: Considerations When Comparing",
+      "article.toc_pitfalls": "Pitfalls to Avoid",
+      "article.toc_faq": "FAQ",
+      "article.toc_refs": "References",
+      "article.h3_whatis": "What is $/TB and Why It Matters",
+      "article.desc_whatis": "$/TB (dollars per terabyte) is a simple calculation: divide the price of the storage device by its capacity in terabytes. For example, a $150 4TB drive offers a $37.50/TB value. This metric makes it easy to fairly compare drives of similar or different sizes, brands, and types. Understanding $/TB helps you identify deals and avoid paying premium prices for less capacity.",
+      "article.h3_whycompare": "Why Compare Storage Devices by $/TB?",
+      "article.desc_whycompare": "Comparing by $/TB cuts through confusing marketing. It helps you avoid being misled by deals on odd-sized drives, fake discounts, or cloud services priced in unusual increments. For businesses and enthusiasts storing large datasets, the $/TB cost is often the primary metric. However, $/TB shouldn't be the only factor—other considerations such as durability, speed, and warranty remain important.",
+      "article.h3_howtouse": "How to Use the $/TB Calculator",
+      "article.desc_howtouse": "Simply enter the total price and capacity of your storage device (in GB, TB, or MB) into the calculator above. The tool instantly converts everything to terabytes, giving you an accurate $/TB figure. This allows you to objectively compare several HDDs, SSDs, NAS drives, or cloud storage plans—even if they differ in size or listed units.",
+      "article.h3_checklist": "Checklist: What to Compare Besides $/TB",
+      "article.checklist.price": "Price: Is the listed price final? Are shipping, taxes, or extra fees included?",
+      "article.checklist.capacity": "Capacity: Is the advertised size usable? Check for pre-installed OS, manufacturer formatting, or system-reserved space.",
+      "article.checklist.type": "Storage Type: HDDs cost less per TB than SSDs, but are slower and less shock-resistant.",
+      "article.checklist.warranty": "Warranty: Longer warranties add value, especially for business use.",
+      "article.checklist.reliability": "Reliability: Consider manufacturer reputation and published failure rates.",
+      "article.checklist.brand": "Brand/Reviews: Known brands or well-reviewed products tend to have better support.",
+      "article.checklist.performance": "Performance: High IOPS, read/write speeds, or features like NVMe may justify a higher price per TB.",
+      "article.h3_pitfalls": "Pitfalls to Avoid",
+      "article.pitfalls.1": "Differences between advertised and usable capacity (after formatting or RAID).",
+      "article.pitfalls.2": "Ignoring hidden costs like shipping, required cables, or data migration tools.",
+      "article.pitfalls.3": "Assuming all TB are equal: Consumer SSDs and HDDs may vary widely in endurance, speed, and reliability.",
+      "article.pitfalls.4": "Not accounting for cloud provider storage class, redundancy level, or data egress fees.",
+      "article.h3_faq": "Frequently Asked Questions",
+      "article.faq.1.q": "Is a lower $/TB always better?",
+      "article.faq.1.a": "Not always. A low $/TB is great for bulk storage, but you may be trading off speed, reliability, or warranty. Balance $/TB with overall product quality.",
+      "article.faq.2.q": "How should I compare cloud storage $/TB vs. physical drives?",
+      "article.faq.2.a": "Cloud prices often have extra variables: monthly or yearly fees, minimum usage, and bandwidth charges. For short-term or small capacity, local disks might be cheaper. For scale, cloud flexibility could be preferable but always check fine print.",
+      "article.faq.3.q": "Why does SSD $/TB cost more than HDD $/TB?",
+      "article.faq.3.a": "SSDs offer faster speed, silent operation, and better shock resistance, but their manufacturing cost per TB is higher. As technology improves, the gap is narrowing.",
+      "article.faq.4.q": "Do manufacturers measure storage capacity the same way?",
+      "article.faq.4.a": "Most use decimal (1TB=1,000GB) but some software/OS tools use binary (1TB=1,024GB), which may cause confusion. Our tool uses decimal units to match manufacturer listings.",
+      "article.faq.5.q": "How often do storage prices change?",
+      "article.faq.5.a": "Very frequently. Flash memory and HDD prices fluctuate based on supply/demand and technology cycles. Compare prices right before buying.",
+      "article.h3_refs": "References",
+      "refs.1": "Backblaze: Drive Stats & Reliability Reports",
+      "refs.2": "Tom's Hardware: Storage Buying Guide",
+      "refs.3": "HDD Mag: Best Hard Drives Updated",
+      "refs.4": "AnandTech Storage Reviews",
+      "refs.5": "TechRadar: Best SSDs 2024",
+      "refs.6": "Wikipedia: Hard Disk Drive",
+      "refs.7": "PC Gamer: Best Hard Drives",
+      "refs.8": "StorageCraft: Understanding Drive Specifications",
+      "refs.9": "DigitalTrends: SSD vs HDD",
+      "refs.10": "AWS S3: Storage Class Guide",
+      "related.header": "Related Sites",
+      "footer.backhub": "Back to Tool Hub",
+      "footer.privacy": "Privacy Policy",
+      "footer.terms": "Terms of Service",
+      "footer.disclaimer": "Disclaimer",
+      "footer.about": "About",
+      "footer.contact": "Contact",
+      "footer.operator": "MikanN / Goliath Toolkit",
+      "compliance.privacy_title": "Privacy Policy",
+      "compliance.privacy_body": "We do not collect personal data. This site uses cookies only for language/theme preferences. No advertising/analytics scripts or third-party trackers are present. Any links to external sites are provided for reference only. Your use of this tool is private.",
+      "compliance.terms_title": "Terms of Service",
+      "compliance.terms_body": "This tool is offered as-is and free for informational use. By using, you accept no guarantee of accuracy, and no liability for decisions or losses arising from use.",
+      "compliance.disclaimer_title": "Disclaimer",
+      "compliance.disclaimer_body": "The contents are for information purposes only. Prices and specifications can vary by store or region. Always verify details with the manufacturer. External links are not endorsements.",
+      "compliance.about_title": "About & Operator",
+      "compliance.about_body": "TerabyteDeals is operated by Goliath Toolkit (MikanN), an open-source initiative to provide easy, private, and accurate comparison tools. We have no affiliation with device manufacturers or vendors.",
+      "compliance.contact_title": "Contact",
+      "compliance.contact_body": "If you have suggestions, corrections, or bug reports, please contact via the Goliath tool hub homepage."
+    },
+    ja: {
+      "nav.hub": "← ツールハブに戻る",
+      "nav.current": "TerabyteDeals：$/TB価格比較",
+      "nav.lang": "言語",
+      "hero.title": "ストレージ価格を$/TBで比較",
+      "hero.subtitle": "あらゆるストレージ機器やクラウドの本当の1TBあたりの価格をすぐに計算。賢い購入判断をサポートします。",
+      "tool.header": "ストレージ $/TB計算ツール",
+      "tool.price_label": "機器価格",
+      "tool.price_ph": "合計価格を入力",
+      "tool.size_label": "容量",
+      "tool.size_ph": "容量を入力",
+      "tool.calc_btn": "1TBあたりの価格を計算",
+      "tool.tip": "ヒント：$ / TBが低いほどお得ですが、購入前に性能や信頼性も確認しましょう。",
+      "tool.result": "1TBあたりの価格：",
+      "tool.invalid": "価格と容量の両方に有効な数値を入力してください。",
+      "tool.zero": "容量は0以上で入力してください。",
+      "article.hdr_intro": "ストレージコストを理解しよう：$/TB比較 完全ガイド",
+      "article.intro": "新しいハードディスクドライブ (HDD)、ソリッドステートドライブ (SSD)、またはクラウドストレージを購入する際、実際のお得度を測るのは意外と難しいものです。多くの小売店は速度やブランドを強調しますが、購入前に必ず計算してほしい指標が「1TBあたりの価格」($/TB)です。この数値を使えば、支払った金額に対し、どれだけの容量を手にできるのか一目瞭然になります。本ガイドとツールで$/TBの考え方を身につけ、失敗を避け、納得のいく購入判断をしてください。",
+      "article.toc": "目次",
+      "article.toc_whatis": "$/TBとは？なぜ重要か",
+      "article.toc_whycompare": "$/TBでなぜ比較する？",
+      "article.toc_howtouse": "$/TB計算ツールの使い方",
+      "article.toc_checklist": "比較時に確認すべきポイント",
+      "article.toc_pitfalls": "気をつける落とし穴",
+      "article.toc_faq": "よくある質問",
+      "article.toc_refs": "参考文献・リンク",
+      "article.h3_whatis": "$/TBとは？なぜ重要なのか",
+      "article.desc_whatis": "$/TB（1テラバイトあたりのドル・円単価）は、ストレージ機器の価格を容量（TB単位）で割って得られる単純な比較尺度です。例えば4TBのドライブが150ドルなら1TBあたり37.5ドルとなります。機種・サイズ・ブランドを問わず、平等に比較ができるため最もフェアで分かりやすい指標です。$ / TBを理解すれば、高くて容量が少ないパッケージや、割安セールの見極めが簡単になります。",
+      "article.h3_whycompare": "$/TBで比較すべき理由",
+      "article.desc_whycompare": "$/TB比較でマーケティングのまやかしを排除できます。不揃い容量の商品や、実際より安く見せるフェイクセール、分かりづらいクラウド料金体系にもだまされません。大容量データ保存を担う法人や趣味ユーザーほど$/TBを重視しますが、最安値だけにとらわれるのは危険。耐久性や速度、保証なども総合的に把握しましょう。",
+      "article.h3_howtouse": "ツールの使い方：1TBあたり価格をすぐ算出",
+      "article.desc_howtouse": "上部ツールに購入予定機器の価格と容量（TB・GB・MBどれでもOK）を入力。ツールが自動でTB換算し、1TBごとの実質単価を表示します。サイズや単位がバラバラなHDD・SSD・NAS・クラウドプランも客観的に比較できます。",
+      "article.h3_checklist": "価格以外にも比較したいポイント",
+      "article.checklist.price": "価格：記載金額が最終価格か、送料・税金・手数料込みか確認。",
+      "article.checklist.capacity": "容量：表示容量が実際に使える容量か要チェック。初期OS・フォーマット・予約領域有無も確認。",
+      "article.checklist.type": "ストレージ種類：基本的にHDDは安いがSSDは速い・衝撃に強いなどの違いも考慮。",
+      "article.checklist.warranty": "保証期間：長期保証はビジネス用途では特に価値があります。",
+      "article.checklist.reliability": "信頼性：メーカーの信頼度や公表故障率を確認。",
+      "article.checklist.brand": "ブランド/レビュー：信頼できるブランドや高評価レビュー品を優先するのが安心。",
+      "article.checklist.performance": "性能：IOPSや読書速度、NVMe等の特徴が高価格を正当化する場合も。",
+      "article.h3_pitfalls": "よくある落とし穴に注意",
+      "article.pitfalls.1": "表記容量と実使用容量の差（初期フォーマットやRAID時も）。",
+      "article.pitfalls.2": "送料や付属ケーブル・データ移行ツールなど隠れた追加費用の見落とし。",
+      "article.pitfalls.3": "TB単価だけでは判断できない耐久性や速度など個体差の無視。",
+      "article.pitfalls.4": "クラウドの場合、ストレージクラスや冗長化・データ転送料金の計算忘れ。",
+      "article.h3_faq": "よくある質問",
+      "article.faq.1.q": "$/TBが低い＝絶対にお得？",
+      "article.faq.1.a": "必ずしもそうとは限りません。大容量安値品は速度・信頼性・保証が劣る場合も。$/TBだけでなく、全体品質もバランス重視がおすすめです。",
+      "article.faq.2.q": "クラウドと物理ストレージの$/TB、どう比較？",
+      "article.faq.2.a": "クラウドは月額/年額・最低容量・転送量等変動要因が多く、短期や小容量なら物理の方が割安なことも。柔軟性や保守負担を考慮し、細部まで確認を。",
+      "article.faq.3.q": "SSDがHDDより$/TB高い理由は？",
+      "article.faq.3.a": "SSDは高速・静音・衝撃耐性等で高価です。製造コストも1TBあたり高いのが現状ですが、技術進歩で差は縮小傾向です。",
+      "article.faq.4.q": "容量表示、メーカーとOSで異なる？",
+      "article.faq.4.a": "多くのメーカーは10進法(1TB=1000GB)ですが、OSや一部ツールでは2進法(1TB=1024GB)換算。混同に注意。ツール計算はメーカー表記に合わせています。",
+      "article.faq.5.q": "ストレージ価格はどれくらい変動する？",
+      "article.faq.5.a": "非常に頻繁に変動します。フラッシュ・HDDの市況や新技術、需給バランスで週単位で変わることも。購入直前の再比較をおすすめします。",
+      "article.h3_refs": "参考リンク",
+      "refs.1": "Backblaze: HDD信頼性統計データ",
+      "refs.2": "Tom's Hardware: ストレージ購入ガイド",
+      "refs.3": "HDD Mag: 最新おすすめドライブ",
+      "refs.4": "AnandTech ストレージレビュー",
+      "refs.5": "TechRadar: 2024年ベストSSD",
+      "refs.6": "Wikipedia: ハードディスクドライブ",
+      "refs.7": "PC Gamer: おすすめHDD",
+      "refs.8": "StorageCraft: ドライブ仕様の解説",
+      "refs.9": "DigitalTrends: SSDとHDDの違い",
+      "refs.10": "AWS S3: ストレージクラスガイド",
+      "related.header": "関連サイト",
+      "footer.backhub": "ツールハブに戻る",
+      "footer.privacy": "プライバシーポリシー",
+      "footer.terms": "利用規約",
+      "footer.disclaimer": "免責事項",
+      "footer.about": "当サイトについて",
+      "footer.contact": "お問い合わせ",
+      "footer.operator": "MikanN / Goliathツールキット",
+      "compliance.privacy_title": "プライバシーポリシー",
+      "compliance.privacy_body": "本サイトは個人情報を一切収集しません。Cookieは言語・テーマ設定保存のみ使用し、広告やアクセス解析・外部トラッカーも設置していません。外部リンク先については内容を保証しません。ご利用は完全にプライベートです。",
+      "compliance.terms_title": "利用規約",
+      "compliance.terms_body": "本ツールは情報提供のためのもので、無保証・無料で提供されます。利用者は、内容の正確性や損害に対し免責されることに同意した上でご利用ください。",
+      "compliance.disclaimer_title": "免責事項",
+      "compliance.disclaimer_body": "本ツールおよび記事の内容は参考情報です。価格や仕様は店舗や地域で異なる場合があります。必ずメーカー公式情報もご確認ください。外部リンクは推奨を意味しません。",
+      "compliance.about_title": "運営・サイト情報",
+      "compliance.about_body": "TerabyteDealsはGoliath Toolkit(MikanN)が運営する、オープンソースの比較ツール群です。メーカー・販売店等との資本的関係は一切ありません。",
+      "compliance.contact_title": "お問い合わせ",
+      "compliance.contact_body": "ご意見・修正提案・不具合報告はGoliathツールハブ経由でご連絡ください。"
+    },
+    fr: {
+      "nav.hub": "← Retour au Hub d'Outils",
+      "nav.current": "TerabyteDeals : Comparaison $/TB",
+      "nav.lang": "Langue",
+      "hero.title": "Comparer les prix du stockage par $/To",
+      "hero.subtitle": "Calculez facilement le coût réel par téraoctet pour tout matériel de stockage ou fournisseur cloud. Comparez, décidez, économisez.",
+      "tool.header": "Calculateur de prix par To",
+      "tool.price_label": "Prix du périphérique",
+      "tool.price_ph": "Saisir le prix total",
+      "tool.size_label": "Capacité",
+      "tool.size_ph": "Saisir la taille",
+      "tool.calc_btn": "Calculer $/To",
+      "tool.tip": "Astuce : Un $/To plus faible signifie plus d'économie, mais vérifiez aussi la fiabilité et la performance.",
+      "tool.result": "Prix par téraoctet :",
+      "tool.invalid": "Veuillez saisir des valeurs valides pour le prix et la capacité.",
+      "tool.zero": "La capacité doit être supérieure à zéro.",
+      "article.hdr_intro": "Comprendre les coûts de stockage : Guide de comparaison $/To",
+      "article.intro": "L'achat d'un disque dur (HDD), d'un SSD ou même d'un espace cloud soulève rapidement une question : quelle est la vraie valeur comparée ? Les revendeurs mettent en exergue vitesse et marque, mais le facteur essentiel à vérifier est le coût par téraoctet ($/To). Cet indicateur traduit le prix en une mesure directe : combien dépensez-vous pour chaque To utilisable ? Ce guide et notre outil interactif vous aident à prendre en main le $/To, à éviter les pièges et à acheter l'esprit serein.",
+      "article.toc": "Sommaire",
+      "article.toc_whatis": "Qu'est-ce que le $/To et pourquoi c'est important",
+      "article.toc_whycompare": "Pourquoi comparer $/To ?",
+      "article.toc_howtouse": "Utiliser le calculateur $/To",
+      "article.toc_checklist": "À vérifier lors de la comparaison",
+      "article.toc_pitfalls": "Pièges à éviter",
+      "article.toc_faq": "FAQ",
+      "article.toc_refs": "Références",
+      "article.h3_whatis": "Qu'est-ce que le $/To et pourquoi c'est important",
+      "article.desc_whatis": "Le $/To (dollars par téraoctet) se calcule simplement : divisez le prix par la capacité en To. Par exemple, un disque de 4 To à 150 $ revient à 37,50 $/To. Cet indicateur permet de comparer équitablement toutes les tailles, types et marques. Il vous offre une vue neutre des offres.",
+      "article.h3_whycompare": "Pourquoi comparer les stockages par $/To ?",
+      "article.desc_whycompare": "Comparer en $/To lève les ambiguïtés marketing. Vous éviterez les fausses promotions, les tailles non standard ou les offres cloud à paliers étranges. Si vous stockez beaucoup de données, le $/To est clé, mais ce n'est pas tout : examinez aussi fiabilité, rapidité et garantie.",
+      "article.h3_howtouse": "Comment utiliser le calculateur $/To",
+      "article.desc_howtouse": "Entrez le prix total et la capacité (en Go, To ou Mo) dans l'outil ci-dessus. Il convertira toute capacité en To et vous montrera le $/To pour comparer différents disques, NAS ou abonnements cloud, même si l'unité varie.",
+      "article.h3_checklist": "Checklist : Points à examiner",
+      "article.checklist.price": "Prix : Est-il final ? Faut-il ajouter frais de port, taxes, accessoires ?",
+      "article.checklist.capacity": "Capacité : L'espace annoncé est-il entièrement utilisable ? Vérifiez la présence d'OS préinstallé, le formatage et l'espace réservé système.",
+      "article.checklist.type": "Type de stockage : Les HDD coûtent moins cher par To, mais sont plus lents et sensibles aux chocs.",
+      "article.checklist.warranty": "Garantie : Plus longue elle est, plus la valeur est élevée, surtout en usage pro.",
+      "article.checklist.reliability": "Fiabilité : Examinez la réputation de la marque et les taux de panne connus.",
+      "article.checklist.brand": "Marque/Avis : Privilégiez les marques reconnues et les produits bien notés.",
+      "article.checklist.performance": "Performance : Un SSD NVMe très rapide, par exemple, peut justifier un $/To plus élevé.",
+      "article.h3_pitfalls": "Pièges à éviter",
+      "article.pitfalls.1": "Différence entre capacité annoncée et réelle (formatage, RAID, etc.).",
+      "article.pitfalls.2": "Oublier les frais cachés : livraison, câbles, logiciels de migration.",
+      "article.pitfalls.3": "Croire que tous les To se valent : SSD/HDD diffèrent beaucoup en endurance et fiabilité.",
+      "article.pitfalls.4": "Négliger les coûts du cloud : classe, redondance, frais de sortie de données.",
+      "article.h3_faq": "Questions fréquentes",
+      "article.faq.1.q": "Un $/To faible est-il toujours préférable ?",
+      "article.faq.1.a": "Pas forcément ! Pour une même capacité, un prix bas peut cacher une fiabilité ou garantie moindre. Évaluez aussi la performance.",
+      "article.faq.2.q": "Comparer $/To cloud vs disques physiques : des pièges ?",
+      "article.faq.2.a": "Le cloud implique des frais récurrents ou cachés (abonnement, transfert…). Pour petits besoins, un disque peut s'avérer moins cher. Pour le volume et la flexibilité, le cloud peut convenir, mais lisez bien les conditions.",
+      "article.faq.3.q": "Pourquoi les SSD coûtent-ils plus cher au To que les HDD ?",
+      "article.faq.3.a": "Technologie plus récente, rapidité supérieure, résistance… mais coût de production plus élevé. L'écart se réduit au fil des années.",
+      "article.faq.4.q": "Toutes les marques mesurent-elles la capacité de la même façon ?",
+      "article.faq.4.a": "Presque toutes utilisent le système décimal (1 To = 1 000 Go). Certains logiciels affichent en binaire, causant de légers écarts. Cet outil calcule en décimal.",
+      "article.faq.5.q": "Les prix du stockage varient-ils beaucoup ?",
+      "article.faq.5.a": "Oui, parfois chaque semaine, selon la demande et la technologie. Comparez juste avant d'acheter.",
+      "article.h3_refs": "Références",
+      "refs.1": "Backblaze : Statistiques fiabilité HDD",
+      "refs.2": "Tom's Hardware : Guide d'achat stockage",
+      "refs.3": "HDD Mag : Disques durs recommandés",
+      "refs.4": "AnandTech : Reviews stockage",
+      "refs.5": "TechRadar : Meilleurs SSD 2024",
+      "refs.6": "Wikipédia : Disque dur",
+      "refs.7": "PC Gamer : Meilleurs HDD",
+      "refs.8": "StorageCraft : Spécifications de disque",
+      "refs.9": "DigitalTrends : SSD vs HDD",
+      "refs.10": "AWS S3 : Guide des classes de stockage",
+      "related.header": "Sites liés",
+      "footer.backhub": "Retour au Hub",
+      "footer.privacy": "Confidentialité",
+      "footer.terms": "Conditions",
+      "footer.disclaimer": "Avertissement",
+      "footer.about": "À propos",
+      "footer.contact": "Contact",
+      "footer.operator": "MikanN / Goliath Toolkit",
+      "compliance.privacy_title": "Politique de confidentialité",
+      "compliance.privacy_body": "Aucune donnée personnelle n'est collectée. Ce site n'utilise des cookies que pour enregistrer la langue/le thème. Aucun traqueur ou publicité tierce. Les liens externes sont fournis à titre informatif uniquement.",
+      "compliance.terms_title": "Conditions d'utilisation",
+      "compliance.terms_body": "Outil fourni tel quel, gratuitement et à titre documentaire. Toute utilisation implique acceptation d'absence de garantie et de responsabilité.",
+      "compliance.disclaimer_title": "Avertissement",
+      "compliance.disclaimer_body": "Contenu purement informatif. Les tarifs/specs peuvent varier. Confirmez toujours à la source fabricante. Les liens externes ne sont pas des recommandations.",
+      "compliance.about_title": "À propos & opérateur",
+      "compliance.about_body": "TerabyteDeals est un service open source du Goliath Toolkit (MikanN), indépendant de toute marque ou vendeur.",
+      "compliance.contact_title": "Contact",
+      "compliance.contact_body": "Pour suggestions/corrections, utilisez la page principale du hub des outils Goliath."
+    },
+    de: {
+      "nav.hub": "← Zurück zum Tool-Hub",
+      "nav.current": "TerabyteDeals: $/TB-Vergleich",
+      "nav.lang": "Sprache",
+      "hero.title": "Speicherpreise nach $/TB vergleichen",
+      "hero.subtitle": "Berechnen Sie schnell die echten Kosten pro Terabyte für Festplatten, SSDs und Cloud. Vergleichen Sie Werte objektiv vor dem Kauf.",
+      "tool.header": "Speicherpreis pro TB Rechner",
+      "tool.price_label": "Gerätepreis",
+      "tool.price_ph": "Gesamtpreis eingeben",
+      "tool.size_label": "Kapazität",
+      "tool.size_ph": "Kapazität eingeben",
+      "tool.calc_btn": "$/TB berechnen",
+      "tool.tip": "Tipp: Ein niedriger $/TB-Wert ist gut, prüfen Sie aber auch Leistung und Zuverlässigkeit.",
+      "tool.result": "Preis pro Terabyte:",
+      "tool.invalid": "Bitte geben Sie gültige Zahlen für Preis und Kapazität ein.",
+      "tool.zero": "Die Kapazität muss größer als Null sein.",
+      "article.hdr_intro": "Speicherkosten verstehen: Ihr Leitfaden zum $/TB-Vergleich",
+      "article.intro": "Ob Festplatte (HDD), SSD oder Cloudspeicher: Den echten Wert zu erkennen ist oft schwer. Marketing hebt meistens Geschwindigkeit und Marke hervor, doch entscheidend ist der Preis pro Terabyte ($/TB). Mit dieser Metrik sehen Sie klar, was Sie für jeden TB wirklich zahlen. Mit dem Tool und Guide auf dieser Seite erkennen Sie Angebote, Fehlerquellen und vergleichen objektiv.",
+      "article.toc": "Inhaltsverzeichnis",
+      "article.toc_whatis": "Was ist $/TB und warum ist es wichtig?",
+      "article.toc_whycompare": "Warum nach $/TB vergleichen?",
+      "article.toc_howtouse": "So nutzen Sie den $/TB-Rechner",
+      "article.toc_checklist": "Checkliste: Weitere Kaufkriterien",
+      "article.toc_pitfalls": "Typische Fallstricke",
+      "article.toc_faq": "FAQ",
+      "article.toc_refs": "Quellen",
+      "article.h3_whatis": "Was ist $/TB und warum spielen sie eine Rolle?",
+      "article.desc_whatis": "$/TB (Dollar pro Terabyte) berechnen Sie einfach: Preis geteilt durch Kapazität in Terabyte. Ein 4TB-Laufwerk zu 150 Dollar kostet 37,50 $/TB. So vergleichen Sie fair alle Größen, Marken und Typen.",
+      "article.h3_whycompare": "Warum Speicher nach $/TB vergleichen?",
+      "article.desc_whycompare": "Mit $/TB erkennen Sie versteckte Kosten und irreführende Werbeaktionen. Sie sehen echte Preisunterschiede. Für große Datenmengen ist $/TB der wichtigste Wert – aber Geschwindigkeit, Garantie und Qualität sind ebenfalls zu beachten.",
+      "article.h3_howtouse": "So funktioniert der $/TB-Rechner",
+      "article.desc_howtouse": "Tragen Sie oben den Preis und die Kapazität Ihres Speichers ein (in GB, TB oder MB). Das Tool rechnet alles auf TB um und liefert Ihnen den genauen $/TB-Wert – praktisch für alle Laufwerkstypen und Cloud-Tarife.",
+      "article.h3_checklist": "Checkliste: Was außerdem beachten?",
+      "article.checklist.price": "Preis: Ist der angegebene Preis inkl. Versand, Steuern u.a.? Endpreis?",
+      "article.checklist.capacity": "Kapazität: Ist die angegebene Größe voll nutzbar? Formatierung, Systempartitionen prüfen.",
+      "article.checklist.type": "Speichertyp: HDDs günstiger pro TB, SSDs aber schneller und robuster.",
+      "article.checklist.warranty": "Garantie: Längere Garantien erhöhen den Wert, besonders im geschäftlichen Einsatz.",
+      "article.checklist.reliability": "Zuverlässigkeit: Hersteller-Ruf und Fehlerstatistiken recherchieren.",
+      "article.checklist.brand": "Marke/Bewertungen: Namhafte Marken und gute Rezensionen geben Sicherheit.",
+      "article.checklist.performance": "Leistung: Höhere IOPS, Schreib/Lese-Raten oder NVMe rechtfertigen ggf. höhere Preise.",
+      "article.h3_pitfalls": "Typische Fallstricke",
+      "article.pitfalls.1": "Unterschiede zwischen Nenn- und Nutzkapazität (Formatierung, RAID).",
+      "article.pitfalls.2": "Versteckte Nebenkosten wie Versand, Kabel, Tools übersehen.",
+      "article.pitfalls.3": "Nicht jede TB ist gleich: Große Unterschiede in Haltbarkeit und Geschwindigkeit.",
+      "article.pitfalls.4": "Bei Cloud-Angeboten auf Tarifdetails, Redundanz und Zusatzkosten achten.",
+      "article.h3_faq": "Häufige Fragen",
+      "article.faq.1.q": "Ist ein niedriger $/TB immer besser?",
+      "article.faq.1.a": "Nicht immer. Auch Qualität, Leistung und Gewährleistung beachten – ein günstiger $/TB kann Schwächen anderswo bedeuten.",
+      "article.faq.2.q": "Wie vergleiche ich $/TB bei Cloud-Speicher?",
+      "article.faq.2.a": "Cloud-Tarife können Zusatzkosten (Transfer, Mindestlaufzeiten) haben. Für kleine Mengen sind Platten oft günstiger, für große Mengen kann Cloud-Fl exibilität punkten. Kleingedrucktes lesen!",
+      "article.faq.3.q": "Warum kosten SSDs mehr pro TB als HDDs?",
+      "article.faq.3.a": "SSDs sind schneller, stoßsicher, lautlos – aber teurer in der Fertigung. Die Preise nähern sich langsam an.",
+      "article.faq.4.q": "Messen alle Hersteller die Kapazität identisch?",
+      "article.faq.4.a": "Meist wird das Dezimalsystem (1TB = 1000GB) genutzt; manche Software rechnet binär (1024GB). Dieses Tool übernimmt Herstellerwerte.",
+      "article.faq.5.q": "Wie oft ändern sich Speicherpreise?",
+      "article.faq.5.a": "Sehr oft, z.B. durch Marktschwankungen und neue Technik. Daher lohnt ein aktueller Vergleich vor dem Kauf.",
+      "article.h3_refs": "Quellen & Links",
+      "refs.1": "Backblaze: HDD-Ausfallsstatistiken",
+      "refs.2": "Tom's Hardware: Speicher-Kaufratgeber",
+      "refs.3": "HDD Mag: Laufwerksempfehlungen",
+      "refs.4": "AnandTech: Speicher-Reviews",
+      "refs.5": "TechRadar: Beste SSDs 2024",
+      "refs.6": "Wikipedia: Festplatte",
+      "refs.7": "PC Gamer: Beste Festplatten",
+      "refs.8": "StorageCraft: Spezifikationen erklärt",
+      "refs.9": "DigitalTrends: SSD vs HDD",
+      "refs.10": "AWS S3: Speicherklassen-Guide",
+      "related.header": "Verwandte Seiten",
+      "footer.backhub": "Zurück zum Hub",
+      "footer.privacy": "Datenschutz",
+      "footer.terms": "Nutzungsbedingungen",
+      "footer.disclaimer": "Haftungsausschluss",
+      "footer.about": "Über uns",
+      "footer.contact": "Kontakt",
+      "footer.operator": "MikanN / Goliath Toolkit",
+      "compliance.privacy_title": "Datenschutz",
+      "compliance.privacy_body": "Wir speichern keine persönlichen Daten. Cookies dienen nur der Sprach-/Theme-Einstellung. Keine Werbung, keine Fremdtracker. Externe Links sind reine Informationsquellen, keine Empfehlungen. Nutzung vollständig privat.",
+      "compliance.terms_title": "Nutzungsbedingungen",
+      "compliance.terms_body": "Dieses Tool ist kostenlos & ohne Gewährleistung. Mit der Nutzung akzeptieren Sie Ausschluss von Haftung und Genauigkeit.",
+      "compliance.disclaimer_title": "Haftungsausschluss",
+      "compliance.disclaimer_body": "Alle Inhalte dienen nur der Information. Preise und Daten können sich regional unterscheiden. Prüfen Sie offizielle Infos. Externe Links sind keine Empfehlung.",
+      "compliance.about_title": "Über & Betreiber",
+      "compliance.about_body": "TerabyteDeals ist ein Open-Source-Projekt von Goliath Toolkit (MikanN) und unabhängig von Herstellern oder Händlern.",
+      "compliance.contact_title": "Kontakt",
+      "compliance.contact_body": "Für Vorschläge/Korrekturen bitte den Goliath-Tool-Hub verwenden."
+    }
+  };
+
+  // Related sites: Add your sites as array of { label:{en,ja,fr,de}, url } objects
+  window.__RELATED__ = [{"title": "Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769195313-tax-calculator-3/"}, {"title": "Show HN: I built a MACRS calculator because TurboTax was overkill", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769189699-tax-calculator-2/"}, {"title": "Show HN: GoGen – A simple template-based file generator written in Go", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769181471-template-template-tool/"}, {"title": "Show HN: I built a MACRS calculator because TurboTax was overkill", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769158606-tax-calculator/"}, {"title": "Show HN: I built a MACRS calculator because TurboTax was overkill", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769155768-tax-calculator/"}, {"title": "Show HN: GoGen – A simple template-based file generator written in Go", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769141611-template-template-tool/"}, {"title": "Show HN: GoGen – A simple template-based file generator written in Go", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769138429-template-template-tool/"}, {"title": "Show HN: GoGen – A simple template-based file generator written in Go", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769116184-show-hn-gogen-a-simple-template-based-file-generator-written/"}];
+
+  // I18N Page Rendering
+  (function(){
+    function setLanguage(lang) {
+      document.documentElement.lang = lang;
+      localStorage.setItem('goliath_lang', lang);
+      var dict = window.__I18N__[lang] || window.__I18N__['en'];
+      // [data-i18n] replacement
+      var nodes = document.querySelectorAll('[data-i18n]');
+      nodes.forEach(function(el){
+        var k = el.getAttribute('data-i18n');
+        if(dict && dict[k]!==undefined) el.innerHTML = dict[k];
+        else el.innerHTML = (window.__I18N__['en'][k] || '');
+      });
+      // placeholder/text/title/aria
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){
+        var k = el.getAttribute('data-i18n-placeholder');
+        el.placeholder = (dict[k]!==undefined ? dict[k]: window.__I18N__['en'][k] || '');
+      });
+      document.querySelectorAll('[data-i18n-title]').forEach(function(el){
+        var k = el.getAttribute('data-i18n-title');
+        el.title = (dict[k]!==undefined ? dict[k]: window.__I18N__['en'][k] || '');
+      });
+      document.querySelectorAll('[data-i18n-aria]').forEach(function(el){
+        var k = el.getAttribute('data-i18n-aria');
+        el.setAttribute("aria-label", (dict[k]!==undefined ? dict[k]: window.__I18N__['en'][k] || ''));
+      });
+
+      // Related sites section
+      var rel = window.__RELATED__ || [];
+      var relSec = document.getElementById('related-section');
+      var relUl = document.getElementById('related-list');
+      if(rel.length > 0 && relUl && relSec) {
+        relUl.innerHTML = '';
+        rel.forEach(function(site){
+          var li = document.createElement('li');
+          var a = document.createElement('a');
+          a.className = "text-indigo-700 hover:underline dark:text-indigo-200";
+          a.target = "_blank"; a.rel="noopener";
+          a.href = site.url;
+          a.textContent = (site.label && site.label[lang]) ? site.label[lang] : site.label['en'];
+          li.appendChild(a);
+          relUl.appendChild(li);
+        });
+        relSec.style.display = '';
+        relSec.classList.remove('i18n-hide');
+        relSec.querySelector('[data-i18n="related.header"]').textContent = dict['related.header'];
+      } else if(relSec) {
+        relSec.style.display = 'none';
+        relSec.classList.add('i18n-hide');
+      }
+    }
+
+    // Initial language: localStorage or default 'en'
+    var lang = (localStorage.getItem('goliath_lang') || navigator.language.slice(0,2) || 'en');
+    if(!window.__I18N__[lang]) lang = 'en';
+    var sel = document.getElementById('langSelect');
+    if(sel) sel.value = lang;
+    setLanguage(lang);
+
+    // Lang select change
+    if(sel) sel.addEventListener('change', function(){
+      var lang = sel.value;
+      setLanguage(lang);
+    });
+
+    // Save also on page reload
+    window.setGoliathLanguage = setLanguage;
+    // Re-render on initial load
+    setTimeout(function(){ setLanguage(lang); },5);
+
+    // Tool Card: $/TB calculator
+    document.getElementById('tbtool-form').addEventListener('submit',function(e){
+      e.preventDefault();
+      var price = parseFloat(document.getElementById('storagePrice').value);
+      var size = parseFloat(document.getElementById('storageSize').value);
+      var unit = document.getElementById('storageUnit').value;
+      var resultEl = document.getElementById('tbtool-result');
+      var lang = (document.getElementById('langSelect').value || 'en');
+      var dict = window.__I18N__[lang] || window.__I18N__['en'];
+      if(isNaN(price) || isNaN(size)) {
+        resultEl.textContent = dict['tool.invalid'];
+        resultEl.classList.remove('hidden');
+        return;
+      }
+      if(size <= 0) {
+        resultEl.textContent = dict['tool.zero'];
+        resultEl.classList.remove('hidden');
+        return;
+      }
+      var tb = 0;
+      if(unit === "TB") tb = size;
+      else if(unit === "GB") tb = size / 1000;
+      else if(unit === "MB") tb = size / 1000 / 1000;
+      else tb = size;
+      var v = (price / tb);
+      if(!isFinite(v) || v<=0) {
+        resultEl.textContent = dict['tool.invalid'];
+        resultEl.classList.remove('hidden');
+        return;
+      }
+      resultEl.textContent = dict['tool.result']+' $'+ v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) + ' / TB';
+      resultEl.classList.remove('hidden');
+    });
+
+    // Theme: dark/light toggle
+    var themeBtn = document.getElementById('themeToggle');
+    function setTheme(t) {
+      if(t==='dark') {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('goliath_theme','dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('goliath_theme','light');
+      }
+    }
+    // Init theme: localStorage or system
+    var theme = localStorage.getItem('goliath_theme');
+    if(!theme) theme = (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    setTheme(theme);
+
+    if(themeBtn) {
+      themeBtn.addEventListener('click',function(){
+        var isDark = document.documentElement.classList.contains('dark');
+        setTheme(!isDark ? 'dark':'light');
+      });
+    }
+    // Show correct icon initially
+    function updateThemeIcons(){
+      document.getElementById('themeToggleIconLight').style.display =
+        document.documentElement.classList.contains('dark') ? 'none' : 'block';
+      document.getElementById('themeToggleIconDark').style.display =
+        document.documentElement.classList.contains('dark') ? 'block' : 'none';
+    }
+    updateThemeIcons();
+    setInterval(updateThemeIcons, 300);
+
+    // Keyboard accessibility (focus lang selector)
+    document.addEventListener("keydown",function(e){
+      if((e.ctrlKey||e.metaKey)&&e.key==='l') {
+        document.getElementById('langSelect').focus(); e.preventDefault();
+      }
+    });
+
+  })();
+  </script>
+</body>
+</html>

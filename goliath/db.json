@@ -1,5 +1,88 @@
 [
   {
+    "id": "393e9a63d1671e7f",
+    "title": "TerabyteDeals – Compare storage prices by $/TB",
+    "search_title": "TerabyteDeals – Compare storage prices by $/TB tool",
+    "created_at": "2026-01-24T01:33:09Z",
+    "path": "./pages/1769218389-terabytedeals-compare-storage-prices-by-tb-tool",
+    "public_url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769218389-terabytedeals-compare-storage-prices-by-tb-tool/",
+    "tags": [
+      "compare"
+    ],
+    "source_urls": [
+      "https://terabytedeals.com",
+      "https://mastodon.social/@mhdhanees/115947495543563514",
+      "https://www.threads.com/@nunyabiznews/post/DT3-n3kiIgk",
+      "https://merveilles.town/@aartaka/115947495099483646",
+      "https://flipboard.com/@fansided/the-smoking-cuban-ka5ha20cz/-/a-x-deM-2mRaiDGU-UN91iWQ%3Aa%3A61877088-%2F0",
+      "https://github.com/saysjonathan/dwm.tmux",
+      "https://github.com/andylbrummer/booklife-mcp",
+      "https://news.ycombinator.com/item?id=46739618",
+      "https://github.com/memvid/screenshot-memory",
+      "https://blogimagegen.com/en",
+      "https://www.usenodal.com",
+      "https://github.com/XORD-AI/NeuralVoid",
+      "https://github.com/Amaculus/sf-config-tool",
+      "https://blog.bymitch.com/posts/bets-by-mitch/",
+      "https://news.ycombinator.com/item?id=46739230",
+      "https://news.ycombinator.com/item?id=46738260",
+      "https://github.com/vlebo/ctx",
+      "https://news.ycombinator.com/item?id=46737270",
+      "https://marketplace.visualstudio.com/items?itemName=NeoResearchInc.heyneo",
+      "https://news.ycombinator.com/item?id=46736217"
+    ],
+    "related": [
+      {
+        "title": "Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769195313-tax-calculator-3/"
+      },
+      {
+        "title": "Show HN: I built a MACRS calculator because TurboTax was overkill",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769189699-tax-calculator-2/"
+      },
+      {
+        "title": "Show HN: GoGen – A simple template-based file generator written in Go",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769181471-template-template-tool/"
+      },
+      {
+        "title": "Show HN: I built a MACRS calculator because TurboTax was overkill",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769158606-tax-calculator/"
+      },
+      {
+        "title": "Show HN: I built a MACRS calculator because TurboTax was overkill",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769155768-tax-calculator/"
+      },
+      {
+        "title": "Show HN: GoGen – A simple template-based file generator written in Go",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769141611-template-template-tool/"
+      },
+      {
+        "title": "Show HN: GoGen – A simple template-based file generator written in Go",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769138429-template-template-tool/"
+      },
+      {
+        "title": "Show HN: GoGen – A simple template-based file generator written in Go",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769116184-show-hn-gogen-a-simple-template-based-file-generator-written/"
+      }
+    ],
+    "best_source": "HN",
+    "best_url": "https://terabytedeals.com",
+    "best_score": 8,
+    "best_score_breakdown": {
+      "tool_request": 4,
+      "convert_generator_calc": 0,
+      "structured_output": 0,
+      "specific_inputs": 4,
+      "how_to_code_only": 0,
+      "too_broad": 0,
+      "adult_or_sensitive": 0,
+      "duplicate_penalty": 0
+    },
+    "score_keys": [
+      "compare"
+    ]
+  },
+  {
     "id": "493df8fbc56a202c",
     "title": "Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly",
     "search_title": "tax calculator",
