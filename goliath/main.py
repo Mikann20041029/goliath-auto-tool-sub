@@ -1333,14 +1333,16 @@ def inject_affiliate_slots(html: str, page_id: str, page_url: str, genre: str, a
 """.strip()
         )
 
-    block = f"""
+    cards_html = "\n".join(cards)
+block = f"""
 <section id="aff-section" class="mt-6">
   <div class="text-sm font-semibold opacity-80 mb-2" data-i18n="ads.title"></div>
   <div class="grid gap-3">
-    {'\n'.join(cards)}
+    {cards_html}
   </div>
 </section>
 """.strip()
+
 
     out = html
 
