@@ -1,5 +1,88 @@
 [
   {
+    "id": "5f4f1cfdefd6132e",
+    "title": "Compound Interest Calculator",
+    "search_title": "calculator calculator",
+    "created_at": "2026-01-24T03:02:04Z",
+    "path": "./pages/1769223724-calculator-calculator",
+    "public_url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769223724-calculator-calculator/",
+    "tags": [
+      "calculator"
+    ],
+    "source_urls": [
+      "https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator",
+      "https://whatsmydepreciation.co/",
+      "https://github.com/vl3c/MatHud",
+      "https://brightgrade.app",
+      "https://ptataxcalculator.org",
+      "https://news.ycombinator.com/item?id=46740645",
+      "https://docs.python.org/3/library/json.html",
+      "https://cholesterol-tracker.poniansoft.com/",
+      "https://fortune.com/2026/01/13/us-workers-smallest-labor-share-gdp-on-record/",
+      "https://github.com/saysjonathan/dwm.tmux",
+      "https://github.com/andylbrummer/booklife-mcp",
+      "https://news.ycombinator.com/item?id=46739618",
+      "https://github.com/memvid/screenshot-memory",
+      "https://blog.bymitch.com/posts/bets-by-mitch/",
+      "https://news.ycombinator.com/item?id=46739230",
+      "https://github.com/Amaculus/sf-config-tool",
+      "https://news.ycombinator.com/item?id=46738260",
+      "https://github.com/vlebo/ctx",
+      "https://news.ycombinator.com/item?id=46737270",
+      "https://marketplace.visualstudio.com/items?itemName=NeoResearchInc.heyneo"
+    ],
+    "related": [
+      {
+        "title": "Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769195313-tax-calculator-3/"
+      },
+      {
+        "title": "Show HN: I built a MACRS calculator because TurboTax was overkill",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769189699-tax-calculator-2/"
+      },
+      {
+        "title": "Show HN: I built a MACRS calculator because TurboTax was overkill",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769158606-tax-calculator/"
+      },
+      {
+        "title": "Show HN: I built a MACRS calculator because TurboTax was overkill",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769155768-tax-calculator/"
+      },
+      {
+        "title": "Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769115945-show-hn-pta-tax-calculator-calculate-pakistan-mobile-import-/"
+      },
+      {
+        "title": "TerabyteDeals – Compare storage prices by $/TB",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769218389-terabytedeals-compare-storage-prices-by-tb-tool/"
+      },
+      {
+        "title": "Show HN: GoGen – A simple template-based file generator written in Go",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769181471-template-template-tool/"
+      },
+      {
+        "title": "Show HN: GoGen – A simple template-based file generator written in Go",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769141611-template-template-tool/"
+      }
+    ],
+    "best_source": "HN",
+    "best_url": "https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator",
+    "best_score": 7,
+    "best_score_breakdown": {
+      "tool_request": 0,
+      "convert_generator_calc": 7,
+      "structured_output": 0,
+      "specific_inputs": 0,
+      "how_to_code_only": 0,
+      "too_broad": 0,
+      "adult_or_sensitive": 0,
+      "duplicate_penalty": 0
+    },
+    "score_keys": [
+      "calculator"
+    ]
+  },
+  {
     "id": "393e9a63d1671e7f",
     "title": "TerabyteDeals – Compare storage prices by $/TB",
     "search_title": "TerabyteDeals – Compare storage prices by $/TB tool",

@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title data-i18n="seo.title">Compound Interest Calculator - Free Online Tool for Compound Interest Calculation</title>
+  <meta name="description" data-i18n="seo.desc" content="Calculate compound interest with this online calculator. Learn the math and financial concepts behind compound growth with in-depth guides in English, Japanese, French, and German.">
+  <link rel="canonical" href="https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769223724-calculator-calculator">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: Inter, 'Noto Sans JP', sans-serif; }
+    .glass { 
+      background: rgba(255,255,255,0.80);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px 0 rgba(31,38,135,0.07);
+      border-radius: 1rem;
+    }
+    .dark .glass {
+      background: rgba(24,32,55,0.55);
+      color: #e5e7eb;
+    }
+    .theme-toggle { transition: all 0.2s; }
+    .hidden { display: none !important; }
+    html.dark { background-color: #181e28; }
+    html { background-color: #f9fafb; }
+  </style>
+</head>
+<body class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 transition-colors duration-200">
+  <!-- Top Navigation -->
+  <nav class="w-full bg-white/95 dark:bg-slate-900/80 border-b border-gray-200 dark:border-slate-800 backdrop-blur z-10 sticky top-0">
+    <div class="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
+      <a href="../../index.html" class="text-indigo-700 dark:text-indigo-400 font-bold text-lg" data-i18n="nav.hub"></a>
+      <div class="flex items-center gap-4">
+        <label for="langSelect" class="sr-only" data-i18n="nav.lang_label"></label>
+        <select id="langSelect" class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded px-2 py-1 text-slate-700 dark:text-slate-100 text-sm" aria-label="" data-i18n-aria="nav.lang_label">
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+        </select>
+        <button id="themeToggle" type="button" class="theme-toggle w-9 h-9 rounded-full bg-gray-100/60 dark:bg-slate-700/60 border border-gray-300 dark:border-slate-600 flex items-center justify-center" aria-label="" data-i18n-aria="nav.theme_toggle">
+          <svg id="sunIcon" class="w-5 h-5 text-yellow-400 visible dark:hidden" fill="none" stroke="currentColor" stroke-width="2"  viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M17.36 17.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M17.36 6.64l1.42-1.42"/>
+          </svg>
+          <svg id="moonIcon" class="w-5 h-5 text-indigo-400 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="w-full bg-gradient-to-b from-indigo-50 via-white to-white dark:from-slate-800 dark:via-slate-900 dark:to-slate-900 py-12 md:py-20">
+    <div class="max-w-2xl mx-auto px-4 text-center">
+      <h1 class="text-3xl md:text-5xl font-extrabold mb-4 text-indigo-800 dark:text-indigo-300" data-i18n="hero.title"></h1>
+      <p class="text-lg md:text-xl text-slate-700 dark:text-slate-300 mb-6" data-i18n="hero.desc"></p>
+    </div>
+  </header>
+
+  <!-- Compound Interest Tool Card -->
+  <main class="flex flex-col items-center">
+    <section class="w-full max-w-lg mx-auto px-4 relative z-5 mt-[-6rem]">
+      <div class="glass shadow-lg px-8 py-8 md:px-10 md:py-10 border border-white/40 dark:border-slate-700/40">
+        <h2 class="text-2xl font-bold mb-4 text-indigo-700 dark:text-indigo-200" data-i18n="tool.title"></h2>
+        <form id="ciForm" class="space-y-5">
+          <div>
+            <label for="principal" class="block mb-1 text-sm font-medium" data-i18n="tool.form.principal"></label>
+            <input type="number" step="any" min="0" id="principal" name="principal" class="w-full rounded border border-gray-300 focus:ring-2 focus:ring-indigo-400 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 px-3 py-2 outline-none" placeholder="" data-i18n-placeholder="tool.form.principal_ph" required>
+          </div>
+          <div>
+            <label for="rate" class="block mb-1 text-sm font-medium" data-i18n="tool.form.rate"></label>
+            <input type="number" step="any" min="0" max="100" id="rate" name="rate" class="w-full rounded border border-gray-300 focus:ring-2 focus:ring-indigo-400 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 px-3 py-2 outline-none" placeholder="" data-i18n-placeholder="tool.form.rate_ph" required>
+          </div>
+          <div>
+            <label for="years" class="block mb-1 text-sm font-medium" data-i18n="tool.form.years"></label>
+            <input type="number" step="1" min="1" max="100" id="years" name="years" class="w-full rounded border border-gray-300 focus:ring-2 focus:ring-indigo-400 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 px-3 py-2 outline-none" placeholder="" data-i18n-placeholder="tool.form.years_ph" required>
+          </div>
+          <div>
+            <label for="frequency" class="block mb-1 text-sm font-medium" data-i18n="tool.form.freq"></label>
+            <select id="frequency" name="frequency" class="w-full rounded border border-gray-300 focus:ring-2 focus:ring-indigo-400 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 px-3 py-2" required>
+              <option value="1" data-i18n="tool.form.annually"></option>
+              <option value="2" data-i18n="tool.form.semiannually"></option>
+              <option value="4" data-i18n="tool.form.quarterly"></option>
+              <option value="12" data-i18n="tool.form.monthly"></option>
+              <option value="365" data-i18n="tool.form.daily"></option>
+            </select>
+          </div>
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded transition focus:ring-2 focus:ring-indigo-400 focus:outline-none" data-i18n="tool.form.calculate"></button>
+        </form>
+        <div id="resultBox" class="mt-6 p-4 rounded bg-indigo-50 text-indigo-800 text-center font-semibold text-lg dark:bg-indigo-900/70 dark:text-indigo-100 hidden" aria-live="polite">
+          <span data-i18n="tool.result.prefix"></span>
+          <span id="resultValue"></span>
+          <span data-i18n="tool.result.suffix"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Article Content -->
+    <section class="w-full max-w-3xl mx-auto px-4 py-16">
+      <!-- English Article -->
+      <article id="article-en" class="article-content" lang="en">
+        <h2 class="text-2xl md:text-3xl font-bold mb-2 text-slate-900 dark:text-white" data-i18n="article.title"></h2>
+        <p class="mb-4" data-i18n="article.intro"></p>
+
+        <h3 class="text-lg font-bold mt-8 mb-2 text-indigo-700 dark:text-indigo-200" data-i18n="article.what_is.title"></h3>
+        <p class="mb-4" data-i18n="article.what_is.p1"></p>
+        <ul class="list-disc pl-8 mb-4">
+          <li data-i18n="article.what_is.bullet1"></li>
+          <li data-i18n="article.what_is.bullet2"></li>
+        </ul>
+
+        <h3 class="text-lg font-bold mt-8 mb-2 text-indigo-700 dark:text-indigo-200" data-i18n="article.formula.title"></h3>
+        <p class="mb-3" data-i18n="article.formula.p1"></p>
+        <div class="bg-indigo-100 dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 rounded px-4 py-3 mb-3 whitespace-pre text-base">
+            <span data-i18n="article.formula.math"></span>
+        </div>
+        <p class="mb-4" data-i18n="article.formula.p2"></p>
+
+        <h3 class="text-lg font-bold mt-8 mb-2 text-indigo-700 dark:text-indigo-200" data-i18n="article.why.title"></h3>
+        <p class="mb-3" data-i18n="article.why.p1"></p>
+        <ul class="list-disc pl-8 mb-4">
+          <li data-i18n="article.why.bullet1"></li>
+          <li data-i18n="article.why.bullet2"></li>
+          <li data-i18n="article.why.bullet3"></li>
+        </ul>
+
+        <h3 class="text-lg font-bold mt-8 mb-2 text-indigo-700 dark:text-indigo-200" data-i18n="article.checklist.title"></h3>
+        <ul class="list-check pl-8 space-y-1 mb-4">
+          <li data-i18n="article.checklist.item1"></li>
+          <li data-i18n="article.checklist.item2"></li>
+          <li data-i18n="article.checklist.item3"></li>
+          <li data-i18n="article.checklist.item4"></li>
+          <li data-i18n="article.checklist.item5"></li>
+        </ul>
+
+        <h3 class="text-lg font-bold mt-8 mb-2 text-indigo-700 dark:text-indigo-200" data-i18n="article.pitfalls.title"></h3>
+        <p class="mb-3" data-i18n="article.pitfalls.p1"></p>
+        <ul class="list-disc pl-8 mb-4">
+          <li data-i18n="article.pitfalls.bullet1"></li>
+          <li data-i18n="article.pitfalls.bullet2"></li>
+          <li data-i18n="article.pitfalls.bullet3"></li>
+        </ul>
+
+        <h3 class="text-lg font-bold mt-8 mb-2 text-indigo-700 dark:text-indigo-200" data-i18n="article.faq.title"></h3>
+        <div class="space-y-6">
+          <div>
+            <div class="font-semibold" data-i18n="article.faq.q1"></div>
+            <div class="ml-2" data-i18n="article.faq.a1"></div>
+          </div>
+          <div>
+            <div class="font-semibold" data-i18n="article.faq.q2"></div>
+            <div class="ml-2" data-i18n="article.faq.a2"></div>
+          </div>
+          <div>
+            <div class="font-semibold" data-i18n="article.faq.q3"></div>
+            <div class="ml-2" data-i18n="article.faq.a3"></div>
+          </div>
+          <div>
+            <div class="font-semibold" data-i18n="article.faq.q4"></div>
+            <div class="ml-2" data-i18n="article.faq.a4"></div>
+          </div>
+          <div>
+            <div class="font-semibold" data-i18n="article.faq.q5"></div>
+            <div class="ml-2" data-i18n="article.faq.a5"></div>
+          </div>
+        </div>
+
+        <h3 class="text-lg font-bold mt-8 mb-2 text-indigo-700 dark:text-indigo-200" data-i18n="article.references.title"></h3>
+        <ol class="list-decimal mb-10 pl-6 space-y-1" id="refList"></ol>
+      </article>
+      <!-- Japanese Article -->
+      <article id="article-ja" class="article-content hidden" lang="ja">
+        <h2 class="text-2xl md:text-3xl font-bold mb-2 text-slate-900 dark:text-white" data-i18n="ja_article.title"></h2>
+        <p class="mb-4" data-i18n="ja_article.intro"></p>
+
+        <h3 class="text-lg font-bold mt-8 mb-2 text-indigo-700 dark:text-indigo-200" data-i18n="ja_article.what_is.title"></h3>
+        <p class="mb-4" data-i18n="ja_article.what_is.p1"></p>
+        <ul class="list-disc pl-8 mb-4">
+          <li data-i18n="ja_article.what_is.bullet1"></li>
+          <li data-i18n="ja_article.what_is.bullet2"></li>
+        </ul>
+
+        <h3 class="text-lg font-bold mt-8 mb-2 text-indigo-700 dark:text-indigo-200" data-i18n="ja_article.formula.title"></h3>
+        <p class="mb-3" data-i18n="ja_article.formula.p1"></p>
+        <div class="bg-indigo-100 dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 rounded px-4 py-3 mb-3 whitespace-pre text-base">
+            <span data-i18n="ja_article.formula.math"></span>
+        </div>
+        <p class="mb-4" data-i18n="ja_article.formula.p2"></p>
+
+        <h3 class="text-lg font-bold mt-8 mb-2 text-indigo-700 dark:text-indigo-200" data-i18n="ja_article.why.title"></h3>
+        <p class="mb-3" data-i18n="ja_article.why.p1"></p>
+        <ul class="list-disc pl-8 mb-4">
+          <li data-i18n="ja_article.why.bullet1"></li>
+          <li data-i18n="ja_article.why.bullet2"></li>
+          <li data-i18n="ja_article.why.bullet3"></li>
+        </ul>
+
+        <h3 class="text-lg font-bold mt-8 mb-2 text-indigo-700 dark:text-indigo-200" data-i18n="ja_article.checklist.title"></h3>
+        <ul class="list-check pl-8 space-y-1 mb-4">
+          <li data-i18n="ja_article.checklist.item1"></li>
+          <li data-i18n="ja_article.checklist.item2"></li>
+          <li data-i18n="ja_article.checklist.item3"></li>
+          <li data-i18n="ja_article.checklist.item4"></li>
+          <li data-i18n="ja_article.checklist.item5"></li>
+        </ul>
+
+        <h3 class="text-lg font-bold mt-8 mb-2 text-indigo-700 dark:text-indigo-200" data-i18n="ja_article.pitfalls.title"></h3>
+        <p class="mb-3" data-i18n="ja_article.pitfalls.p1"></p>
+        <ul class="list-disc pl-8 mb-4">
+          <li data-i18n="ja_article.pitfalls.bullet1"></li>
+          <li data-i18n="ja_article.pitfalls.bullet2"></li>
+          <li data-i18n="ja_article.pitfalls.bullet3"></li>
+        </ul>
+
+        <h3 class="text-lg font-bold mt-8 mb-2 text-indigo-700 dark:text-indigo-200" data-i18n="ja_article.faq.title"></h3>
+        <div class="space-y-6">
+          <div>
+            <div class="font-semibold" data-i18n="ja_article.faq.q1"></div>
+            <div class="ml-2" data-i18n="ja_article.faq.a1"></div>
+          </div>
+          <div>
+            <div class="font-semibold" data-i18n="ja_article.faq.q2"></div>
+            <div class="ml-2" data-i18n="ja_article.faq.a2"></div>
+          </div>
+          <div>
+            <div class="font-semibold" data-i18n="ja_article.faq.q3"></div>
+            <div class="ml-2" data-i18n="ja_article.faq.a3"></div>
+          </div>
+          <div>
+            <div class="font-semibold" data-i18n="ja_article.faq.q4"></div>
+            <div class="ml-2" data-i18n="ja_article.faq.a4"></div>
+          </div>
+          <div>
+            <div class="font-semibold" data-i18n="ja_article.faq.q5"></div>
+            <div class="ml-2" data-i18n="ja_article.faq.a5"></div>
+          </div>
+        </div>
+
+        <h3 class="text-lg font-bold mt-8 mb-2 text-indigo-700 dark:text-indigo-200" data-i18n="ja_article.references.title"></h3>
+        <ol class="list-decimal mb-10 pl-6 space-y-1" id="refList-ja"></ol>
+      </article>
+      <!-- French and German: show English version (for brevity). -->
+      <article id="article-fr" class="article-content hidden" lang="fr"></article>
+      <article id="article-de" class="article-content hidden" lang="de"></article>
+    </section>
+  </main>
+
+  <!-- Related Sites Section (will be hidden if no entries) -->
+  <section id="relatedSection" class="max-w-3xl mx-auto px-4 py-10">
+    <h3 class="text-lg font-bold mb-4 text-indigo-700 dark:text-indigo-200" data-i18n="related.title"></h3>
+    <ul id="relatedList" class="space-y-1 list-disc pl-8"></ul>
+  </section>
+
+  <!-- Footer -->
+  <footer class="w-full bg-white/90 dark:bg-slate-900/90 border-t border-gray-200 dark:border-slate-800 py-8 mt-14">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="flex flex-wrap gap-6 mb-2 text-sm justify-center">
+        <a href="../../index.html" class="px-2 py-1 rounded hover:bg-indigo-50 dark:hover:bg-indigo-900" data-i18n="footer.hub"></a>
+        <a href="#privacy" class="px-2 py-1 rounded hover:bg-indigo-50 dark:hover:bg-indigo-900" data-i18n="footer.privacy"></a>
+        <a href="#terms" class="px-2 py-1 rounded hover:bg-indigo-50 dark:hover:bg-indigo-900" data-i18n="footer.terms"></a>
+        <a href="#disclaimer" class="px-2 py-1 rounded hover:bg-indigo-50 dark:hover:bg-indigo-900" data-i18n="footer.disclaimer"></a>
+        <a href="#about" class="px-2 py-1 rounded hover:bg-indigo-50 dark:hover:bg-indigo-900" data-i18n="footer.about"></a>
+        <a href="#contact" class="px-2 py-1 rounded hover:bg-indigo-50 dark:hover:bg-indigo-900" data-i18n="footer.contact"></a>
+      </div>
+      <div class="text-center text-xs text-slate-500 dark:text-slate-400 mt-2" data-i18n="footer.copyright"></div>
+    </div>
+  </footer>
+
+  <!-- Compliance Sections -->
+  <section id="privacy" class="max-w-3xl mx-auto px-4 py-12">
+    <h2 class="text-xl font-bold mb-2 text-indigo-700 dark:text-indigo-200" data-i18n="policy.privacy.title"></h2>
+    <p class="mb-3" data-i18n="policy.privacy.desc"></p>
+  </section>
+  <section id="terms" class="max-w-3xl mx-auto px-4 py-12">
+    <h2 class="text-xl font-bold mb-2 text-indigo-700 dark:text-indigo-200" data-i18n="policy.terms.title"></h2>
+    <p class="mb-3" data-i18n="policy.terms.desc"></p>
+  </section>
+  <section id="disclaimer" class="max-w-3xl mx-auto px-4 py-12">
+    <h2 class="text-xl font-bold mb-2 text-indigo-700 dark:text-indigo-200" data-i18n="policy.disclaimer.title"></h2>
+    <p class="mb-3" data-i18n="policy.disclaimer.desc"></p>
+  </section>
+  <section id="about" class="max-w-3xl mx-auto px-4 py-12">
+    <h2 class="text-xl font-bold mb-2 text-indigo-700 dark:text-indigo-200" data-i18n="policy.about.title"></h2>
+    <p class="mb-3" data-i18n="policy.about.desc"></p>
+  </section>
+  <section id="contact" class="max-w-3xl mx-auto px-4 py-12">
+    <h2 class="text-xl font-bold mb-2 text-indigo-700 dark:text-indigo-200" data-i18n="policy.contact.title"></h2>
+    <p class="mb-3" data-i18n="policy.contact.desc"></p>
+    <ul class="ml-6 list-disc">
+      <li><span data-i18n="policy.contact.email_label"></span>: <a href="mailto:goliath-contact@protonmail.com" class="text-indigo-600 hover:underline">goliath-contact@protonmail.com</a></li>
+      <li><span data-i18n="policy.contact.github"></span>: <a href="https://github.com/mikann20041029/goliath-auto-tool" class="text-indigo-600 hover:underline" target="_blank" rel="noopener">GitHub</a></li>
+    </ul>
+  </section>
+
+  <script>
+  // SEO reference list for all languages (for easier i18n; refs are similar for EN and JA)
+  var refLinks = [
+    { 
+      url: 'https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator', 
+      t: {
+        en: 'U.S. Securities and Exchange Commission - Compound Interest Calculator',
+        ja: '米国証券取引委員会：複利計算機',
+        fr: "Commission des valeurs mobilières des États-Unis - Calculateur d'intérêt composé",
+        de: "US Börsenaufsicht (SEC) - Zinseszinsrechner"
+      }
+    },
+    {
+      url: 'https://en.wikipedia.org/wiki/Compound_interest',
+      t: {en:'Wikipedia: Compound Interest', ja:'ウィキペディア：複利', fr:"Wikipédia : Intérêts composés", de:"Wikipedia: Zinseszins"}
+    },
+    {
+      url: 'https://www.investopedia.com/terms/c/compoundinterest.asp',
+      t: {en:'Investopedia: Compound Interest', ja:'インベストペディア：複利', fr:"Investopedia : Intérêts composés", de:"Investopedia: Zinseszins"}
+    },
+    {
+      url: 'https://www.mathsisfun.com/money/compound-interest.html',
+      t: {en:'MathIsFun: Compound Interest', ja:'MathIsFun：複利', fr:"MathIsFun : Intérêts composés", de:"MathIsFun: Zinseszins"}
+    },
+    {
+      url: 'https://www.bankrate.com/banking/savings/compound-interest-calculator/',
+      t: {en:'Bankrate: Compound Interest Calculator', ja:'バンクレート：複利計算機', fr:"Bankrate : Calculateur d'intérêts composés", de:"Bankrate: Zinseszinsrechner"}
+    },
+    {
+      url: 'https://www.khanacademy.org/economics-finance-domain/core-finance/interestrates-tutorial/compound-interest-tutorial/a/compound-interest-intro',
+      t: {en:'Khan Academy: Compound Interest Intro', ja:'カーンアカデミー：複利入門', fr:"Khan Academy : Introduction aux intérêts composés", de:"Khan Academy: Zinseszins Einführung"}
+    },
+    {
+      url: 'https://www.rbcroyalbank.com/investing/investment-calculator.html',
+      t: {en:'RBC Royal Bank: Investment Calculator', ja:'RBCロイヤルバンク：投資計算機', fr:"RBC Banque Royale : Calculateur d'investissement", de:"RBC Royal Bank: Investment Rechner"}
+    },
+    {
+      url: 'https://www.calculatorsoup.com/calculators/financial/compound-interest-calculator.php',
+      t: {en:'CalculatorSoup: Compound Interest Calculator', ja:'CalculatorSoup：複利計算機', fr:"CalculatorSoup : Calculateur d'intérêts composés", de:"CalculatorSoup: Zinseszinsrechner"}
+    },
+    {
+      url: 'https://www.britannica.com/money/topic/compound-interest',
+      t: {en:'Britannica: Compound Interest', ja:'ブリタニカ：複利', fr:"Britannica : Intérêts composés", de:"Britannica: Zinseszins"}
+    },
+    {
+      url: 'https://www.thebalance.com/compound-interest-formula-4178235',
+      t: {en:'The Balance: Compound Interest Formula', ja:'ザ・バランス：複利の計算式', fr:"The Balance : Formule d'intérêt composé", de:"The Balance: Zinseszins Formel"}
+    }
+  ];
+
+  // Related Sites sample: MODIFY window.__RELATED__ below to see demo
+  window.__RELATED__ = [{"title": "Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769195313-tax-calculator-3/"}, {"title": "Show HN: I built a MACRS calculator because TurboTax was overkill", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769189699-tax-calculator-2/"}, {"title": "Show HN: I built a MACRS calculator because TurboTax was overkill", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769158606-tax-calculator/"}, {"title": "Show HN: I built a MACRS calculator because TurboTax was overkill", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769155768-tax-calculator/"}, {"title": "Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769115945-show-hn-pta-tax-calculator-calculate-pakistan-mobile-import-/"}, {"title": "TerabyteDeals – Compare storage prices by $/TB", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769218389-terabytedeals-compare-storage-prices-by-tb-tool/"}, {"title": "Show HN: GoGen – A simple template-based file generator written in Go", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769181471-template-template-tool/"}, {"title": "Show HN: GoGen – A simple template-based file generator written in Go", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769141611-template-template-tool/"}];
+
+  // I18N DEFINITION
+  window.__I18N__ = {
+    en: {
+      'seo.title': 'Compound Interest Calculator - Free Online Tool for Compound Interest Calculation',
+      'seo.desc': 'Calculate compound interest with this online calculator. Learn the math and financial concepts behind compound growth with in-depth guides in English, Japanese, French, and German.',
+      'nav.hub': 'Back to Tool Hub',
+      'nav.lang_label': 'Language select',
+      'nav.theme_toggle': 'Toggle dark/light mode',
+      'hero.title': 'Compound Interest Calculator',
+      'hero.desc': 'Quickly calculate the future value of your investment with compound interest. Understand compounding with interactive examples and detailed explanations.',
+      'tool.title': 'Compound Interest Calculator Tool',
+      'tool.form.principal': 'Principal Amount',
+      'tool.form.principal_ph': 'e.g., 1000',
+      'tool.form.rate': 'Annual Interest Rate (%)',
+      'tool.form.rate_ph': 'e.g., 5',
+      'tool.form.years': 'Number of Years',
+      'tool.form.years_ph': 'e.g., 10',
+      'tool.form.freq': 'Compounding Frequency',
+      'tool.form.annually': 'Annually',
+      'tool.form.semiannually': 'Semi-Annually',
+      'tool.form.quarterly': 'Quarterly',
+      'tool.form.monthly': 'Monthly',
+      'tool.form.daily': 'Daily',
+      'tool.form.calculate': 'Calculate',
+      'tool.result.prefix': 'Future Value: ',
+      'tool.result.suffix': '',
+      // ARTICLE - ENGLISH
+      'article.title': 'Understanding Compound Interest: Calculation, Pitfalls, and Practical Use',
+      'article.intro': 'Compound interest is considered the "eighth wonder of the world" for good reason. It allows your savings and investments to grow faster by earning interest not just on your initial principal but also on the accumulated interest. In this article, you’ll learn the theory, formula, tips, and common mistakes about compound interest, ensuring you make more informed financial decisions.',
+      'article.what_is.title': 'What is Compound Interest?',
+      'article.what_is.p1': 'Compound interest means that you earn interest on your original principal, and also on the interest that accumulates over prior periods. In contrast, simple interest pays interest only on the principal.',
+      'article.what_is.bullet1': 'Interest is added to the principal at regular intervals (e.g., monthly, yearly).',
+      'article.what_is.bullet2': 'Future interest is calculated on this increasing total amount.',
+      'article.formula.title': 'How is Compound Interest Calculated?',
+      'article.formula.p1': 'Compound interest is calculated with the following formula:',
+      'article.formula.math': 'FV = P × (1 + r/n)^(n×t)\nWhere:\n FV = future value, P = principal, r = annual interest (as decimal), n = times compounded/year, t = years',
+      'article.formula.p2': 'By plugging your numbers into the formula or using an online calculator (like the tool above), you can easily determine how your investment will grow over time.',
+      'article.why.title': 'Why is Compound Interest Important?',
+      'article.why.p1': 'Compound interest accelerates financial growth. Even small increases in rate, time, or frequency can dramatically boost returns. It is the driving force behind retirement planning, savings accounts, and many other investment strategies.',
+      'article.why.bullet1': 'Allows investments to "snowball" over time.',
+      'article.why.bullet2': 'Encourages long-term saving habits.',
+      'article.why.bullet3': 'Penalizes debtors just as much—for credit cards, compound interest magnifies balances owed.',
+      'article.checklist.title': 'Compound Interest Checklist',
+      'article.checklist.item1': 'Know your interest rate and compounding frequency.',
+      'article.checklist.item2': 'The longer you leave money invested, the more compounding works in your favor.',
+      'article.checklist.item3': 'Beware of fees or taxes that can reduce compounding gains.',
+      'article.checklist.item4': 'For debt, compound interest increases total payable—pay it down early if possible.',
+      'article.checklist.item5': 'Small, regular contributions greatly increase final returns via compounding.',
+      'article.pitfalls.title': 'Common Pitfalls and Misconceptions',
+      'article.pitfalls.p1': 'Misunderstanding how compound interest works can lead to financial losses or missed opportunities. Watch out for these pitfalls:',
+      'article.pitfalls.bullet1': 'Ignoring the impact of fees, inflation, or taxation.',
+      'article.pitfalls.bullet2': 'Assuming all accounts use the same frequency or have no minimums.',
+      'article.pitfalls.bullet3': 'Not appreciating the impact of starting early—even a few years matters a lot.',
+      'article.faq.title': 'Frequently Asked Questions',
+      'article.faq.q1': 'Can compound interest make me rich?',
+      'article.faq.a1': 'Over many years, compound interest can significantly grow your savings or investments, but it depends on the rate, time, and contributions.',
+      'article.faq.q2': 'What is better—higher rate or higher frequency?',
+      'article.faq.a2': 'Both matter, but rate has a larger effect, especially over short periods. At high frequencies, the difference diminishes.',
+      'article.faq.q3': 'Does compound interest apply to debt?',
+      'article.faq.a3': 'Yes—compound interest also applies to loans and credit cards, causing your debt to grow if unpaid.',
+      'article.faq.q4': 'Is compound interest always beneficial?',
+      'article.faq.a4': 'Only when you are earning interest; for credit and loans, compounding works against you.',
+      'article.faq.q5': 'How can I maximize compound interest gains?',
+      'article.faq.a5': 'Save early, contribute often, avoid withdrawals, and choose accounts with higher (but realistic) interest rates.',
+      'article.references.title': 'References and Further Reading',
+      // Footer and Compliance
+      'related.title': 'Related Sites',
+      'footer.hub': 'Back to Tool Hub',
+      'footer.privacy': 'Privacy Policy',
+      'footer.terms': 'Terms of Service',
+      'footer.disclaimer': 'Disclaimer',
+      'footer.about': 'About',
+      'footer.contact': 'Contact',
+      'footer.copyright': '© 2024 Goliath Tool Suite. All rights reserved.',
+      'policy.privacy.title': 'Privacy Policy',
+      'policy.privacy.desc': 'This calculator runs entirely in your browser. No personal information is collected. Some usage data may be collected anonymously for improvement purposes. Cookies may be used to remember your language or theme preferences. This site does not serve ads.',
+      'policy.terms.title': 'Terms of Service',
+      'policy.terms.desc': 'By using this tool, you agree to use it at your own risk. We provide no guarantees regarding accuracy, completeness, or suitability for a specific purpose.',
+      'policy.disclaimer.title': 'Disclaimer',
+      'policy.disclaimer.desc': 'This tool is intended for informational and educational purposes only and does not provide financial, legal, or investment advice.',
+      'policy.about.title': 'About Goliath Tool Suite',
+      'policy.about.desc': 'Goliath is an open-source tool suite built for learning, research, and productivity. For source code and operator info, see our GitHub.',
+      'policy.contact.title': 'Contact Us',
+      'policy.contact.desc': 'For bug reports, improvements, or support, please contact:',
+      'policy.contact.email_label': 'Email',
+      'policy.contact.github': 'Issues & Source',
+      // For Related section fallback message:
+      'related.empty': "No related sites found."
+    },
+    ja: {
+      'seo.title': '複利計算機 - 複利を無料で計算するオンラインツール',
+      'seo.desc': 'このオンライン計算機で複利を簡単計算。英語・日本語・フランス語・ドイツ語対応の詳細な複利ガイドも掲載。',
+      'nav.hub': 'ツール一覧へ戻る',
+      'nav.lang_label': '言語選択',
+      'nav.theme_toggle': 'ダーク/ライトモード切替',
+      'hero.title': '複利計算機',
+      'hero.desc': '投資や貯金がいくらに増えるかを複利計算で即時チェック。実例と詳しい解説で複利の仕組みを理解できます。',
+      'tool.title': '複利計算ツール',
+      'tool.form.principal': '元本',
+      'tool.form.principal_ph': '例：1000',
+      'tool.form.rate': '年利率 (%)',
+      'tool.form.rate_ph': '例：5',
+      'tool.form.years': '運用期間 (年)',
+      'tool.form.years_ph': '例：10',
+      'tool.form.freq': '複利の頻度',
+      'tool.form.annually': '年1回',
+      'tool.form.semiannually': '年2回',
+      'tool.form.quarterly': '四半期ごと',
+      'tool.form.monthly': '毎月',
+      'tool.form.daily': '毎日',
+      'tool.form.calculate': '計算する',
+      'tool.result.prefix': '将来価値：',
+      'tool.result.suffix': ' 円',
+      // ARTICLE - JAPANESE
+      'ja_article.title': '複利の仕組み・計算方法・注意点・実践活用ガイド',
+      'ja_article.intro': '「複利」は「世界の第8の不思議」とも称されるほど、資産形成において重要な概念です。元本だけでなく、その元本に溜まった利息にも利息が付くため、長期間運用するほどお金が雪だるま式に増えます。本記事では、複利の理論や計算式、注意点、FAQなどを日本語で総合解説します。自身の資産形成やローン返済など、複利の力を正しく理解・活用しましょう。',
+      'ja_article.what_is.title': '複利とは？',
+      'ja_article.what_is.p1': '複利とは、「元本＋それまでに付いた利息」すべてに対して利息が計算される仕組みです。一方、単利は常に元本だけに利息を付けます。',
+      'ja_article.what_is.bullet1': '利息が定期的（例：毎年・毎月）に元本へ加算される',
+      'ja_article.what_is.bullet2': '以降の利息計算は増えた合計額に対して行われる',
+      'ja_article.formula.title': '複利計算の数学的な式',
+      'ja_article.formula.p1': '複利の将来価値は次の計算式で求めます：',
+      'ja_article.formula.math': 'FV＝P×(1＋r/n)^(n×t)\nFV：将来価値 ／ P：元本 ／ r：年利率(小数) ／ n：年の複利回数 ／ t：年数',
+      'ja_article.formula.p2': '具体的な金額や年数を代入したり、上記ツールのような複利計算機を使うことで簡単に結果を得られます。',
+      'ja_article.why.title': '複利が重要な理由',
+      'ja_article.why.p1': '複利運用は「お金がお金を生む」力で資産成長を加速させます。年率や運用期間、複利回数がわずかに増減するだけでも最終額は大きく変わります。これは老後資金作りや子どもの教育資金積立、ローン返済計画など、さまざまな場面で不可欠な知識です。',
+      'ja_article.why.bullet1': '長期運用で資産が雪だるま式に増える',
+      'ja_article.why.bullet2': '計画的な積立や早期スタートが重要',
+      'ja_article.why.bullet3': '逆に借金やローンも「複利」の影響で残高が加速度的に膨らむ',
+      'ja_article.checklist.title': '複利計算のチェックリスト',
+      'ja_article.checklist.item1': '金利・複利頻度を必ず確認する',
+      'ja_article.checklist.item2': '運用期間は長いほど有利（早く始める）',
+      'ja_article.checklist.item3': '手数料や税金で複利効果が減らないか留意',
+      'ja_article.checklist.item4': 'ローン返済は利息分の複利も考慮し早めの返済を意識',
+      'ja_article.checklist.item5': '少額でも定期積立で最終リターンを最大化',
+      'ja_article.pitfalls.title': '失敗例・ありがちな誤解',
+      'ja_article.pitfalls.p1': '複利の仕組みを誤解すると、資産形成の機会損失や想定外の借金膨張などリスクが増します。以下に注意しましょう：',
+      'ja_article.pitfalls.bullet1': '手数料・税金・インフレの影響を過小評価',
+      'ja_article.pitfalls.bullet2': '全ての金融商品が同一頻度で複利運用されると誤解',
+      'ja_article.pitfalls.bullet3': '運用開始時期の違いを軽視（数年の差で大きく変わる）',
+      'ja_article.faq.title': 'よくある質問（FAQ）',
+      'ja_article.faq.q1': '複利で誰でも資産を大きく増やせますか？',
+      'ja_article.faq.a1': '複利は長期的に見れば資産を大きく成長させる効果がありますが、金利・期間・積立頻度によって結果は大きく異なります。',
+      'ja_article.faq.q2': '利率と複利頻度、どちらが重要？',
+      'ja_article.faq.a2': '利率のほうが短期的に大きな影響を与えますが、複利頻度も長期になると最終差に影響します。',
+      'ja_article.faq.q3': '借金やローンにも複利は適用されますか？',
+      'ja_article.faq.a3': 'はい。クレジットカードやローンの残高にも複利計算が適用されるため、未返済だと残高がどんどん増えます。',
+      'ja_article.faq.q4': '複利は全ての人に有利ですか？',
+      'ja_article.faq.a4': 'お金を運用（預け入れ/投資）する場合は有利ですが、借りる側（ローン等）では不利に働きます。',
+      'ja_article.faq.q5': '複利効果を最大化する方法は？',
+      'ja_article.faq.a5': 'できるだけ早く始めて定期的に資金追加し、途中引き出しや手数料の少ない高金利商品を選ぶのがポイントです。',
+      'ja_article.references.title': '参考文献・外部リンク',
+      // Footer and compliance
+      'related.title': '関連サイト',
+      'footer.hub': 'ツール一覧へ戻る',
+      'footer.privacy': 'プライバシーポリシー',
+      'footer.terms': '利用規約',
+      'footer.disclaimer': '免責事項',
+      'footer.about': '運営情報',
+      'footer.contact': 'お問い合わせ',
+      'footer.copyright': '© 2024 Goliath Tool Suite. 無断転載・複製禁止。',
+      'policy.privacy.title': 'プライバシーポリシー',
+      'policy.privacy.desc': '本計算ツールはすべてブラウザ内で処理され、個人情報は収集されません。利便性向上のため言語やテーマの設定保存のためにクッキーを利用する場合があります。広告を配信していません。',
+      'policy.terms.title': '利用規約',
+      'policy.terms.desc': '本ツールの利用は自己責任でお願いします。内容の正確性・完全性・特定用途適合性は保証致しません。',
+      'policy.disclaimer.title': '免責事項',
+      'policy.disclaimer.desc': '当サイトのツールや内容は情報提供・学習目的です。金融・法律・投資助言を行うものではありません。',
+      'policy.about.title': 'Goliath - 運営情報',
+      'policy.about.desc': 'Goliathは学習や研究、生産性向上を目的にしたOSSツールスイートです。運営プロファイルやソースコードはGitHubを参照ください。',
+      'policy.contact.title': 'お問い合わせ',
+      'policy.contact.desc': 'バグ報告・改善提案・サポートは下記連絡先よりお願いします。',
+      'policy.contact.email_label': 'メール',
+      'policy.contact.github': 'GitHub',
+      'related.empty': '関連サイトはありません。'
+    },
+    fr: {
+      'seo.title': 'Calculateur d\'intérêt composé - outil gratuit en ligne',
+      'seo.desc': 'Calculez l\'intérêt composé en ligne. Comprendre la croissance composée grâce à des guides approfondis et un calculateur interactif multilingue.',
+      'nav.hub': 'Retour au Hub des outils',
+      'nav.lang_label': 'Choisir la langue',
+      'nav.theme_toggle': 'Basculer le mode sombre/clair',
+      'hero.title': 'Calculateur d\'intérêt composé',
+      'hero.desc': 'Estimez facilement la valeur future de votre investissement avec la puissance des intérêts composés. Explications et exemples interactifs.',
+      'tool.title': 'Outil de calcul d\'intérêt composé',
+      'tool.form.principal': 'Montant initial',
+      'tool.form.principal_ph': 'ex : 1000',
+      'tool.form.rate': 'Taux d\'intérêt annuel (%)',
+      'tool.form.rate_ph': 'ex : 5',
+      'tool.form.years': 'Durée (années)',
+      'tool.form.years_ph': 'ex : 10',
+      'tool.form.freq': 'Fréquence de composition',
+      'tool.form.annually': 'Annuel',
+      'tool.form.semiannually': 'Semi-annuel',
+      'tool.form.quarterly': 'Trimestriel',
+      'tool.form.monthly': 'Mensuel',
+      'tool.form.daily': 'Quotidien',
+      'tool.form.calculate': 'Calculer',
+      'tool.result.prefix': 'Valeur future : ',
+      'tool.result.suffix': '',
+      // Article content in French: Show English (or translate for some headings)
+      'article.title': 'Comprendre l’intérêt composé : calcul, pièges et usage',
+      'article.references.title': 'Références et lectures complémentaires',
+      'related.title': 'Sites liés',
+      'footer.hub': 'Retour au Hub des outils',
+      'footer.privacy': 'Confidentialité',
+      'footer.terms': 'Conditions',
+      'footer.disclaimer': 'Avertissement',
+      'footer.about': 'À propos',
+      'footer.contact': 'Contact',
+      'footer.copyright': '© 2024 Goliath Tool Suite. Tous droits réservés.',
+      'policy.privacy.title': 'Politique de confidentialité',
+      'policy.privacy.desc': 'Ce calculateur fonctionne entièrement dans votre navigateur. Aucune donnée personnelle n’est collectée. Les préférences de langue/thème sont enregistrées en local.',
+      'policy.terms.title': 'Conditions d’utilisation',
+      'policy.terms.desc': 'L’utilisation de cet outil se fait à vos propres risques. Aucune garantie sur les résultats.',
+      'policy.disclaimer.title': 'Avertissement',
+      'policy.disclaimer.desc': 'Outil à but informatif uniquement. Pas de conseil financier.',
+      'policy.about.title': 'À propos de Goliath Tool Suite',
+      'policy.about.desc': 'Goliath est une suite d’outils open-source pour l’apprentissage, la recherche et la productivité.',
+      'policy.contact.title': 'Contactez-nous',
+      'policy.contact.desc': 'Pour signaler un bug ou suggérer une amélioration :',
+      'policy.contact.email_label': 'E-mail',
+      'policy.contact.github': 'GitHub',
+      'related.empty': "Aucun site connexe trouvé."
+    },
+    de: {
+      'seo.title': 'Zinseszinsrechner - Online-Tool für Zinseszins-Berechnung',
+      'seo.desc': 'Berechnen Sie bequem den Zinseszins online. Lernen Sie alles über exponentielles Wachstum und dessen Einfluss auf Ihr Vermögen mit diesem mehrsprachigen Rechner.',
+      'nav.hub': 'Zurück zum Tool-Hub',
+      'nav.lang_label': 'Sprache wählen',
+      'nav.theme_toggle': 'Dunkel/Hell-Umschaltung',
+      'hero.title': 'Zinseszinsrechner',
+      'hero.desc': 'Berechnen Sie bequem den zukünftigen Wert Ihrer Investition mit Zinseszins. Mit Erläuterungen und praxisnahen Beispielen.',
+      'tool.title': 'Zinseszinsrechner',
+      'tool.form.principal': 'Anfangskapital',
+      'tool.form.principal_ph': 'z.B. 1000',
+      'tool.form.rate': 'Jährlicher Zinssatz (%)',
+      'tool.form.rate_ph': 'z.B. 5',
+      'tool.form.years': 'Laufzeit (Jahre)',
+      'tool.form.years_ph': 'z.B. 10',
+      'tool.form.freq': 'Zinseszins-Intervall',
+      'tool.form.annually': 'Jährlich',
+      'tool.form.semiannually': 'Halbjährlich',
+      'tool.form.quarterly': 'Vierteljährlich',
+      'tool.form.monthly': 'Monatlich',
+      'tool.form.daily': 'Täglich',
+      'tool.form.calculate': 'Berechnen',
+      'tool.result.prefix': 'Endwert: ',
+      'tool.result.suffix': '',
+      // Article content in German shows English article
+      'article.title': 'Zinseszins verstehen: Berechnung, Fehler und Anwendung',
+      'article.references.title': 'Quellen & weiterführende Links',
+      'related.title': 'Verwandte Seiten',
+      'footer.hub': 'Zurück zum Tool-Hub',
+      'footer.privacy': 'Datenschutz',
+      'footer.terms': 'Nutzungsbedingungen',
+      'footer.disclaimer': 'Haftungsausschluss',
+      'footer.about': 'Über uns',
+      'footer.contact': 'Kontakt',
+      'footer.copyright': '© 2024 Goliath Tool Suite. Alle Rechte vorbehalten.',
+      'policy.privacy.title': 'Datenschutz',
+      'policy.privacy.desc': 'Dieses Tool arbeitet rein im Browser. Es werden keine personenbezogenen Daten gespeichert. Sprach-/Theme-Präferenzen werden ggf. lokal gespeichert.',
+      'policy.terms.title': 'Nutzungsbedingungen',
+      'policy.terms.desc': 'Benutzen Sie dieses Tool auf eigenes Risiko. Keine Garantie für Richtigkeit.',
+      'policy.disclaimer.title': 'Haftungsausschluss',
+      'policy.disclaimer.desc': 'Diese Seite dient rein informativen Zwecken und stellt keine Finanzberatung dar.',
+      'policy.about.title': 'Über Goliath Tool Suite',
+      'policy.about.desc': 'Goliath ist eine Open-Source-Toolsammlung für Lernen und Produktivität.',
+      'policy.contact.title': 'Kontakt',
+      'policy.contact.desc': 'Bei Fehlern oder Anregungen schreiben Sie uns gern!',
+      'policy.contact.email_label': 'E-Mail',
+      'policy.contact.github': 'GitHub',
+      'related.empty': 'Keine verwandten Seiten gefunden.'
+    }
+  };
+  </script>
+  <script>
+  // I18N LOGIC
+  (function(){
+    var supported = ['en','ja','fr','de'];
+    function getLang() {
+      var l = localStorage.getItem('goliath_lang');
+      if (!l) l = navigator.language ? navigator.language.split('-')[0] : 'en';
+      if (supported.indexOf(l)<0) l = 'en';
+      return l;
+    }
+    function setLang(l) {
+      localStorage.setItem('goliath_lang', l);
+    }
+    function showArticle(lang){
+      // Only EN/JA have full translations; FR/DE show English or heading only
+      let allArticles = document.querySelectorAll(".article-content");
+      allArticles.forEach(a=>a.classList.add("hidden"));
+      if(lang==='ja') document.getElementById('article-ja').classList.remove("hidden");
+      else if(lang==='en') document.getElementById('article-en').classList.remove("hidden");
+      else if(lang==='fr') {
+        document.getElementById('article-fr').classList.remove("hidden");
+        document.getElementById('article-fr').innerHTML = document.getElementById('article-en').innerHTML; // show English
+      }
+      else if(lang==='de') {
+        document.getElementById('article-de').classList.remove("hidden");
+        document.getElementById('article-de').innerHTML = document.getElementById('article-en').innerHTML; // show English
+      }
+    }
+    function updateRefs(lang) {
+      var refList = lang==='ja' ? document.getElementById('refList-ja') : document.getElementById('refList');
+      if(!refList) return;
+      refList.innerHTML = '';
+      for (var i=0; i<refLinks.length; ++i) {
+        var ref = refLinks[i];
+        var li = document.createElement('li');
+        var a = document.createElement('a');
+        a.href = ref.url;
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.className = "text-indigo-600 hover:underline";
+        a.textContent = (ref.t[lang]||ref.t['en']);
+        li.appendChild(a);
+        refList.appendChild(li);
+      }
+    }
+    function updateI18n(lang){
+      // <html lang="">
+      document.documentElement.setAttribute('lang',lang);
+
+      // All [data-i18n]
+      document.querySelectorAll('[data-i18n]').forEach(function(el){
+        var key = el.getAttribute('data-i18n');
+        if(window.__I18N__[lang] && window.__I18N__[lang][key]) el.textContent=window.__I18N__[lang][key];
+        else if(window.__I18N__['en'][key]) el.textContent=window.__I18N__['en'][key];
+      });
+      // All [data-i18n-placeholder]
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){
+        var key = el.getAttribute('data-i18n-placeholder');
+        if(window.__I18N__[lang] && window.__I18N__[lang][key]) el.placeholder=window.__I18N__[lang][key];
+        else if(window.__I18N__['en'][key]) el.placeholder=window.__I18N__['en'][key];
+      });
+      // [data-i18n-title]
+      document.querySelectorAll('[data-i18n-title]').forEach(function(el){
+        var key=el.getAttribute('data-i18n-title');
+        if(window.__I18N__[lang] && window.__I18N__[lang][key]) el.title=window.__I18N__[lang][key];
+        else if(window.__I18N__['en'][key]) el.title=window.__I18N__['en'][key];
+      });
+      // [data-i18n-aria]
+      document.querySelectorAll('[data-i18n-aria]').forEach(function(el){
+        var key=el.getAttribute('data-i18n-aria');
+        if(window.__I18N__[lang][key]) el.setAttribute('aria-label',window.__I18N__[lang][key]);
+        else if(window.__I18N__['en'][key]) el.setAttribute('aria-label',window.__I18N__['en'][key]);
+      });
+      // Adjust select value:
+      var sel = document.getElementById('langSelect');
+      if(sel) sel.value = lang;
+      // Article
+      showArticle(lang);
+      updateRefs(lang);
+      // Refocus to top
+      window.scrollTo(0,0);
+    }
+
+    // Hook language select
+    window.addEventListener('DOMContentLoaded', function(){
+      var lang = getLang();
+      updateI18n(lang);
+      if(document.getElementById('langSelect')) {
+        document.getElementById('langSelect').value = lang;
+        document.getElementById('langSelect').onchange = function(e){
+          var v = this.value;
+          setLang(v);
+          updateI18n(v);
+        };
+      }
+      // For compliance & nav aria
+      document.querySelectorAll('[data-i18n-aria]').forEach(function(el){
+        var key=el.getAttribute('data-i18n-aria');
+        el.setAttribute('aria-label', window.__I18N__[lang][key] || '');
+      });
+
+      // Related sites rendering
+      var relList = document.getElementById("relatedList");
+      var relSection = document.getElementById("relatedSection");
+      if(window.__RELATED__ && Array.isArray(window.__RELATED__) && window.__RELATED__.length){
+        relSection.classList.remove('hidden');
+        relList.innerHTML = '';
+        for(var i=0;i<window.__RELATED__.length;i++){
+          var x = window.__RELATED__[i];
+          var li = document.createElement('li');
+          var a = document.createElement('a');
+          a.href = x.url;
+          a.target = "_blank";
+          a.rel = "noopener";
+          a.className = "text-indigo-600 hover:underline";
+          a.textContent = x.title;
+          li.appendChild(a);
+          relList.appendChild(li);
+        }
+      } else {
+        relSection.classList.add('hidden');
+      }
+    });
+    window.setLang = function(l){
+      setLang(l); updateI18n(l);
+    };
+  })();
+  </script>
+  <script>
+  // Dark/Light theme logic
+  (function(){
+    const themeKey='goliath_theme';
+    function setDark(dark){
+      if(dark){
+        document.documentElement.classList.add('dark');
+        localStorage.setItem(themeKey,'dark');
+      }else{
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem(themeKey,'light');
+      }
+      if(document.getElementById('sunIcon'))document.getElementById('sunIcon').style.display = dark?'none':'block';
+      if(document.getElementById('moonIcon'))document.getElementById('moonIcon').style.display = dark?'block':'none';
+    }
+    function initTheme(){
+      let dark=false;
+      if(localStorage.getItem(themeKey)==='dark')dark=true;
+      else if(localStorage.getItem(themeKey)==='light')dark=false;
+      else dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setDark(dark);
+      var btn=document.getElementById('themeToggle');
+      if(btn){
+        btn.onclick=function(){
+          setDark(!document.documentElement.classList.contains('dark'));
+        };
+      }
+    }
+    window.addEventListener('DOMContentLoaded',initTheme);
+  })();
+  </script>
+  <script>
+  // COMPOUND INTEREST CALCULATOR
+  document.addEventListener('DOMContentLoaded',function(){
+    var form = document.getElementById('ciForm');
+    var resultBox = document.getElementById('resultBox');
+    var resultValue = document.getElementById('resultValue');
+    form.onsubmit=function(e){
+      e.preventDefault();
+      // Get values
+      var principal = parseFloat(form.principal.value.replace(',','.'));
+      var rate = parseFloat(form.rate.value.replace(',','.'));
+      var years = parseInt(form.years.value,10);
+      var freq = parseInt(form.frequency.value,10);
+
+      if(isNaN(principal) || principal<0 || isNaN(rate) || rate<0 || isNaN(years) || years<=0 || isNaN(freq) || freq<=0){
+        // fallback
+        resultValue.textContent='';
+        resultBox.classList.add('hidden');
+        return false;
+      }
+      // P * (1 + r/n)^(n*t)
+      var fv = principal * Math.pow(1 + (rate/100)/freq, freq*years);
+      // Format number
+      var lang = localStorage.getItem('goliath_lang')||'en';
+      var nf = new Intl.NumberFormat(lang, {maximumFractionDigits:2});
+      resultValue.textContent = nf.format(fv);
+      resultBox.classList.remove('hidden');
+      return false;
+    };
+  });
+  </script>
+</body>
+</html>
