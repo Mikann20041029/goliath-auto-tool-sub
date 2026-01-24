@@ -52,7 +52,7 @@ def _load_json(path, default):
      return default
  try:
      with open(path, "r", encoding="utf-8") as f:
- return json.load(f)
+         return json.load(f)
  except Exception:
  return default
 
