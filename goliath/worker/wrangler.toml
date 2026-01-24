@@ -1,0 +1,14 @@
+
+
+name = "goliath-clicklog"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+
+kv_namespaces = [
+  { binding = "CLICKS", id = "YOUR_KV_NAMESPACE_ID" }
+]
+
+[vars]
+# STATS_TOKEN は wrangler secret で入れるの推奨:
+# wrangler secret put STATS_TOKEN
+# ここに書かない
