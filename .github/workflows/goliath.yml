@@ -1,4 +1,4 @@
-name: goliath
+name: Goliath Auto Tool System
 
 on:
   workflow_dispatch:
@@ -9,87 +9,74 @@ permissions:
   contents: write
   issues: write
 
+concurrency:
+  group: goliath-auto
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.10"
 
-      - name: Install deps
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests openai atproto Mastodon.py tweepy praw || true
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      # 1) クリック集計→affiliates.json priority更新（なければスキップ動作）
-      - name: Update affiliate priorities
-        env:
-          CLICK_STATS_ENDPOINT: ${{ secrets.CLICK_STATS_ENDPOINT }}   # 例: https://xxx.workers.dev/stats
-          CLICK_STATS_TOKEN: ${{ secrets.CLICK_STATS_TOKEN }}
-          CLICK_STATS_DAYS: "7"
-        run: |
-          python goliath/scripts/update_affiliate_priorities.py
-
-      # 2) 8時間ごとの新規ページ生成
-      - name: Run generator
+      - name: Run Goliath System (capture exit)
+        id: goliath_run
+        continue-on-error: true
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: "gpt-4o-mini"
-          MAX_OUTPUT_TOKENS_REPLY: "300"
-          MAX_OUTPUT_TOKENS_BUILD: "3000"
-          # Click log endpoint（ページ側が叩く先）
-          CLICK_LOG_ENDPOINT: ${{ secrets.CLICK_LOG_ENDPOINT }}       # 例: https://xxx.workers.dev/log
-          # Unsplash
-          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
-          # SNS系（必要なら）
-          BSKY_HANDLE: ${{ secrets.BSKY_HANDLE }}
-          BSKY_PASSWORD: ${{ secrets.BSKY_PASSWORD }}
-          MASTODON_API_BASE: ${{ secrets.MASTODON_API_BASE }}
-          MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
-          
-          GH_PAT: ${{ secrets.GH_PAT }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_REF_NAME: ${{ github.ref_name }}
-          GH_TOKEN: ${{ github.token }}
-          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
-          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
-          REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
-          REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
-          REDDIT_USER_AGENT: ${{ secrets.REDDIT_USER_AGENT }}
-
-          # 追加で入れてるやつ（使わなくてもOK）
-        
-          X_API_KEY: ${{ secrets.X_API_KEY }}
-          X_API_SECRET: ${{ secrets.X_API_SECRET }}
-          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
-          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
-          LEADS_TOTAL: "40"
-          LEADS_PER_SOURCE: "20"
-          LEADS_DAYS: "730"
-
-          # Xを安全運用（3回/日なら月≈90回）
-          X_MAX_REQUESTS_PER_RUN: "1"
-          X_RESULTS_PER_REQUEST: "10"
-          X_FULL_ARCHIVE: "0"
-          # 投稿はデフォルトOFFのまま
-          ENABLE_AUTO_POST: "0"
         run: |
-          python main.py
+          set +e
+          python main.py 2>&1 | tee run_log.txt
+          code=${PIPESTATUS[0]}
+          echo "exitcode=$code" >> "$GITHUB_OUTPUT"
+          exit 0
 
-      - name: Commit & push if changed
+      - name: Commit and Push Changes (ALL files)
+        if: always()
         run: |
-          git config user.name "goliath-bot"
-          git config user.email "goliath-bot@users.noreply.github.com"
+          set -euo pipefail
+          git config --global user.name "Goliath-Bot"
+          git config --global user.email "bot@mikanntool.com"
           git add -A
           if git diff --cached --quiet; then
-            echo "no changes"
-            exit 0
+            echo "No changes to commit."
+          else
+            git commit -m "Update tool + SEO + replies (auto)"
+            git push
           fi
-          git commit -m "chore: auto update (priorities + new tool)"
-          git push
 
+      - name: Create Issue Report (ALWAYS)
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python tools/report_to_issue.py
+
+      - name: Upload run log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: goliath-run-log
+          path: run_log.txt
+
+      - name: Fail job if Goliath failed
+        if: always()
+        run: |
+          code="${{ steps.goliath_run.outputs.exitcode }}"
+          if [ "$code" != "0" ]; then
+            echo "Goliath failed with exit code $code"
+            exit "$code"
+          fi
