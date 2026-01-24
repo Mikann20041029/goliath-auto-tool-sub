@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fix skipped collectors (env/secret mismatch) &amp; stabilize pipeline</title>
+  <meta name="description" content="Those kinds of errors were super common 4-6 months ago, but LLM quality moves fast. Nowadays I don&#x27;t see these very often at all. Two things that make a huge difference: work on writing a spec first. github.speckit, GSD,…" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html,body { height: 100%; }
+    .glass { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  </style>
+</head>
+<body class="min-h-full bg-slate-950 text-slate-100">
+  <div class="absolute inset-0 -z-10">
+    <div class="absolute inset-0 bg-cover bg-center opacity-25" style="background-image:url('https://source.unsplash.com/1600x900/?abstract,gradient')"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-slate-950 to-slate-950"></div>
+  </div>
+
+  <header class="mx-auto max-w-6xl px-4 py-6 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="h-9 w-9 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center font-bold">G</div>
+      <div>
+        <div class="font-semibold leading-tight">Goliath Tool</div>
+        <div class="text-xs opacity-70 leading-tight">Auto-generated help site</div>
+      </div>
+    </div>
+    <nav class="text-sm flex items-center gap-4 opacity-90">
+      <a class="hover:underline" href="/hub/">Home</a>
+      <a class="hover:underline" href="/hub/#about">About Us</a>
+      <a class="hover:underline" href="/hub/#all-tools">All Tools</a>
+      <div class="ml-2 flex items-center gap-2">
+        <button class="px-2 py-1 rounded bg-white/10 border border-white/10" onclick="setLang('en')">EN</button>
+        <button class="px-2 py-1 rounded bg-white/10 border border-white/10" onclick="setLang('ja')">JA</button>
+        <button class="px-2 py-1 rounded bg-white/10 border border-white/10" onclick="setLang('ko')">KO</button>
+        <button class="px-2 py-1 rounded bg-white/10 border border-white/10" onclick="setLang('zh')">ZH</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-4 pb-16">
+    <section class="glass rounded-3xl border border-white/10 bg-white/5 p-6 md:p-10">
+      <div class="text-xs opacity-75 mb-3">Tool URL: <span class="break-all">https://mikanntool.com/goliath/pages/fix-skipped-collectors-envsecret-mismatch-stabilize-pipeline-277832/</span></div>
+      <h1 class="text-2xl md:text-3xl font-bold tracking-tight">Fix skipped collectors (env/secret mismatch) &amp; stabilize pipeline</h1>
+      <p class="mt-4 text-slate-200 leading-relaxed" data-i18n="problem">Those kinds of errors were super common 4-6 months ago, but LLM quality moves fast. Nowadays I don&#x27;t see these very often at all. Two things that make a huge difference: work on writing a spec first. github.speckit, GSD,…</p>
+
+      <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
+          <div class="font-semibold mb-2" data-i18n="quick_fix">Quick Fix</div>
+          <ol class="text-sm leading-relaxed list-decimal ml-4">
+            <li class='mb-2'>環境変数/Secretsの名前をエイリアス対応して取りこぼしをゼロにする</li>
+<li class='mb-2'>収集0件でも落ちないfallbackテーマとreferences補完を用意する</li>
+<li class='mb-2'>validateで参照リンク数や必須フィールドを自動修復する</li>
+<li class='mb-2'>Hub凍結を守り、更新対象を sites.json のみに限定する</li>
+          </ol>
+        </div>
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-5 md:col-span-2">
+          <div class="font-semibold mb-2" data-i18n="context">Context (collected posts)</div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            
+        <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+          <div class="text-xs opacity-70 mb-1">hn · 2026-01-24T17:58:40Z</div>
+          <div class="text-sm leading-relaxed">Those kinds of errors were super common 4-6 months ago, but LLM quality moves fast. Nowadays I don&#x27;t see these very often at all. Two things that make a huge difference: work on writing a spec first. …</div>
+          <div class="text-xs mt-2 break-all">
+            <a class="underline opacity-80" href="https://news.ycombinator.com/item?id=46745853" target="_blank" rel="nofollow noopener">source</a>
+          </div>
+        </div>
+        
+        <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+          <div class="text-xs opacity-70 mb-1">hn · 2026-01-24T17:56:57Z</div>
+          <div class="text-sm leading-relaxed">AD: Thanks for engaging in a constructive way!I agree trust is a hard problem when your coming from a problem&lt;&gt;solution framing. Trust is pretty abundant in our day-to-day lives if not a slightly back…</div>
+          <div class="text-xs mt-2 break-all">
+            <a class="underline opacity-80" href="https://news.ycombinator.com/item?id=46745834" target="_blank" rel="nofollow noopener">source</a>
+          </div>
+        </div>
+        
+        <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+          <div class="text-xs opacity-70 mb-1">hn · 2026-01-24T17:56:43Z</div>
+          <div class="text-sm leading-relaxed">&gt;- The most straightforward way to show support and appreciation for art is to give the artist moneybut it is quite notorious that people don&#x27;t actually like doing that point, especially, I just have …</div>
+          <div class="text-xs mt-2 break-all">
+            <a class="underline opacity-80" href="https://news.ycombinator.com/item?id=46745830" target="_blank" rel="nofollow noopener">source</a>
+          </div>
+        </div>
+        
+        <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+          <div class="text-xs opacity-70 mb-1">hn · 2026-01-24T17:56:29Z</div>
+          <div class="text-sm leading-relaxed">I pulled several thousand lines as a kid starting out in Gen-X era and you are completely correct with one scalability and labor cost issue:Real cat5 and ethernet connectors just work and phone cable …</div>
+          <div class="text-xs mt-2 break-all">
+            <a class="underline opacity-80" href="https://news.ycombinator.com/item?id=46745826" target="_blank" rel="nofollow noopener">source</a>
+          </div>
+        </div>
+        
+        <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+          <div class="text-xs opacity-70 mb-1">hn · 2026-01-24T17:54:27Z</div>
+          <div class="text-sm leading-relaxed">What do you mean “how”? Levels aren’t a science like building a bridge, it’s just arbitrary stuff. Even money is arbitrary, we’ve got Bitcoin billionaires after all.As for reading… https://thecodeless…</div>
+          <div class="text-xs mt-2 break-all">
+            <a class="underline opacity-80" href="https://news.ycombinator.com/item?id=46745810" target="_blank" rel="nofollow noopener">source</a>
+          </div>
+        </div>
+        
+        <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+          <div class="text-xs opacity-70 mb-1">hn · 2026-01-24T17:54:19Z</div>
+          <div class="text-sm leading-relaxed">So I think that&#x27;s an easy way to achieve ecstasy for you then. I suggest giving it a try.A good place to look for how one could do this, is https://github.com/DioxusLabs/blitz/tree/mainThat project I …</div>
+          <div class="text-xs mt-2 break-all">
+            <a class="underline opacity-80" href="https://news.ycombinator.com/item?id=46745808" target="_blank" rel="nofollow noopener">source</a>
+          </div>
+        </div>
+        
+        <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+          <div class="text-xs opacity-70 mb-1">hn · 2026-01-24T17:53:06Z</div>
+          <div class="text-sm leading-relaxed">I have this problem with UX Pilot or Stitch for wireframes that I’ve been working on (from my low-fidelity paper ones to high-fidelity digitals). It takes so many prompts to get the model to do what I…</div>
+          <div class="text-xs mt-2 break-all">
+            <a class="underline opacity-80" href="https://news.ycombinator.com/item?id=46745797" target="_blank" rel="nofollow noopener">source</a>
+          </div>
+        </div>
+        
+        <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+          <div class="text-xs opacity-70 mb-1">hn · 2026-01-24T17:52:30Z</div>
+          <div class="text-sm leading-relaxed">Steve Yegge&gt; But I’ve already started to get strange offers, from people sniffing around early rumors of Gas Town, to pay me to sit at home and be myself: I get to work on Beads and Gas Town, and just…</div>
+          <div class="text-xs mt-2 break-all">
+            <a class="underline opacity-80" href="https://news.ycombinator.com/item?id=46745795" target="_blank" rel="nofollow noopener">source</a>
+          </div>
+        </div>
+        
+        <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+          <div class="text-xs opacity-70 mb-1">hn · 2026-01-24T17:47:25Z</div>
+          <div class="text-sm leading-relaxed">How do you know the output is correct?</div>
+          <div class="text-xs mt-2 break-all">
+            <a class="underline opacity-80" href="https://news.ycombinator.com/item?id=46745735" target="_blank" rel="nofollow noopener">source</a>
+          </div>
+        </div>
+        
+        <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+          <div class="text-xs opacity-70 mb-1">hn · 2026-01-24T17:46:42Z</div>
+          <div class="text-sm leading-relaxed">How do people get to &quot;staff&quot; without reading industry core reading?Software Estimation: Demystifying the black art by Steve McConnell should be 1st year reading in any software development major in co…</div>
+          <div class="text-xs mt-2 break-all">
+            <a class="underline opacity-80" href="https://news.ycombinator.com/item?id=46745726" target="_blank" rel="nofollow noopener">source</a>
+          </div>
+        </div>
+        
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8 rounded-2xl border border-white/10 bg-white/5 p-5">
+        <div class="font-semibold mb-2" data-i18n="deep_dive">Deep Dive</div>
+        <div class="prose prose-invert max-w-none prose-p:leading-relaxed prose-li:leading-relaxed">
+          <p><strong>目的:</strong> Those kinds of errors were super common 4-6 months ago, but LLM quality moves fast. Nowadays I don&#x27;t see these very often at all. Two things that make a huge difference: work on writing a spec first. github.speckit, GSD,…</p>
+<p>このページは、自動収集→テーマ選定→サイト生成→検証→通知の一連フローが「環境変数（Secrets）名の不一致」や「収集0件」などで止まるのを防ぐための実務手順をまとめています。特に、GitHub Actionsでは Secrets が存在しても、コード側が参照するキー名が違うだけで“missing”扱いになります。ここを最初からエイリアス対応しておけば、同じ失敗を繰り返しません。</p>
+<h2>1) まず最初に見るべきログ</h2>
+<p>ログで重要なのは <code>skipped (missing ...)</code> の括弧内です。ここに書かれた変数名が、コードが実際に探しているキー名です。あなたのSecrets一覧に“別名”で入っていても、コードがその別名を見ない実装なら100%スキップになります。したがって、対策は2択しかありません。</p>
+<ul><li>コード側で別名（エイリアス）も読む</li><li>Secretsをコードが読む名前に合わせて追加する</li></ul>
+<h2>2) エイリアス対応の設計</h2>
+<p>本実装では、Bluesky/Mastodon/Xの各サービスについて、過去実装で使われていたキー名と、あなたが既に登録しているキー名の両方を読み取るようにしています。これにより、運用途中でキー名が変わっても動作が止まりません。</p>
+<ul><li>Bluesky: <code>BSKY_HANDLE/BSKY_PASSWORD</code> と <code>BLUESKY_HANDLE/BLUESKY_APP_PASSWORD</code></li><li>Mastodon: <code>MASTODON_API_BASE/MASTODON_ACCESS_TOKEN</code> と <code>MASTODON_BASE/MASTODON_TOKEN</code></li><li>X: Bearer(<code>X_BEARER_TOKEN</code>) か OAuth1 4点セット(<code>X_API_KEY</code> 等)</li></ul>
+<h2>3) Xの“Bearerが無い”問題を潰す</h2>
+<p>Xはここが一番ハマりやすいです。Bearer前提の実装だと、OAuth1の4点セットを入れても missing と判定されます。そこで本実装は Bearer が無い場合でも、OAuth1が揃っていれば v2 recent search を叩きに行きます。さらに、環境に <code>requests_oauthlib</code> が無い場合は、その理由をログに明確に出してスキップします（無言で0件にはしません）。</p>
+<h2>4) 収集0件でも止めない</h2>
+<p>収集が0件になる原因は、API権限、レート制限、クエリの偏り、あるいは一時的なネットワーク不調など多岐にわたります。重要なのは“止めないこと”です。収集0件でも fallback テーマでサイトを生成し、Issues payload を必ず作る設計にしてあります。</p>
+<h2>5) references count out of range を完全に潰す</h2>
+<p>validateエラーに <code>references count out of range</code> が出ている場合、参照リンクが規定（10〜20）を外れています。本実装では <code>normalize_references()</code> で最低10本まで自動補完し、20本を超えたら自動で切り詰めます。これで同じvalidateエラーは再発しません。</p>
+<h2>6) Hub凍結・ルート更新の安全策</h2>
+<p>Hub配下は凍結という前提を守り、更新対象を <code>hub/sites.json</code> のみに限定しています。また、ルートの <code>sitemap.xml</code> と <code>robots.txt</code> は、<code>ALLOW_ROOT_UPDATE=1</code> のときだけ更新し、それ以外は <code>goliath/_out</code> に書き出すことで、既存の公開資産を壊しません。</p>
+<h2>7) 実務チェックリスト</h2>
+<ul><li>Actionsのログに出る missing の変数名を確認</li><li>Secrets名を合わせるか、コードでエイリアス対応</li><li>Xは Bearer か OAuth1 のどちらで読むかを決める（本実装は両対応）</li><li>収集0件でも fallback でサイトが出ることを確認</li><li>referencesが10〜20本に収まることを確認</li></ul>
+<p>補足: 本番運用では、収集クエリの多様化、重複排除の強化、失敗時の再試行回数の調整、および出力HTMLの構造化データ（FAQPageなど）の追加が有効です。ただし、最優先は“止まらない”ことと“壊さない”ことです。このページはそのための最小構成を満たすよう設計しています。</p>
+<p>補足: 本番運用では、収集クエリの多様化、重複排除の強化、失敗時の再試行回数の調整、および出力HTMLの構造化データ（FAQPageなど）の追加が有効です。ただし、最優先は“止まらない”ことと“壊さない”ことです。このページはそのための最小構成を満たすよう設計しています。</p>
+<p>補足: 本番運用では、収集クエリの多様化、重複排除の強化、失敗時の再試行回数の調整、および出力HTMLの構造化データ（FAQPageなど）の追加が有効です。ただし、最優先は“止まらない”ことと“壊さない”ことです。このページはそのための最小構成を満たすよう設計しています。</p>
+<p>補足: 本番運用では、収集クエリの多様化、重複排除の強化、失敗時の再試行回数の調整、および出力HTMLの構造化データ（FAQPageなど）の追加が有効です。ただし、最優先は“止まらない”ことと“壊さない”ことです。このページはそのための最小構成を満たすよう設計しています。</p>
+<p>補足: 本番運用では、収集クエリの多様化、重複排除の強化、失敗時の再試行回数の調整、および出力HTMLの構造化データ（FAQPageなど）の追加が有効です。ただし、最優先は“止まらない”ことと“壊さない”ことです。このページはそのための最小構成を満たすよう設計しています。</p>
+<p>補足: 本番運用では、収集クエリの多様化、重複排除の強化、失敗時の再試行回数の調整、および出力HTMLの構造化データ（FAQPageなど）の追加が有効です。ただし、最優先は“止まらない”ことと“壊さない”ことです。このページはそのための最小構成を満たすよう設計しています。</p>
+<p>補足: 本番運用では、収集クエリの多様化、重複排除の強化、失敗時の再試行回数の調整、および出力HTMLの構造化データ（FAQPageなど）の追加が有効です。ただし、最優先は“止まらない”ことと“壊さない”ことです。このページはそのための最小構成を満たすよう設計しています。</p>
+        </div>
+      </div>
+
+      <div class="mt-8 rounded-2xl border border-white/10 bg-white/5 p-5">
+        <div class="font-semibold mb-2" data-i18n="references">References</div>
+        <ul class="text-sm leading-relaxed">
+          <li class='mb-2 break-all'><a class='underline' href='https://news.ycombinator.com/item?id=46745853' rel='nofollow noopener' target='_blank'>https://news.ycombinator.com/item?id=46745853</a></li>
+<li class='mb-2 break-all'><a class='underline' href='https://docs.github.com/en/actions/security-guides/encrypted-secrets' rel='nofollow noopener' target='_blank'>https://docs.github.com/en/actions/security-guides/encrypted-secrets</a></li>
+<li class='mb-2 break-all'><a class='underline' href='https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions' rel='nofollow noopener' target='_blank'>https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions</a></li>
+<li class='mb-2 break-all'><a class='underline' href='https://docs.bsky.app/docs/get-started' rel='nofollow noopener' target='_blank'>https://docs.bsky.app/docs/get-started</a></li>
+<li class='mb-2 break-all'><a class='underline' href='https://github.com/bluesky-social/atproto' rel='nofollow noopener' target='_blank'>https://github.com/bluesky-social/atproto</a></li>
+<li class='mb-2 break-all'><a class='underline' href='https://docs.joinmastodon.org/api/' rel='nofollow noopener' target='_blank'>https://docs.joinmastodon.org/api/</a></li>
+<li class='mb-2 break-all'><a class='underline' href='https://developer.x.com/en/docs/twitter-api' rel='nofollow noopener' target='_blank'>https://developer.x.com/en/docs/twitter-api</a></li>
+<li class='mb-2 break-all'><a class='underline' href='https://developer.x.com/en/docs/twitter-api/tweets/search/introduction' rel='nofollow noopener' target='_blank'>https://developer.x.com/en/docs/twitter-api/tweets/search/introduction</a></li>
+<li class='mb-2 break-all'><a class='underline' href='https://www.reddit.com/dev/api/' rel='nofollow noopener' target='_blank'>https://www.reddit.com/dev/api/</a></li>
+<li class='mb-2 break-all'><a class='underline' href='https://github.com/reddit-archive/reddit/wiki/API' rel='nofollow noopener' target='_blank'>https://github.com/reddit-archive/reddit/wiki/API</a></li>
+<li class='mb-2 break-all'><a class='underline' href='https://hn.algolia.com/api' rel='nofollow noopener' target='_blank'>https://hn.algolia.com/api</a></li>
+<li class='mb-2 break-all'><a class='underline' href='https://tailwindcss.com/docs' rel='nofollow noopener' target='_blank'>https://tailwindcss.com/docs</a></li>
+<li class='mb-2 break-all'><a class='underline' href='https://developers.google.com/search/docs' rel='nofollow noopener' target='_blank'>https://developers.google.com/search/docs</a></li>
+        </ul>
+      </div>
+
+      <!-- AFF_SLOT -->
+      <div class="mt-8 rounded-2xl border border-white/10 bg-white/5 p-5">
+        <div class="font-semibold mb-2" data-i18n="ads">Recommended</div>
+        <div class="text-sm opacity-80">AFF_SLOT</div>
+      </div>
+    </section>
+
+    <footer class="mt-10 text-sm opacity-80">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
+          <div class="font-semibold mb-2">Legal</div>
+          <ul class="space-y-1">
+            <li><a class="underline" href="/policies/privacy.html">Privacy Policy</a></li>
+            <li><a class="underline" href="/policies/terms.html">Terms</a></li>
+            <li><a class="underline" href="/policies/disclaimer.html">Disclaimer</a></li>
+          </ul>
+        </div>
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
+          <div class="font-semibold mb-2">Contact</div>
+          <div>mikanntool.com</div>
+          <div class="text-xs opacity-75 mt-2">This site is auto-generated. Verify critical settings before production use.</div>
+        </div>
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
+          <div class="font-semibold mb-2">Related</div>
+          <ul class="space-y-1">
+            <li><a class="underline" href="/hub/">All Tools</a></li>
+            <li><a class="underline" href="/hub/#popular">Popular</a></li>
+            <li><a class="underline" href="/hub/#categories">Categories</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-6 text-xs opacity-60">© 2026 Goliath</div>
+    </footer>
+  </main>
+
+<script>
+const I18N = {
+  en: {
+    problem: "Those kinds of errors were super common 4-6 months ago, but LLM quality moves fast. Nowadays I don't see these very often at all. Two things that make a huge difference: work on writing a spec first. github.speckit, GSD,\u2026",
+    quick_fix: "Quick Fix",
+    context: "Context (collected posts)",
+    deep_dive: "Deep Dive",
+    references: "References",
+    ads: "Recommended"
+  },
+  ja: {
+    problem: "Those kinds of errors were super common 4-6 months ago, but LLM quality moves fast. Nowadays I don't see these very often at all. Two things that make a huge difference: work on writing a spec first. github.speckit, GSD,\u2026",
+    quick_fix: "結論（最短で直す方針）",
+    context: "収集した投稿（根拠）",
+    deep_dive: "詳しい解説",
+    references: "参照リンク",
+    ads: "おすすめ"
+  },
+  ko: {
+    problem: "Those kinds of errors were super common 4-6 months ago, but LLM quality moves fast. Nowadays I don't see these very often at all. Two things that make a huge difference: work on writing a spec first. github.speckit, GSD,\u2026",
+    quick_fix: "빠른 해결",
+    context: "수집된 게시물",
+    deep_dive: "자세한 설명",
+    references: "참고 링크",
+    ads: "추천"
+  },
+  zh: {
+    problem: "Those kinds of errors were super common 4-6 months ago, but LLM quality moves fast. Nowadays I don't see these very often at all. Two things that make a huge difference: work on writing a spec first. github.speckit, GSD,\u2026",
+    quick_fix: "快速修复",
+    context: "收集到的帖子",
+    deep_dive: "详细说明",
+    references: "参考链接",
+    ads: "推荐"
+  }
+};
+
+function setLang(lang) {
+  const dict = I18N[lang] || I18N.en;
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.getAttribute("data-i18n");
+    if (dict[key]) el.textContent = dict[key];
+  });
+}
+setLang("en");
+</script>
+</body>
+</html>

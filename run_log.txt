@@ -1,20 +1,14 @@
-2026-01-24 17:54:19,124 | INFO | RUN_ID=1769277259
-2026-01-24 17:54:19,124 | INFO | REPO_ROOT=/home/runner/work/goliath-auto-tool/goliath-auto-tool
-2026-01-24 17:54:19,125 | INFO | Bluesky: skipped (missing BLUESKY_HANDLE/BLUESKY_APP_PASSWORD)
-2026-01-24 17:54:19,125 | INFO | X: skipped (missing X_BEARER_TOKEN/X_USER_ID)
-2026-01-24 17:54:19,125 | INFO | Reddit: public mode collecting up to 60
-2026-01-24 17:54:19,900 | INFO | Reddit: collected 0
-2026-01-24 17:54:20,367 | INFO | HN: collected 0
-2026-01-24 17:54:20,367 | INFO | Mastodon: skipped (missing MASTODON_BASE/MASTODON_TOKEN)
-2026-01-24 17:54:20,368 | INFO | Total collected posts (deduped): 0
-2026-01-24 17:54:20,368 | WARNING | Too few posts collected (0). Generating fallback theme.
-2026-01-24 17:54:20,373 | WARNING | Validate issues (attempt 1): ['references count out of range: 6']
-2026-01-24 17:54:20,373 | WARNING | Validate issues (attempt 2): ['references count out of range: 6']
-2026-01-24 17:54:20,373 | WARNING | Validate issues (attempt 3): ['references count out of range: 6']
-2026-01-24 17:54:20,374 | WARNING | Validate issues (attempt 4): ['references count out of range: 6']
-2026-01-24 17:54:20,374 | WARNING | Validate issues (attempt 5): ['references count out of range: 6']
-2026-01-24 17:54:20,375 | INFO | Updated hub/sites.json (hub frozen respected)
-2026-01-24 17:54:20,376 | INFO | Root sitemap/robots not updated (ALLOW_ROOT_UPDATE!=1). Written to goliath/_out instead.
-2026-01-24 17:54:20,376 | INFO | Wrote Issues payload: /home/runner/work/goliath-auto-tool/goliath-auto-tool/goliath/_out/issues_payload_1769277259.md
-2026-01-24 17:54:20,376 | INFO | DONE
+2026-01-24 18:03:52,525 | INFO | RUN_ID=1769277832
+2026-01-24 18:03:52,525 | INFO | REPO_ROOT=/home/runner/work/goliath-auto-tool/goliath-auto-tool/goliath
+2026-01-24 18:03:52,525 | INFO | Bluesky: skipped (missing BLUESKY/BSKY handle+password)
+2026-01-24 18:03:52,525 | INFO | X: skipped (missing X_BEARER_TOKEN or oauth1 secrets)
+2026-01-24 18:03:52,597 | WARNING | Reddit: failed (403)
+2026-01-24 18:03:52,597 | INFO | Reddit: collected 0
+2026-01-24 18:03:52,598 | INFO | Mastodon: skipped (missing MASTODON base+token)
+2026-01-24 18:03:52,934 | INFO | HN: collected 20
+2026-01-24 18:03:52,936 | INFO | Total collected posts (deduped): 20
+2026-01-24 18:03:52,938 | INFO | Updated hub/sites.json (hub frozen respected)
+2026-01-24 18:03:52,938 | INFO | Root sitemap/robots not updated (ALLOW_ROOT_UPDATE!=1). Written to goliath/_out instead.
+2026-01-24 18:03:52,939 | INFO | Wrote Issues payload: /home/runner/work/goliath-auto-tool/goliath-auto-tool/goliath/goliath/_out/issues_payload_1769277832.md
+2026-01-24 18:03:52,939 | INFO | DONE
 REAL_EXITCODE=0
