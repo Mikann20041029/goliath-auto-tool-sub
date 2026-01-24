@@ -483,6 +483,9 @@ def collect_bluesky(limit: int) -> List[Dict[str, Any]]:
     if BskyClient is None:
         print("[bluesky] skip: BskyClient is None (atproto not installed/import failed)")
         return []
+        print("[bsky] start collect_bluesky")
+        print(f"[bsky] handle_set={bool(h)} password_set={bool(p)}")
+
 
 
     queries = [
@@ -499,6 +502,8 @@ def collect_bluesky(limit: int) -> List[Dict[str, Any]]:
         "issue",
         "failed",
     ]
+    print(f"[bsky] queries={len(queries)}")
+
 
     keywords = KEYWORDS[:]  # reuse
 
