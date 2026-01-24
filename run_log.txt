@@ -1,14 +1,18 @@
-[WRAPPER] Unhandled exception inside goliath/main.py (workflow will stay green):
-Traceback (most recent call last):
-  File "/home/runner/work/goliath-auto-tool/goliath-auto-tool/main.py", line 17, in _run_goliath_main
-    runpy.run_path(target, run_name="__main__")
-  File "/opt/hostedtoolcache/Python/3.10.19/x64/lib/python3.10/runpy.py", line 289, in run_path
-    return _run_module_code(code, init_globals, run_name,
-  File "/opt/hostedtoolcache/Python/3.10.19/x64/lib/python3.10/runpy.py", line 96, in _run_module_code
-    _run_code(code, mod_globals, init_globals,
-  File "/opt/hostedtoolcache/Python/3.10.19/x64/lib/python3.10/runpy.py", line 86, in _run_code
-    exec(code, run_globals)
-  File "goliath/main.py", line 82, in <module>
-    LEADS_TOTAL = int(os.getenv("LEADS_TOTAL", str(sum(LEADS_TARGETS.values()))))  # default 173
-ValueError: invalid literal for int() with base 10: ''
+[bsky] preflight {"has_handle": false, "has_password": false, "has_atproto": true, "has_ext_collector": true, "limit": 220, "BSKY_MAX_PAGES": 16, "BSKY_LIMIT_PER_CALL": 50, "query_pool": 1190}
+[bsky] ext_collector ok {'count': 0}
+[mastodon] preflight {'has_base': False, 'has_token': False, 'has_lib': True, 'limit': 360, 'query_pool': 1190}
+[issue] skip: missing token or repo {'has_token': False, 'repo': 'Mikann20041029/goliath-auto-tool'}
+[unsplash] fallback via source {'q': 'soft colors'}
+[bsky] preflight {"has_handle": false, "has_password": false, "has_atproto": true, "has_ext_collector": true, "limit": 180, "BSKY_MAX_PAGES": 16, "BSKY_LIMIT_PER_CALL": 50, "query_pool": 1190}
+[bsky] ext_collector ok {'count': 0}
+[counts] bluesky=0 (want~180)
+[mastodon] preflight {'has_base': False, 'has_token': False, 'has_lib': True, 'limit': 300, 'query_pool': 1190}
+[counts] mastodon=0 (want~300)
+[reddit] skip: missing secrets
+[counts] reddit=0 (want~90)
+[x] skip: missing secrets
+[counts] x=0 (want~3)
+[issue] skip: missing token or repo {'has_token': False, 'repo': 'Mikann20041029/goliath-auto-tool'}
+[issue] skip: missing token or repo {'has_token': False, 'repo': 'Mikann20041029/goliath-auto-tool'}
+[done] created: https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769269272-calculator-calculator-3/
 REAL_EXITCODE=0

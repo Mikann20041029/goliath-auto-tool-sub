@@ -1,5 +1,92 @@
 [
   {
+    "id": "9a4cf6897a3f7dac",
+    "title": "Show HN: I built a space travel calculator using Vanilla JavaScript",
+    "search_title": "calculator calculator",
+    "created_at": "2026-01-24T15:41:12Z",
+    "path": "./pages/1769269272-calculator-calculator-3",
+    "public_url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769269272-calculator-calculator-3/",
+    "tags": [
+      "calculator",
+      "travel"
+    ],
+    "genre": "Travel / Planning",
+    "source_urls": [
+      "https://endfielddb.com/",
+      "https://cosmic-odometer.vercel.app/",
+      "https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator",
+      "https://whatsmydepreciation.co/",
+      "https://github.com/vl3c/MatHud",
+      "https://ptataxcalculator.org",
+      "https://agilelie.com/tools/standup-tax",
+      "https://calcu-gator.com/",
+      "https://manishrjain.com/brisk",
+      "https://www.mikeayles.com/#openscad-doom",
+      "https://plugins.jetbrains.com/plugin/29778-imageedit-pro",
+      "https://news.ycombinator.com/item?id=46743794",
+      "https://github.com/scouzi1966/maclocal-api",
+      "https://github.com/neutree-ai/openapi-to-skills",
+      "https://github.com/butttons/dora",
+      "https://news.ycombinator.com/item?id=46742677",
+      "https://news.ycombinator.com/item?id=46742181",
+      "https://news.ycombinator.com/item?id=46742075",
+      "https://apps.apple.com/us/app/dayzen-visual-time-planner/id6754326173",
+      "https://news.ycombinator.com/item?id=46742192"
+    ],
+    "related": [
+      {
+        "title": "Show HN: MatHud – Open-source AI-assisted graphing calculator",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769234968-calculator-calculator-2/"
+      },
+      {
+        "title": "Compound Interest Calculator",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769223724-calculator-calculator/"
+      },
+      {
+        "title": "Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769195313-tax-calculator-3/"
+      },
+      {
+        "title": "Show HN: I built a MACRS calculator because TurboTax was overkill",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769189699-tax-calculator-2/"
+      },
+      {
+        "title": "Show HN: I built a MACRS calculator because TurboTax was overkill",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769158606-tax-calculator/"
+      },
+      {
+        "title": "Show HN: I built a MACRS calculator because TurboTax was overkill",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769155768-tax-calculator/"
+      },
+      {
+        "title": "Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769115945-show-hn-pta-tax-calculator-calculate-pakistan-mobile-import-/"
+      },
+      {
+        "title": "TerabyteDeals – Compare storage prices by $/TB",
+        "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769218389-terabytedeals-compare-storage-prices-by-tb-tool/"
+      }
+    ],
+    "best_source": "HN",
+    "best_url": "https://cosmic-odometer.vercel.app/",
+    "best_score": 8,
+    "best_score_breakdown": {
+      "tool_request": 1,
+      "convert_generator_calc": 7,
+      "structured_output": 0,
+      "specific_inputs": 0,
+      "how_to_code_only": 0,
+      "too_broad": 0,
+      "adult_or_sensitive": 0,
+      "duplicate_penalty": 0
+    },
+    "score_keys": [
+      "calculator"
+    ],
+    "unsplash_bg": "https://source.unsplash.com/featured/1600x900/?soft%20colors",
+    "ads_injected": []
+  },
+  {
     "id": "28c02d06c339f88e",
     "title": "Show HN: MatHud – Open-source AI-assisted graphing calculator",
     "search_title": "calculator calculator",

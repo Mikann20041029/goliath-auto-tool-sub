@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A space travel calculator built with Vanilla JavaScript. Calculate your travel costs and times with ease.">
+    <link rel="canonical" href="https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769269272-calculator-calculator-3">
+    <meta name="goliath-genre" content="Travel / Planning">
+    <link href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Space Travel Calculator</title>
+    <style>
+        body {
+            /* Define base styles for dark and light modes */
+            transition: background-color 0.3s, color 0.3s;
+        }
+    </style>
+    <link rel="stylesheet" href="styles.css">
+<style id="goliath-bg-style">
+  body {
+    background-image: url('https://source.unsplash.com/featured/1600x900/?soft%20colors');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
+  .goliath-bg-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,0.60);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    pointer-events: none;
+    z-index: -1;
+  }
+  .dark .goliath-bg-overlay {
+    background: rgba(2,6,23,0.55);
+  }
+</style>
+</head>
+<body class="text-gray-800 dark:text-gray-200">
+<div class=\"goliath-bg-overlay\"></div>
+    <select id="langSelect" class="hidden">
+        <option value="en">English</option>
+        <option value="ja">日本語</option>
+        <option value="fr">Français</option>
+        <option value="de">Deutsch</option>
+    </select>
+    <nav>
+        <ul class="flex space-x-4">
+            <li><a href="#privacy" data-i18n="footer.privacy">Privacy Policy</a></li>
+            <li><a href="#terms" data-i18n="footer.terms">Terms of Service</a></li>
+            <li><a href="#disclaimer" data-i18n="footer.disclaimer">Disclaimer</a></li>
+            <li><a href="#about" data-i18n="footer.about">About Us</a></li>
+            <li><a href="#contact" data-i18n="footer.contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section id="privacy" class="hidden">
+        <h2>Privacy Policy</h2>
+        <p>Your privacy policy text goes here.</p>
+    </section>
+
+    <section id="terms" class="hidden">
+        <h2>Terms of Service</h2>
+        <p>Your terms of service text goes here.</p>
+    </section>
+
+    <section id="disclaimer" class="hidden">
+        <h2>Disclaimer</h2>
+        <p>Your disclaimer text goes here.</p>
+    </section>
+
+    <section id="about" class="hidden">
+        <h2>About Us</h2>
+        <p>Your about us text goes here.</p>
+        };
+        
+        window.__RELATED__ = [{"title": "Show HN: MatHud – Open-source AI-assisted graphing calculator", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769234968-calculator-calculator-2/"}, {"title": "Compound Interest Calculator", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769223724-calculator-calculator/"}, {"title": "Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769195313-tax-calculator-3/"}, {"title": "Show HN: I built a MACRS calculator because TurboTax was overkill", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769189699-tax-calculator-2/"}, {"title": "Show HN: I built a MACRS calculator because TurboTax was overkill", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769158606-tax-calculator/"}, {"title": "Show HN: I built a MACRS calculator because TurboTax was overkill", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769155768-tax-calculator/"}, {"title": "Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769115945-show-hn-pta-tax-calculator-calculate-pakistan-mobile-import-/"}, {"title": "TerabyteDeals – Compare storage prices by $/TB", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769218389-terabytedeals-compare-storage-prices-by-tb-tool/"}]; // Initialize window.__RELATED__ for related sites
+        
+        const toggleTheme = () => {
+            document.body.classList.toggle('dark');
+            localStorage.setItem('goliath_theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    </section>
+
+    <footer class="bg-white dark:bg-gray-800 p-4">
+        <div class="container mx-auto">
+            <div>
+                <a href="../../index.html" data-i18n="footer.home">Home</a>
+            </div>
+            <div>
+                <a href="#privacy" data-i18n="footer.privacy">Privacy Policy</a>
+                <a href="#terms" data-i18n="footer.terms">Terms of Service</a>
+                <a href="#disclaimer" data-i18n="footer.disclaimer">Disclaimer</a>
+                <a href="#about" data-i18n="footer.about">About Us</a>
+                <a href="#contact" data-i18n="footer.contact">Contact</a>
+            </div>
+        </div>
+            const langSelect = document.getElementById('langSelect');
+            langSelect.addEventListener('change', (e) => {
+                const lang = e.target.value;
+                window.__RELATED__ = [{"title": "Show HN: MatHud – Open-source AI-assisted graphing calculator", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769234968-calculator-calculator-2/"}, {"title": "Compound Interest Calculator", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769223724-calculator-calculator/"}, {"title": "Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769195313-tax-calculator-3/"}, {"title": "Show HN: I built a MACRS calculator because TurboTax was overkill", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769189699-tax-calculator-2/"}, {"title": "Show HN: I built a MACRS calculator because TurboTax was overkill", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769158606-tax-calculator/"}, {"title": "Show HN: I built a MACRS calculator because TurboTax was overkill", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769155768-tax-calculator/"}, {"title": "Show HN: PTA Tax Calculator – Calculate Pakistan mobile import taxes instantly", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769115945-show-hn-pta-tax-calculator-calculate-pakistan-mobile-import-/"}, {"title": "TerabyteDeals – Compare storage prices by $/TB", "url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769218389-terabytedeals-compare-storage-prices-by-tb-tool/"}]; // Populate related sites
+                localStorage.setItem('goliath_lang', lang);
+                loadLanguage(lang);
+            });
+    <header class="py-16 text-center">
+        <h1 class="text-4xl font-bold" data-i18n="hero.title">Calculate Your Space Travel Costs</h1>
+        <p class="mt-4" data-i18n="hero.subtitle">Estimate your space journey expenses effortlessly!</p>
+    </header>
+    <main class="container mx-auto my-8 px-4">
+        <!-- AFF_SLOT -->
+        <div class="card bg-white dark:bg-gray-900 shadow-lg p-6 rounded-lg">
+            <h2 class="text-2xl font-semibold mb-4" data-i18n="tool.title">Space Travel Calculator</h2>
+            <label for="distance" data-i18n="tool.distance.label" class="block">Distance (in kilometers):</label>
+            <input type="number" id="distance" data-i18n-placeholder="tool.distance.placeholder" class="border rounded p-2 w-full" placeholder="Enter distance">
+            
+            <label for="cost-per-km" data-i18n="tool.cost.label" class="block mt-4">Cost per kilometer:</label>
+            <input type="number" id="cost-per-km" data-i18n-placeholder="tool.cost.placeholder" class="border rounded p-2 w-full" placeholder="Enter cost per km">
+            
+            <button id="calculate" class="bg-blue-500 text-white px-4 py-2 rounded mt-4" data-i18n="tool.calculate.button">Calculate</button>
+            <h3 class="text-xl mt-4" data-i18n="tool.result.title">Total Cost:</h3>
+            <p id="result" class="font-bold text-lg" data-i18n="tool.result.text">0</p>
+            <button id="copy" class="bg-green-500 text-white px-4 py-2 rounded mt-2" data-i18n="tool.copy.button">Copy Result</button>
+        </div>
+        <section class="mt-8">
+            <h2 class="text-2xl font-semibold mb-4" data-i18n="article.title">Understanding Space Travel Costs</h2>
+            <p data-i18n="article.paragraph1">Space travel is becoming increasingly popular, and with it comes the necessity to understand the financial implications. This article discusses the factors affecting the cost of space travel, including fuel, vehicle maintenance, and more. By calculating the total cost of a journey, travelers can better plan their finances.</p>
+            <h3 class="text-xl mt-4" data-i18n="article.factors.title">Factors Affecting Costs</h3>
+            <ul class="list-disc ml-8" data-i18n="article.factors.list">
+                <li>Distance to destination</li>
+                <li>Type of spacecraft</li>
+                <li>Duration of travel</li>
+                <li>Fuel efficiency</li>
+                <li>Crew expenses</li>
+            </ul>
+            <h3 class="text-xl mt-4" data-i18n="article.pitfalls.title">Common Pitfalls</h3>
+            <p data-i18n="article.pitfalls.explanation">Many travelers underestimate costs. Always consider potential delays and additional expenses.</p>
+            <h3 class="text-xl mt-4" data-i18n="faq.title">FAQ</h3>
+            <ul class="list-decimal ml-8" data-i18n="faq.list">
+                <li data-i18n="faq.question1">What is the average cost for a space trip?</li>
+                <li data-i18n="faq.question2">How can I reduce travel costs?</li>
+                <li data-i18n="faq.question3">Are there financing options for space travel?</li>
+                <li data-i18n="faq.question4">What safety measures are in place?</li>
+                <li data-i18n="faq.question5">Is space travel accessible to everyone?</li>
+            </ul>
+        </section>
+
+    <script>
+        window.__I18N__ = {
+        // Omitted for brevity
+        };
+
+</html>
+                <li><a href="https://blueorigin.com" target="_blank">Blue Origin</a></li>
+                <li><a href="https://virgingalactic.com" target="_blank">Virgin Galactic</a></li>
+                <li><a href="https://esa.int" target="_blank">European Space Agency</a></li>
+                <li><a href="https://space.com" target="_blank">Space.com</a></li>
+                <li><a href="https://skyscout.com" target="_blank">Sky Scout</a></li>
+            </ul>
+        </section>
+        <section class="mt-8">
+            <h2 class="text-2xl font-semibold mb-4" data-i18n="related.title">Related Sites</h2>
+            <ul id="related-list" class="list-disc ml-8"></ul>
+        </section>
+    </main>
+    <footer class="bg-white dark:bg-gray-800 p-4">
+        <div class="container mx-auto">
+            <a href="../../index.html" data-i18n="footer.home">Home</a>
+        </div>
+    </footer>
+    <script>
+        window.__I18N__ = {
+            en: {
+                "nav.home": "Home",
+                "hero.title": "Calculate Your Space Travel Costs",
+                "hero.subtitle": "Estimate your space journey expenses effortlessly!",
+                "tool.title": "Space Travel Calculator",
+                "tool.distance.label": "Distance (in kilometers):",
+                "tool.distance.placeholder": "Enter distance",
+                "tool.cost.label": "Cost per kilometer:",
+                "tool.cost.placeholder": "Enter cost per km",
+                "tool.calculate.button": "Calculate",
+                "tool.result.title": "Total Cost:",
+                "tool.result.text": "0",
+                "tool.copy.button": "Copy Result",
+                "article.title": "Understanding Space Travel Costs",
+                "article.paragraph1": "Space travel is becoming increasingly popular, and with it comes the necessity to understand the financial implications...",
+                "article.factors.title": "Factors Affecting Costs",
+                "article.factors.list": "Factors affecting costs can vary greatly based on different parameters...",
+                "article.pitfalls.title": "Common Pitfalls",
+                "article.pitfalls.explanation": "Many travelers underestimate costs. Always consider potential delays...",
+                "faq.title": "FAQ",
+                "faq.list": "Frequently asked questions regarding space travel...",
+                "references.title": "References",
+                "related.title": "Related Sites",
+                "footer.home": "Home"
+            },
+            ja: {
+                "nav.home": "ホーム",
+                "hero.title": "宇宙旅行コストを計算する",
+                "hero.subtitle": "宇宙の旅の費用を簡単に見積もり！",
+                "tool.title": "宇宙旅行計算機",
+                "tool.distance.label": "距離（キロメートル）：",
+                "tool.distance.placeholder": "距離を入力",
+                "tool.cost.label": "キロメートルあたりの費用：",
+                "tool.cost.placeholder": "km当たりの費用を入力",
+                "tool.calculate.button": "計算する",
+                "tool.result.title": "合計費用：",
+                "tool.result.text": "0",
+                "tool.copy.button": "結果をコピー",
+                "article.title": "宇宙旅行コストの理解",
+                "article.paragraph1": "宇宙旅行はますます人気が高まっています。そのため、財政的な影響を理解する必要があります...",
+                "article.factors.title": "コストに影響を与える要因",
+                "article.factors.list": "コストに影響を与える要因は、さまざまなパラメーターに基づいて大きく異なる可能性があります...",
+                "article.pitfalls.title": "一般的な落とし穴",
+                "article.pitfalls.explanation": "多くの旅行者はコストを過小評価しています。常に潜在的な遅延を考慮してください...",
+                "faq.title": "よくある質問",
+                "faq.list": "宇宙旅行に関するよくある質問...",
+                "references.title": "参考文献",
+                "related.title": "関連サイト",
+                "footer.home": "ホーム"
+            },
+            fr: { /* Add translations */ },
+            de: { /* Add translations */ }
+        };
+
+        const toggleTheme = () => {
+            document.body.classList.toggle('dark');
+            localStorage.setItem('goliath_theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('goliath_theme');
+            if (savedTheme) {
+                document.body.classList.toggle('dark', savedTheme === 'dark');
+            }
+
+            const langSelect = document.getElementById('langSelect');
+            langSelect.addEventListener('change', (e) => {
+                const lang = e.target.value;
+                localStorage.setItem('goliath_lang', lang);
+                loadLanguage(lang);
+            });
+
+            function loadLanguage(lang) {
+                const translations =

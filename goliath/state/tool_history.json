@@ -50,5 +50,16 @@
     ],
     "fp": "396eaa56b054d2defeeb937bd7a755474d8916eb",
     "public_url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769234968-calculator-calculator-2/"
+  },
+  {
+    "created_at": "2026-01-24T15:41:12Z",
+    "tool_slug": "calculator-calculator-3",
+    "theme": "Show HN: I built a space travel calculator using Vanilla JavaScript",
+    "tags": [
+      "calculator",
+      "travel"
+    ],
+    "fp": "a22684b9cfcb8974b1c2208ede41d010edfffba9",
+    "public_url": "https://mikann20041029.github.io/goliath-auto-tool/goliath/pages/1769269272-calculator-calculator-3/"
   }
 ]
