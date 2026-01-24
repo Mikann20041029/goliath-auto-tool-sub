@@ -12,6 +12,7 @@ from typing import Any, Dict, List, Tuple, Optional
 
 import requests
 from openai import OpenAI
+from collectors import collect_bluesky as collect_bluesky_ext
 
 # Optional SNS libs (missing secretsなら黙ってスキップ)
 try:
