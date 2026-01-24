@@ -1,0 +1,18 @@
+{
+  "Web/Hosting": [
+    { "id": "cf_dns_01", "title": "Cloudflare", "html": "<a href=\"https://example.com\"><img src=\"https://example.com/banner.jpg\" alt=\"Cloudflare\"></a>", "priority": 50, "tags": ["dns","cdn"] }
+  ],
+  "Marketing/Social": [
+    { "id": "taobao_global", "title": "Taobao-Global", "html": "<a href=\"https://click.linksynergy.com/...\">Taobao-Global<img src=\"https://ad.linksynergy.com/...\" alt=\"Taobao\"></a>", "priority": 50 }
+  ],
+  "Dev/Tools": [],
+  "AI/Automation": [],
+  "Security/Privacy": [],
+  "Media: Video/Audio": [],
+  "PDF/Docs": [],
+  "Images/Design": [],
+  "Data/Spreadsheets": [],
+  "Business/Accounting/Tax": [],
+  "Productivity": [],
+  "Education/Language": []
+}
