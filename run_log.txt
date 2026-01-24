@@ -1,5 +1,4 @@
-=== SELF CHECK ===
-Counts: {"reddit": 302, "hn": 68, "bluesky": 0, "mastodon": 0, "x_mentions": 0, "dedup_after_filter": 302, "leads": 100}
-Leads >= 100: True
-Affiliates keys ok: True
-==================
+  File "/home/runner/work/goliath-auto-tool/goliath-auto-tool/main.py", line 52
+    return default
+    ^
+IndentationError: expected an indented block after 'if' statement on line 51
