@@ -1344,7 +1344,7 @@ block = f"""
 """.strip()
 
 
-    out = html
+out = html
 
     # Placeholder marker preferred
     if "AFF_SLOT" in out:
