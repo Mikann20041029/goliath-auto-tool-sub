@@ -35,6 +35,22 @@ from typing import Any, Dict, List, Optional, Tuple, Iterable
 from urllib.parse import urlencode, quote, urlparse
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
+import os
+
+def getenv_any(*keys: str, default: str | None = None) -> str | None:
+    for k in keys:
+        v = os.getenv(k)
+        if v is not None and str(v).strip() != "":
+            return v
+    return default
+
+# Bluesky (どっちの命名でも拾う)
+BLUESKY_HANDLE = getenv_any("BLUESKY_HANDLE", "BSKY_HANDLE")
+BLUESKY_APP_PASSWORD = getenv_any("BLUESKY_APP_PASSWORD", "BSKY_PASSWORD")
+
+# Mastodon (どっちの命名でも拾う)
+MASTODON_BASE = getenv_any("MASTODON_BASE", "MASTODON_API_BASE")
+MASTODON_TOKEN = getenv_any("MASTODON_TOKEN", "MASTODON_ACCESS_TOKEN")
 
 
 # =========================
