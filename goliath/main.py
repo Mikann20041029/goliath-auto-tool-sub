@@ -762,7 +762,7 @@ def report_source_counts(counts: Dict[str, int], notes: str = "") -> None:
 def collector_real() -> List[Dict[str, Any]]:
     items: List[Dict[str, Any]] = []
 
-    b = collect_bluesky(COLLECT_BSKY)
+    b = collect_bluesky_ext(KEYWORDS, limit_per_query=25)
     m = collect_mastodon(COLLECT_MASTODON)
     h = collect_hn(COLLECT_HN)
 
