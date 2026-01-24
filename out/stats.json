@@ -1,0 +1,20 @@
+{
+  "time": "2026-01-24T11:52:50Z",
+  "counts": {
+    "reddit": 302,
+    "hn": 68,
+    "bluesky": 0,
+    "mastodon": 0,
+    "x_mentions": 0,
+    "dedup_after_filter": 302,
+    "leads": 100
+  },
+  "affiliates_key_check": {
+    "missing_keys": [],
+    "extra_keys": [],
+    "ok": true
+  },
+  "note": {
+    "x_mode": "mentions_only (unless you implement search later)"
+  }
+}
