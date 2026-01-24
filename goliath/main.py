@@ -745,7 +745,9 @@ def collect_x_limited(theme: str) -> List[Dict[str, Any]]:
 
     return out
 
-def collect_bluesky
+def collect_bluesky(limit: int) -> List[Dict[str, Any]]:
+    ...
+
 def report_source_counts(counts: Dict[str, int], notes: str = "") -> None:
     msg = ["Source counts (collector/leads):"]
     for k, v in counts.items():
