@@ -1321,7 +1321,6 @@ def inject_affiliate_slots(html: str, page_id: str, page_url: str, genre: str, a
     for ad in ads:
         aid = ad["id"]
         title = (ad.get("title") or "").strip()
-        # wrap inside container so we can attach dataset
         cards.append(
             f"""
 <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 p-4">
@@ -1334,7 +1333,7 @@ def inject_affiliate_slots(html: str, page_id: str, page_url: str, genre: str, a
         )
 
     cards_html = "\n".join(cards)
-block = f"""
+    block = f"""
 <section id="aff-section" class="mt-6">
   <div class="text-sm font-semibold opacity-80 mb-2" data-i18n="ads.title"></div>
   <div class="grid gap-3">
@@ -1343,21 +1342,17 @@ block = f"""
 </section>
 """.strip()
 
+    out = html
 
-out = html
-
-# Placeholder marker preferred
-if "AFF_SLOT" in out:
-    out = out.replace("<!-- AFF_SLOT -->", block)
-else:
-    # Inject after first <main> or after body start if main missing
-    out2 = re.sub(r"(<main[^>]*>)", r"\1\n" + block, out, flags=re.IGNORECASE)
-    if out2 == out:
-        out2 = re.sub(r"(<body[^>]*>)", r"\1\n" + block, out, flags=re.IGNORECASE)
-    out = out2
-
-
-
+    # Placeholder marker preferred
+    if "AFF_SLOT" in out:
+        out = out.replace("<!-- AFF_SLOT -->", block)
+    else:
+        # Inject after first <main> or after body start if main missing
+        out2 = re.sub(r"(<main[^>]*>)", r"\1\n" + block, out, flags=re.IGNORECASE)
+        if out2 == out:
+            out2 = re.sub(r"(<body[^>]*>)", r"\1\n" + block, out, flags=re.IGNORECASE)
+        out = out2
 
     # Inject click logger script
     js = f"""
@@ -1374,7 +1369,6 @@ else:
     if (!endpoint) return;
     const data = Object.assign({{}}, payloadBase, {{ ad_id: ad_id, ts: new Date().toISOString() }});
     try {{
-      // Prefer sendBeacon when available
       if (navigator.sendBeacon) {{
         const blob = new Blob([JSON.stringify(data)], {{ type: "application/json" }});
         navigator.sendBeacon(endpoint, blob);
@@ -1391,7 +1385,6 @@ else:
     }} catch(e) {{}}
   }}
 
-  // Attach click handler to any link inside .goliath-ad
   document.querySelectorAll(".goliath-ad").forEach(function(box) {{
     const adId = box.getAttribute("data-ad-id") || "";
     if (!adId) return;
@@ -1417,6 +1410,7 @@ else:
     })
 
     return out
+
 
 
 def ensure_i18n_key(html: str, key: str, vals: Dict[str, str]) -> str:
