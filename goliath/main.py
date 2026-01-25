@@ -243,6 +243,9 @@ def setup_logging() -> None:
     logging.info("SITE_DOMAIN=%s", SITE_DOMAIN)
     logging.info("ALLOW_ROOT_UPDATE=%s", ALLOW_ROOT_UPDATE)
     logging.info("LEADS_TOTAL=%s", LEADS_TOTAL)
+    logging.info("HN_QUERY=%s", HN_QUERY)
+    logging.info("HN_MAX=%s", HN_MAX)
+
 
 
 # =============================================================================
