@@ -3623,6 +3623,20 @@ def main() -> int:
     themes = choose_themes(posts, max_themes=MAX_THEMES)
     logging.info("Chosen themes=%d", len(themes))
     default_tool_slug = ""
+        # --- guard: chosen_themes が未定義でも落とさない（フォールバックあり） ---
+    chosen_themes = globals().get("chosen_themes")
+    if not chosen_themes:
+        _fallback = (
+            globals().get("themes")
+            or globals().get("all_themes")
+            or globals().get("candidate_themes")
+            or []
+        )
+        if isinstance(_fallback, list):
+            chosen_themes = _fallback[:MAX_THEMES]
+        else:
+            chosen_themes = []
+
 for _t in (chosen_themes or []):
     if _t and getattr(_t, "slug", ""):
         default_tool_slug = _t.slug
