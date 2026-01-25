@@ -2177,38 +2177,96 @@ copy_text = "TITLE: " + (theme.search_title or theme.title or "Tool") + "\n" \
 copy_text_escaped = html.escape(copy_text)
 
 return f"""
+# --- FIX: raw HTML must be inside a Python string (otherwise SyntaxError) ---
+__safe_title = html.escape(getattr(theme, "search_title", "Tool"), quote=False)
+__short_url = ""
+try:
+    if getattr(theme, "short_code", ""):
+        __short_url = f"{PUBLIC_BASE_URL.rstrip('/')}/goliath/go/{theme.short_code}/"
+except Exception:
+    __short_url = ""
+
+__tool_card_html = f"""
 <div class="rounded-2xl border border-slate-200/70 dark:border-slate-700/70 bg-white/70 dark:bg-slate-900/60 backdrop-blur p-4 shadow-sm">
-  <div class="flex items-start justify-between gap-3">
+  <div class="flex flex-wrap items-center justify-between gap-3">
     <div>
-      <div class="text-xs opacity-70"><span data-i18n="tool">Tool</span></div>
-      <div class="text-lg font-semibold">{page_title}</div>
-      <div class="text-xs opacity-70 mt-1">Category: {cat}</div>
+      <div class="text-sm text-slate-500 dark:text-slate-300" data-i18n="tool">Tool</div>
+      <div class="text-base font-semibold text-slate-900 dark:text-white">{__safe_title}</div>
     </div>
-    <button type="button" class="px-3 py-2 rounded-xl border border-slate-200/70 dark:border-slate-700/70 hover:bg-slate-50 dark:hover:bg-slate-800"
-            onclick="copyToolText()">
-      <span id="copyBtnLabel" data-i18n="copy">Copy</span>
+    <button id="copyShortBtn"
+      class="inline-flex items-center gap-2 rounded-xl border border-slate-200/70 dark:border-slate-700/70 px-3 py-2 text-sm
+             bg-white/60 dark:bg-slate-900/40 hover:bg-white dark:hover:bg-slate-900 transition">
+      <span data-i18n="copy">Copy</span>
     </button>
   </div>
 
-  <div class="mt-4 grid md:grid-cols-2 gap-4">
-    <div class="rounded-xl border border-slate-200/70 dark:border-slate-700/70 p-3">
-      <div class="text-sm font-semibold mb-2" data-i18n="problems">Problems this tool can help with</div>
-      <ul class="list-disc pl-5 text-sm leading-6">
-        {problems_html}
-      </ul>
-    </div>
-    <div class="rounded-xl border border-slate-200/70 dark:border-slate-700/70 p-3">
-      <div class="text-sm font-semibold mb-2" data-i18n="steps">Step-by-step checklist</div>
-      <ol class="list-decimal pl-5 text-sm leading-6">
-        {steps_html}
-      </ol>
+  <div class="mt-3 grid gap-2">
+    <div class="text-xs text-slate-500 dark:text-slate-300">Short URL</div>
+    <input id="shortUrlInput"
+      class="w-full rounded-xl border border-slate-200/70 dark:border-slate-700/70 bg-white/60 dark:bg-slate-900/40 px-3 py-2 text-sm
+             text-slate-900 dark:text-white"
+      value="{html.escape(__short_url or '', quote=True)}"
+      readonly>
+    <div class="text-xs text-slate-500 dark:text-slate-300">
+      <span data-i18n="short_value">Do it in 3 seconds</span> — copy and share
     </div>
   </div>
-
-  <textarea id="toolCopySrc" class="hidden">{copy_text_escaped}</textarea>
 </div>
 
 <script>
+(function(){
+  const btn = document.getElementById("copyShortBtn");
+  const inp = document.getElementById("shortUrlInput");
+  if(!btn || !inp) return;
+
+  function currentLang(){
+    const saved = localStorage.getItem("lang");
+    return saved || document.documentElement.getAttribute("lang") || "en";
+  }
+
+  btn.addEventListener("click", async () => {
+    const lang = currentLang();
+    const labelCopy = (window.I18N && I18N[lang] && I18N[lang].copy) ? I18N[lang].copy : "Copy";
+    const labelCopied = (window.I18N && I18N[lang] && I18N[lang].copied) ? I18N[lang].copied : "Copied";
+
+    const text = (inp.value && inp.value.trim()) ? inp.value.trim() : window.location.href;
+    try{
+      await navigator.clipboard.writeText(text);
+      btn.querySelector("[data-i18n='copy']")?.replaceWith(document.createTextNode(labelCopied));
+      setTimeout(() => {
+        btn.textContent = labelCopy;
+        const span = document.createElement("span");
+        span.setAttribute("data-i18n","copy");
+        span.textContent = labelCopy;
+        btn.innerHTML = "";
+        btn.appendChild(span);
+      }, 1200);
+    }catch(e){
+      // fallback
+      inp.focus(); inp.select();
+      document.execCommand("copy");
+    }
+  });
+})();
+</script>
+"""
+
+# Try to append to whatever buffer this file uses (parts/html_parts/page_html)
+try:
+    parts.append(__tool_card_html)  # type: ignore[name-defined]
+except Exception:
+    try:
+        html_parts.append(__tool_card_html)  # type: ignore[name-defined]
+    except Exception:
+        try:
+            page_parts.append(__tool_card_html)  # type: ignore[name-defined]
+        except Exception:
+            try:
+                page_html += __tool_card_html  # type: ignore[name-defined]
+            except Exception:
+                pass
+# --- /FIX ---
+
 function copyToolText() {{
   const src = document.getElementById("toolCopySrc");
   const label = document.getElementById("copyBtnLabel");
