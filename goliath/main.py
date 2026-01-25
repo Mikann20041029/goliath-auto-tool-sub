@@ -111,28 +111,33 @@ ALLOW_ROOT_UPDATE = os.environ.get("ALLOW_ROOT_UPDATE", "0") == "1"
 PING_SITEMAP = os.environ.get("PING_SITEMAP", "0") == "1"
 
 # Social API credentials (optional)
-BLUESKY_HANDLE = os.environ.get("BLUESKY_HANDLE", "")
-BLUESKY_APP_PASSWORD = os.environ.get("BLUESKY_APP_PASSWORD", "")
+# Social API credentials (optional) - accept alias env names too
+BLUESKY_HANDLE = getenv_any(["BLUESKY_HANDLE", "BSKY_HANDLE", "BLUESKY_ID"], "")
+BLUESKY_APP_PASSWORD = getenv_any(["BLUESKY_APP_PASSWORD", "BSKY_APP_PASSWORD", "BLUESKY_PASSWORD"], "")
 
-MASTODON_BASE = os.environ.get("MASTODON_BASE", "")  # e.g. https://mastodon.social
-MASTODON_TOKEN = os.environ.get("MASTODON_TOKEN", "")
+MASTODON_BASE = getenv_any(["MASTODON_BASE", "MASTODON_INSTANCE", "MASTODON_INSTANCE_URL"], "")  # e.g. https://mastodon.social
+MASTODON_TOKEN = getenv_any(["MASTODON_TOKEN", "MASTODON_ACCESS_TOKEN", "MASTODON_BEARER_TOKEN"], "")
 
-REDDIT_CLIENT_ID = os.environ.get("REDDIT_CLIENT_ID", "")
-REDDIT_CLIENT_SECRET = os.environ.get("REDDIT_CLIENT_SECRET", "")
-REDDIT_REFRESH_TOKEN = os.environ.get("REDDIT_REFRESH_TOKEN", "")
-REDDIT_USER_AGENT = os.environ.get("REDDIT_USER_AGENT", "goliath-tool/1.0 (read-only)")
-REDDIT_SUBREDDITS = os.environ.get(
-    "REDDIT_SUBREDDITS",
-    "webdev,sysadmin,programming,learnprogramming,privacy,photography,excel,smallbusiness,marketing,"
-    "travel,solotravel,cooking,mealprep,fitness,loseit,personalfinance,careerguidance,relationships,productivity"
-)
+REDDIT_CLIENT_ID = getenv_any(["REDDIT_CLIENT_ID", "REDDIT_ID", "REDDIT_APP_ID"], "")
+REDDIT_CLIENT_SECRET = getenv_any(["REDDIT_CLIENT_SECRET", "REDDIT_SECRET", "REDDIT_APP_SECRET"], "")
+REDDIT_REFRESH_TOKEN = getenv_any(["REDDIT_REFRESH_TOKEN", "REDDIT_TOKEN"], "")
+REDDIT_USER_AGENT = getenv_any(["REDDIT_USER_AGENT"], "goliath-tool/1.0 (read-only)")
 
-HN_QUERY = os.environ.get("HN_QUERY", "error OR issue OR help OR how to OR stuck OR recommend OR checklist")
-HN_MAX = int(os.environ.get("HN_MAX", "70"))
+# X (Twitter) — accept alias + allow keyword-search mode
+X_BEARER_TOKEN = getenv_any([
+    "X_BEARER_TOKEN",
+    "X_BEARER",
+    "TWITTER_BEARER_TOKEN",
+    "TW_BEARER_TOKEN",
+    "X_API_BEARER_TOKEN",
+    "TWITTER_API_BEARER_TOKEN",
+], "")
+X_USER_ID = getenv_any(["X_USER_ID", "X_USERID", "TWITTER_USER_ID", "TW_USER_ID", "TWITTER_ID", "X_ID"], "")
+X_QUERY = getenv_any(["X_QUERY", "X_SEARCH_QUERY", "TWITTER_QUERY"], "")
+X_API_BASE = getenv_any(["X_API_BASE", "TWITTER_API_BASE"], "https://api.x.com")
 
-X_BEARER_TOKEN = os.environ.get("X_BEARER_TOKEN", "")
-X_USER_ID = os.environ.get("X_USER_ID", "")  # numeric user id for mentions lookup
-X_MAX = int(os.environ.get("X_MAX", "5"))    # mentions-limited
+X_MAX = int(os.environ.get("X_MAX", "1"))    # 1 run = 1採用（read節約の前提）
+
 
 # OpenAI (optional) - not required; kept off by default in this file
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
