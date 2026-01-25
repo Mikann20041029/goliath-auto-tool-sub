@@ -1,0 +1,9 @@
+2026-01-25 06:31:25,936 | INFO | RUN_ID=1769322685
+2026-01-25 06:31:25,937 | INFO | REPO_ROOT=/home/runner/work/goliath-auto-tool/goliath-auto-tool
+2026-01-25 06:31:25,937 | INFO | SITE_DOMAIN=https://mikann20041029.github.io
+2026-01-25 06:31:25,937 | INFO | ALLOW_ROOT_UPDATE=False
+2026-01-25 06:31:25,937 | INFO | LEADS_TOTAL=100
+2026-01-25 06:31:25,937 | INFO | Bluesky: collecting up to 50
+2026-01-25 06:31:26,330 | WARNING | Bluesky: session failed status=401 body={"error":"AuthenticationRequired","message":"Invalid identifier or password"}
+2026-01-25 06:31:26,330 | INFO | Mastodon: collecting up to 100 from https://mastodon.social
+2026-01-25 06:31:30,197 | INFO | Mastodon: collected 100
