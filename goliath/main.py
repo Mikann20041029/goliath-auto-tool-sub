@@ -71,6 +71,16 @@ REDDIT_USER_AGENT = env_first("REDDIT_USER_AGENT", default="goliath-tool/1.0 (re
 X_BEARER_TOKEN = env_first("X_BEARER_TOKEN", "TWITTER_BEARER_TOKEN", "X_TOKEN", "TW_BEARER_TOKEN")
 X_SEARCH_QUERY = os.environ.get("X_SEARCH_QUERY", '("how to" OR help OR error OR fix) lang:en -is:retweet').strip()
 X_MAX = int(os.environ.get("X_MAX", "1"))
+def getenv_any(names: Iterable[str], default: str = "") -> str:
+    for n in names:
+        v = os.environ.get(n)
+        if v is None:
+            continue
+        v = str(v).strip()
+        if v:
+            return v
+    return default
+
 HN_QUERY = getenv_any(["HN_QUERY", "HACKER_NEWS_QUERY", "HN_SEARCH_QUERY"], "how to fix error OR help OR cannot OR failed OR bug")
 
 # ---- State file (重複返信防止) ----
