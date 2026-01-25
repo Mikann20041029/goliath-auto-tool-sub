@@ -1,0 +1,12 @@
+2026-01-25 06:40:40,492 | INFO | RUN_ID=1769323240
+2026-01-25 06:40:40,492 | INFO | REPO_ROOT=/home/runner/work/goliath-auto-tool/goliath-auto-tool
+2026-01-25 06:40:40,492 | INFO | SITE_DOMAIN=https://mikann20041029.github.io
+2026-01-25 06:40:40,492 | INFO | ALLOW_ROOT_UPDATE=False
+2026-01-25 06:40:40,492 | INFO | LEADS_TOTAL=100
+2026-01-25 06:40:40,493 | INFO | Bluesky: collecting up to 50
+2026-01-25 06:40:41,065 | WARNING | Bluesky: session failed status=401 body={"error":"AuthenticationRequired","message":"Invalid identifier or password"}
+2026-01-25 06:40:41,066 | INFO | Mastodon: collecting up to 100 from https://mastodon.social
+2026-01-25 06:40:44,912 | INFO | Mastodon: collected 100
+2026-01-25 06:40:44,912 | INFO | Reddit: public mode collecting up to 20
+2026-01-25 06:40:45,445 | INFO | Reddit: collected 0
+2026-01-25 06:40:45,547 | WARNING | X: search failed status=402 body={"account_id":2014321677820387328,"title":"CreditsDepleted","detail":"Your enrolled account [2014321677820387328] does not have any credits to fulfill this request.","type":"https://api.twitter.com/2/
