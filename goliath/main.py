@@ -3436,6 +3436,9 @@ def write_run_summary(
 
 
 def main() -> int:
+    # Always initialize to avoid UnboundLocalError in any branch
+    chosen = []
+
     setup_logging()
 
     # legal pages
