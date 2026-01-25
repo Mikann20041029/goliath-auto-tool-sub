@@ -3441,6 +3441,21 @@ def main() -> int:
     # choose themes
     themes = choose_themes(posts, max_themes=MAX_THEMES)
     logging.info("Chosen themes=%d", len(themes))
+    if len(chosen) == 0:
+    # 収集0でも「最低1サイト生成」して、Issuesに必ずURLを出す
+    seed_post = Post(
+        source="seed",
+        id=sha1(f"seed:{RUN_ID}"),
+        url=HUB_BASE_URL.rstrip("/"),  # 参照用（ダミー）
+        text="seed: no posts collected this run",
+        author="system",
+        created_at=now_iso(),
+    )
+    t = make_theme([seed_post])
+    # slug衝突回避は既存ロジックに任せる前提（-2/-3）
+    chosen = [t]
+    logging.info("Chosen themes forced=1 (seed)")
+
 
     # hero background (optional)
     hero_bg = fetch_unsplash_bg_url()
