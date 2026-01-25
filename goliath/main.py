@@ -3727,7 +3727,11 @@ tool_url = f"{PUBLIC_BASE_URL.rstrip('/')}/goliath/pages/{slug}/"
     # post drafts (short URL + one-line value):
 drafts = build_post_drafts(built_themes)
 
-    write_json(os.path.join(OUT_DIR, f"post_drafts_{RUN_ID}.json"), {"run_id": RUN_ID, "drafts": drafts})
+    write_json(
+    os.path.join(OUT_DIR, f"post_drafts_{RUN_ID}.json"),
+    {"run_id": RUN_ID, "created_at": now_iso(), "drafts": drafts},
+)
+
 
 
     # sitemap + robots
