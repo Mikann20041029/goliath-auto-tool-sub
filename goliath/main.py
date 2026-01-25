@@ -2765,7 +2765,12 @@ def build_page_html(
     canonical = tool_url if tool_url.startswith("http") else (SITE_DOMAIN.rstrip("/") + "/" + theme.slug + "/")
 
     article_html = "<p class='leading-relaxed whitespace-pre-wrap text-white/85'>" + html_escape(article_ja) + "</p>"
-    tool_ui = build_tool_ui(theme)
+        try:
+        tool_ui = build_tool_ui(theme)
+    except Exception as e:
+        logging.exception("build_tool_ui failed: %s", e)
+        tool_ui = "<div class='rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/80'>Tool UI rendering failed. Please refresh later.</div>"
+
 
     # internal linking: ALWAYS provide a path back to /hub/
     hub_url = SITE_DOMAIN.rstrip("/") + "/hub/"
