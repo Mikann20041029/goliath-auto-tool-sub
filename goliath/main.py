@@ -124,6 +124,7 @@ REDDIT_CLIENT_ID = getenv_any(["REDDIT_CLIENT_ID", "REDDIT_ID", "REDDIT_APP_ID"]
 REDDIT_CLIENT_SECRET = getenv_any(["REDDIT_CLIENT_SECRET", "REDDIT_SECRET", "REDDIT_APP_SECRET"], "")
 REDDIT_REFRESH_TOKEN = getenv_any(["REDDIT_REFRESH_TOKEN", "REDDIT_TOKEN"], "")
 REDDIT_USER_AGENT = getenv_any(["REDDIT_USER_AGENT"], "goliath-tool/1.0 (read-only)")
+REDDIT_SUBREDDITS = getenv_any(["REDDIT_SUBREDDITS", "REDDIT_SUBS", "SUBREDDITS"], "webdev,sysadmin,programming,techsupport,github,privacy,excel,personalfinance,travel,solotravel,productivity,studytips,mealprep,fitness")
 
 # X (Twitter) — accept alias + allow keyword-search mode
 X_BEARER_TOKEN = getenv_any([
