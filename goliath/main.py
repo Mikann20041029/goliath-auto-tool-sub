@@ -3636,6 +3636,20 @@ def main() -> int:
             chosen_themes = _fallback[:MAX_THEMES]
         else:
             chosen_themes = []
+# ---- SAFETY: chosen_themes が未定義の分岐があるため、必ず正規化する ----
+if "chosen_themes" not in globals():
+    # 既存の変数名に寄せて拾う（過去のリファクタで名前が変わっても落ちない）
+    chosen_themes = globals().get("selected_themes") or globals().get("themes") or []
+
+if chosen_themes is None:
+    chosen_themes = []
+
+# list 以外でも回せるようにしておく（最終防衛）
+if not isinstance(chosen_themes, list):
+    try:
+        chosen_themes = list(chosen_themes)
+    except Exception:
+        chosen_themes = []
 
 for _t in (chosen_themes or []):
     if _t and getattr(_t, "slug", ""):
