@@ -39,5 +39,121 @@
       ]
     }
   ],
-  "updated_at": "2026-01-24T17:54:20+00:00"
+  "aggregates": {
+    "categories": {
+      "Web/Hosting": [],
+      "Dev/Tools": [
+        {
+          "title": "checklist / fixing / help / issue / need — Fix Guide & Tool",
+          "url": "https://mikanntool.com/goliath/pages/checklist-fixing-help-issue-need-f13019/",
+          "slug": "checklist-fixing-help-issue-need-f13019"
+        },
+        {
+          "title": "checklist / fixing / help / issue / need — Fix Guide & Tool",
+          "url": "https://mikanntool.com/goliath/pages/checklist-fixing-help-issue-need-f13019-2/",
+          "slug": "checklist-fixing-help-issue-need-f13019-2"
+        }
+      ],
+      "AI/Automation": [],
+      "Security/Privacy": [],
+      "Media": [],
+      "PDF/Docs": [],
+      "Images/Design": [],
+      "Data/Spreadsheets": [],
+      "Business/Accounting/Tax": [],
+      "Marketing/Social": [],
+      "Productivity": [],
+      "Education/Language": [],
+      "Travel/Planning": [],
+      "Food/Cooking": [],
+      "Health/Fitness": [],
+      "Study/Learning": [],
+      "Money/Personal Finance": [],
+      "Career/Work": [],
+      "Relationships/Communication": [],
+      "Home/Life Admin": [],
+      "Shopping/Products": [],
+      "Events/Leisure": []
+    },
+    "popular": [
+      {
+        "title": "checklist / fixing / help / issue / need — Fix Guide & Tool",
+        "url": "https://mikanntool.com/goliath/pages/checklist-fixing-help-issue-need-f13019-2/",
+        "slug": "checklist-fixing-help-issue-need-f13019-2"
+      },
+      {
+        "title": "checklist / fixing / help / issue / need — Fix Guide & Tool",
+        "url": "https://mikanntool.com/goliath/pages/checklist-fixing-help-issue-need-f13019/",
+        "slug": "checklist-fixing-help-issue-need-f13019"
+      }
+    ],
+    "new": [
+      {
+        "title": "checklist / fixing / help / issue / need — Fix Guide & Tool",
+        "url": "https://mikanntool.com/goliath/pages/checklist-fixing-help-issue-need-f13019-2/",
+        "slug": "checklist-fixing-help-issue-need-f13019-2"
+      },
+      {
+        "title": "checklist / fixing / help / issue / need — Fix Guide & Tool",
+        "url": "https://mikanntool.com/goliath/pages/checklist-fixing-help-issue-need-f13019/",
+        "slug": "checklist-fixing-help-issue-need-f13019"
+      }
+    ],
+    "purpose": {
+      "Popular tools": [
+        {
+          "title": "checklist / fixing / help / issue / need — Fix Guide & Tool",
+          "url": "https://mikanntool.com/goliath/pages/checklist-fixing-help-issue-need-f13019-2/",
+          "slug": "checklist-fixing-help-issue-need-f13019-2"
+        },
+        {
+          "title": "checklist / fixing / help / issue / need — Fix Guide & Tool",
+          "url": "https://mikanntool.com/goliath/pages/checklist-fixing-help-issue-need-f13019/",
+          "slug": "checklist-fixing-help-issue-need-f13019"
+        }
+      ],
+      "New tools": [
+        {
+          "title": "checklist / fixing / help / issue / need — Fix Guide & Tool",
+          "url": "https://mikanntool.com/goliath/pages/checklist-fixing-help-issue-need-f13019-2/",
+          "slug": "checklist-fixing-help-issue-need-f13019-2"
+        },
+        {
+          "title": "checklist / fixing / help / issue / need — Fix Guide & Tool",
+          "url": "https://mikanntool.com/goliath/pages/checklist-fixing-help-issue-need-f13019/",
+          "slug": "checklist-fixing-help-issue-need-f13019"
+        }
+      ],
+      "By purpose": [
+        {
+          "bucket": "convert",
+          "items": []
+        },
+        {
+          "bucket": "time",
+          "items": []
+        },
+        {
+          "bucket": "productivity",
+          "items": [
+            {
+              "title": "checklist / fixing / help / issue / need — Fix Guide & Tool",
+              "url": "https://mikanntool.com/goliath/pages/checklist-fixing-help-issue-need-f13019/",
+              "slug": "checklist-fixing-help-issue-need-f13019"
+            },
+            {
+              "title": "checklist / fixing / help / issue / need — Fix Guide & Tool",
+              "url": "https://mikanntool.com/goliath/pages/checklist-fixing-help-issue-need-f13019-2/",
+              "slug": "checklist-fixing-help-issue-need-f13019-2"
+            }
+          ]
+        },
+        {
+          "bucket": "pricing",
+          "items": []
+        }
+      ]
+    }
+  },
+  "updated_at": "2026-01-25T03:08:50+00:00"
 }

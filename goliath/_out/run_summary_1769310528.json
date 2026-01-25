@@ -1,0 +1,55 @@
+{
+  "run_id": "1769310528",
+  "counts": {
+    "Bluesky": 0,
+    "Mastodon": 0,
+    "Reddit": 0,
+    "X": 0,
+    "HN": 0,
+    "Total": 0
+  },
+  "reply_candidates": 100,
+  "affiliates_audit": {
+    "missing": [
+      "Web/Hosting",
+      "Dev/Tools",
+      "AI/Automation",
+      "Security/Privacy",
+      "Media",
+      "PDF/Docs",
+      "Images/Design",
+      "Data/Spreadsheets",
+      "Business/Accounting/Tax",
+      "Marketing/Social",
+      "Productivity",
+      "Education/Language",
+      "Travel/Planning",
+      "Food/Cooking",
+      "Health/Fitness",
+      "Study/Learning",
+      "Money/Personal Finance",
+      "Career/Work",
+      "Relationships/Communication",
+      "Home/Life Admin",
+      "Shopping/Products",
+      "Events/Leisure"
+    ],
+    "extra": [
+      "career_work",
+      "events_leisure",
+      "food_cooking",
+      "health_fitness",
+      "home_life_admin",
+      "money_personal_finance",
+      "relationships_communication",
+      "shopping_products",
+      "study_learning",
+      "tech_web",
+      "travel_planning"
+    ],
+    "ok": false
+  },
+  "sitemap_url": "https://mikanntool.com/goliath/_out/sitemap.xml",
+  "post_drafts": [],
+  "updated_at": "2026-01-25T03:08:50+00:00"
+}

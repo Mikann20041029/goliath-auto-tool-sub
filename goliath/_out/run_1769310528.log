@@ -1,0 +1,22 @@
+2026-01-25 03:08:48,722 | INFO | RUN_ID=1769310528
+2026-01-25 03:08:48,722 | INFO | REPO_ROOT=/home/runner/work/goliath-auto-tool/goliath-auto-tool
+2026-01-25 03:08:48,722 | INFO | SITE_DOMAIN=https://mikanntool.com
+2026-01-25 03:08:48,722 | INFO | ALLOW_ROOT_UPDATE=False
+2026-01-25 03:08:48,722 | INFO | LEADS_TOTAL=100
+2026-01-25 03:08:48,723 | INFO | Bluesky: skipped (missing BLUESKY_HANDLE/BLUESKY_APP_PASSWORD)
+2026-01-25 03:08:48,723 | INFO | Mastodon: skipped (missing MASTODON_BASE/MASTODON_TOKEN)
+2026-01-25 03:08:48,723 | INFO | Reddit: public mode collecting up to 20
+2026-01-25 03:08:49,655 | INFO | Reddit: collected 0
+2026-01-25 03:08:49,656 | INFO | X: skipped (missing X_BEARER_TOKEN/X_USER_ID)
+2026-01-25 03:08:50,029 | INFO | HN: collected 0
+2026-01-25 03:08:50,029 | INFO | Collected total=0 (Bluesky=0, Mastodon=0, Reddit=0, X=0, HN=0)
+2026-01-25 03:08:50,029 | INFO | Clustering 0 posts (threshold=0.22)
+2026-01-25 03:08:50,029 | INFO | Clusters: 0 (top sizes=[])
+2026-01-25 03:08:50,029 | INFO | Chosen themes=0
+2026-01-25 03:08:50,510 | INFO | Unsplash hero bg enabled.
+2026-01-25 03:08:50,513 | INFO | Wrote issues payload: /home/runner/work/goliath-auto-tool/goliath-auto-tool/goliath/_out/issues_payload_1769310528.json
+2026-01-25 03:08:50,514 | INFO | Root sitemap/robots NOT updated (ALLOW_ROOT_UPDATE=0). Wrote to goliath/_out instead.
+2026-01-25 03:08:50,514 | INFO | Self-check: counts={'Bluesky': 0, 'Mastodon': 0, 'Reddit': 0, 'X': 0, 'HN': 0, 'Total': 0}
+2026-01-25 03:08:50,514 | INFO | Self-check: reply_candidates=100
+2026-01-25 03:08:50,514 | INFO | Self-check: affiliates_audit ok=False missing=22 extra=11
+2026-01-25 03:08:50,514 | INFO | Self-check: sitemap=https://mikanntool.com/goliath/_out/sitemap.xml
