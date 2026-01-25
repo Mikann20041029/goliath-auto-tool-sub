@@ -3460,6 +3460,10 @@ def main() -> int:
     # choose themes
     themes = choose_themes(posts, max_themes=MAX_THEMES)
     logging.info("Chosen themes=%d", len(themes))
+        # Safety: chosenが未代入のまま参照される事故を防ぐ
+    if "chosen" not in locals() or chosen is None:
+        chosen = []
+
     if len(chosen) == 0:
     # 収集0でも「最低1サイト生成」して、Issuesに必ずURLを出す
         seed_post = Post(
