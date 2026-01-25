@@ -3729,6 +3729,7 @@ drafts = build_post_drafts(built_themes)
 
     write_json(os.path.join(OUT_DIR, f"post_drafts_{RUN_ID}.json"), {"run_id": RUN_ID, "drafts": drafts})
 
+
     # sitemap + robots
     # Always write safe versions into goliath/_out/
     sitemap_urls = []
