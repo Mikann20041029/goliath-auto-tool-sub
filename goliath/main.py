@@ -2155,7 +2155,8 @@ def build_tool_ui(theme: Theme) -> str:
 cat = html.escape(theme.category or "Dev/Tools")
 
 problems = theme.problem_list or []
-problems_html = "\n".join([f"<li>{html.escape(x)}</li>" for x in problems[:10]]) or "<li>(no items)</li>"
+problems_html = "\n".join([f"<li>{html.escape(str(item))}</li>" for item in (problems or [])[:10]]) or "<li>(no items)</li>"
+
 
 # “チェックリスト”は既存の build_steps があればそれを使う。無ければ保険で固定文。
 if "build_steps" in globals():
