@@ -3522,6 +3522,8 @@ def main() -> int:
 
     issues_path = write_issues_payload(issue_items, extra_notes=extra_notes)
     logging.info("Wrote issues payload: %s", issues_path)
+    tool_url = f"{PUBLIC_BASE_URL.rstrip('/')}/goliath/pages/{theme.slug}/"
+
 
     # post drafts (short URL + one-line value)
     drafts = build_post_drafts(built_themes)
