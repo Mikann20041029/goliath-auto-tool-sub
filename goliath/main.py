@@ -2178,6 +2178,8 @@ copy_text_escaped = html.escape(copy_text)
 
 return f"""
 # --- FIX: raw HTML must be inside a Python string (otherwise SyntaxError) ---
+theme = locals().get("theme") or locals().get("th") or locals().get("t") or locals().get("site_theme") or None
+
 __safe_title = html.escape(getattr(theme, "search_title", "Tool"), quote=False)
 __short_url = ""
 try:
