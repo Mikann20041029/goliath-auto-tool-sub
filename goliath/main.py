@@ -155,9 +155,18 @@ LEADS_TOTAL = int(os.environ.get("LEADS_TOTAL", "100"))  # IMPORTANT: default 10
 ISSUE_MAX_ITEMS = int(os.environ.get("ISSUE_MAX_ITEMS", "40"))  # chunking for long issue body
 
 # Branding / canonical
+# Branding / canonical
 SITE_BRAND = os.environ.get("SITE_BRAND", "Mikanntool")
-SITE_DOMAIN = os.environ.get("SITE_DOMAIN", "https://mikanntool.com")  # used in canonical/og
+
+# 公開URL（いまは GitHub Pages 側。ドメイン移行後は env で差し替え）
+PUBLIC_BASE_URL = os.environ.get("PUBLIC_BASE_URL", "https://mikann20041029.github.io")
+HUB_BASE_URL = os.environ.get("HUB_BASE_URL", "https://mikann20041029.github.io/hub/")
+
+# canonical/og に使う基準（今は PUBLIC_BASE_URL に合わせる）
+SITE_DOMAIN = os.environ.get("SITE_DOMAIN", PUBLIC_BASE_URL)
+
 SITE_CONTACT_EMAIL = os.environ.get("SITE_CONTACT_EMAIL", "contact@mikanntool.com")
+
 
 # Unsplash (optional): if set, we fetch one photo URL for hero background
 UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY", "")
