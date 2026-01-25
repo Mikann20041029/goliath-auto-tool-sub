@@ -3736,14 +3736,14 @@ write_json(
 
     # sitemap + robots
     # Always write safe versions into goliath/_out/
-    sitemap_urls = []
-    sitemap_urls += policy_urls
-    sitemap_urls += site_urls
-    sitemap_urls.append(SITE_DOMAIN.rstrip("/") + "/hub/")
+sitemap_urls = []
+sitemap_urls += policy_urls
+sitemap_urls += site_urls
+sitemap_urls.append(SITE_DOMAIN.rstrip("/") + "/hub/")
     # (Optional) if you have other top-level pages you want indexed, add here.
 
-    sitemap_xml = build_sitemap(sitemap_urls)
-    sitemap_out_path = os.path.join(OUT_DIR, "sitemap.xml")
+sitemap_xml = build_sitemap(sitemap_urls)
+sitemap_out_path = os.path.join(OUT_DIR, "sitemap.xml")
     write_text(sitemap_out_path, sitemap_xml)
 
     # Default sitemap URL depends on where you place it. For search engines, root is best.
