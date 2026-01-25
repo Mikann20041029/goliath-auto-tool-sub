@@ -77,6 +77,15 @@ STATE_DIR = os.path.join(REPO_ROOT, "state")
 LAST_SEEN_JSON = os.path.join(STATE_DIR, "last_seen.json")
 
 REPO_ROOT = os.environ.get("REPO_ROOT", os.getcwd())
+def getenv_any(names: List[str], default: str = "") -> str:
+    for n in names:
+        v = os.environ.get(n)
+        if v is None:
+            continue
+        v = str(v).strip()
+        if v:
+            return v
+    return default
 
 GOLIATH_DIR = os.path.join(REPO_ROOT, "goliath")
 PAGES_DIR = os.path.join(GOLIATH_DIR, "pages")
