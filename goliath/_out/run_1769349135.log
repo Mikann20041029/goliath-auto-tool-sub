@@ -1,0 +1,21 @@
+2026-01-25 13:52:15,562 | INFO | RUN_ID=1769349135
+2026-01-25 13:52:15,562 | INFO | REPO_ROOT=/home/runner/work/goliath-auto-tool/goliath-auto-tool
+2026-01-25 13:52:15,562 | INFO | SITE_DOMAIN=https://mikann20041029.github.io
+2026-01-25 13:52:15,562 | INFO | ALLOW_ROOT_UPDATE=False
+2026-01-25 13:52:15,562 | INFO | LEADS_TOTAL=100
+2026-01-25 13:52:15,562 | INFO | HN_QUERY=how to fix error OR help OR cannot OR failed OR bug
+2026-01-25 13:52:15,562 | INFO | HN_MAX=70
+2026-01-25 13:52:15,563 | INFO | Bluesky: collecting up to 50
+2026-01-25 13:52:16,289 | WARNING | Bluesky: session failed status=401 body={"error":"AuthenticationRequired","message":"Invalid identifier or password"}
+2026-01-25 13:52:16,289 | INFO | Mastodon: collecting up to 100 from https://mastodon.social
+2026-01-25 13:52:20,862 | INFO | Mastodon: collected 100
+2026-01-25 13:52:20,862 | INFO | Reddit: public mode collecting up to 20
+2026-01-25 13:52:21,367 | INFO | Reddit: collected 0
+2026-01-25 13:52:21,455 | WARNING | X: search failed status=402 body={"account_id":2014321677820387328,"title":"CreditsDepleted","detail":"Your enrolled account [2014321677820387328] does not have any credits to fulfill this request.","type":"https://api.twitter.com/2/
+2026-01-25 13:52:21,757 | INFO | HN: collected 0
+2026-01-25 13:52:21,758 | INFO | Collected total=99 (Bluesky=0, Mastodon=100, Reddit=0, X=0, HN=0)
+2026-01-25 13:52:21,758 | INFO | Clustering 99 posts (threshold=0.22)
+2026-01-25 13:52:21,778 | INFO | Clusters: 93 (top sizes=[3, 2, 2, 2, 2, 1, 1, 1])
+2026-01-25 13:52:21,781 | INFO | Chosen themes=5
+2026-01-25 13:52:21,781 | INFO | Chosen themes forced=1 (seed)
+2026-01-25 13:52:21,923 | INFO | Unsplash hero bg enabled.
