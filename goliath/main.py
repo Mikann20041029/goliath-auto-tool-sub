@@ -3622,6 +3622,14 @@ def main() -> int:
     # choose themes
     themes = choose_themes(posts, max_themes=MAX_THEMES)
     logging.info("Chosen themes=%d", len(themes))
+    default_tool_slug = ""
+for _t in (chosen_themes or []):
+    if _t and getattr(_t, "slug", ""):
+        default_tool_slug = _t.slug
+        break
+if not default_tool_slug:
+    default_tool_slug = "tool"
+
         # Safety: chosenが未代入のまま参照される事故を防ぐ
     if "chosen" not in locals() or chosen is None:
         chosen = []
