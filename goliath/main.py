@@ -3771,7 +3771,8 @@ write_run_summary(
     sitemap_url_written=(sitemap_public_url if ALLOW_ROOT_UPDATE else (SITE_DOMAIN.rstrip("/") + "/goliath/_out/sitemap.xml")),
 )
 
-return 0
+# return 0  # top-level return is invalid in Python (leave exit code to wrapper / normal script end)
+
 
 
 if __name__ == "__main__":
