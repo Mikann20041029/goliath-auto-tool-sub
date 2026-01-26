@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://mikanntool.com/sitemap.xml
+Sitemap: https://mikann20041029.github.io/sitemap.xml
