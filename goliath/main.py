@@ -3694,7 +3694,8 @@ if not default_tool_slug:
 
     # build sites
     built_themes, new_entries, post_to_tool_url, site_urls = build_sites(
-        themes=themes,
+        themes=(themes := (globals().get("themes") or globals().get("selected_themes") or globals().get("chosen_themes") or globals().get("best_themes") or globals().get("top_themes") or globals().get("final_themes") or globals().get("picked_themes") or [])),
+
         aff_norm=aff_norm,
         all_sites_inventory=existing_sites,
         hero_bg_url=hero_bg,
