@@ -1296,6 +1296,16 @@ def audit_affiliate_keys(aff_raw: Dict[str, Any]) -> Dict[str, Any]:
 
 # =============================================================================
 # Hub inventory (hub/sites.json) & routing features (categories / popular / new / purpose)
+# ---- Affiliates: always define aff_norm (and aff_audit) BEFORE any use ----
+try:
+    _aff_raw = load_affiliates()
+    aff_audit = audit_affiliate_keys(_aff_raw)
+    aff_norm = normalize_affiliates_shape(_aff_raw)
+except Exception:
+    # ultra-safe fallback (no affiliates)
+    aff_audit = {"missing": CATEGORIES_22[:], "extra": [], "ok": False}
+    aff_norm = {c: [] for c in CATEGORIES_22}
+
 # =============================================================================
 def read_hub_sites() -> List[Dict[str, Any]]:
     data = read_json(HUB_SITES_JSON, default={})
