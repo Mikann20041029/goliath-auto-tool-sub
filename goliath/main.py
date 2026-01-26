@@ -91,7 +91,7 @@ HN_MAX = int(os.environ.get("HN_MAX", os.environ.get("HACKER_NEWS_MAX", "70")))
 REPO_ROOT = os.environ.get("REPO_ROOT", os.getcwd())
 
 STATE_DIR = os.path.join(REPO_ROOT, "state")
-LAST_SEEN_JSON = os.path.join(STATE_DIR, "last_seen.json")
+LAST_SEEN_PATH = os.path.join(STATE_DIR, "last_seen.json")
 
 
 GOLIATH_DIR = os.path.join(REPO_ROOT, "goliath")
