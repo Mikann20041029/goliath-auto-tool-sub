@@ -1297,14 +1297,26 @@ def audit_affiliate_keys(aff_raw: Dict[str, Any]) -> Dict[str, Any]:
 # =============================================================================
 # Hub inventory (hub/sites.json) & routing features (categories / popular / new / purpose)
 # ---- Affiliates: always define aff_norm (and aff_audit) BEFORE any use ----
-try:
-    _aff_raw = load_affiliates()
-    aff_audit = audit_affiliate_keys(_aff_raw)
-    aff_norm = normalize_affiliates_shape(_aff_raw)
-except Exception:
-    # ultra-safe fallback (no affiliates)
-    aff_audit = {"missing": CATEGORIES_22[:], "extra": [], "ok": False}
-    aff_norm = {c: [] for c in CATEGORIES_22}
+def init_affiliates() -> tuple[dict[str, list[dict[str, Any]]], dict[str, Any]]:
+    """
+    Safe initializer for affiliates.
+    Returns:
+      - aff_norm: { "<CAT>": [ {..}, .. ] }
+      - aff_audit: { missing: [...], extra: [...], ok: bool }
+    """
+    try:
+        _aff_raw = load_affiliates()
+        _audit = audit_affiliate_keys(_aff_raw)
+        _norm = normalize_affiliates_shape(_aff_raw)
+        return _norm, _audit
+    except Exception:
+        # ultra-safe fallback (no affiliates)
+        _audit = {"missing": CATEGORIES_22[:], "extra": [], "ok": False}
+        _norm = {c: [] for c in CATEGORIES_22}
+        return _norm, _audit
+
+aff_norm, aff_audit = init_affiliates()
+
 
 # =============================================================================
 def read_hub_sites() -> List[Dict[str, Any]]:
