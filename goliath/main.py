@@ -3947,6 +3947,9 @@ if True:
         logging.warning("counts build failed: %s", e)
 write_run_summary(
     counts=counts,
+    # safety: issue_items が空でも確実にカウントできる
+reply_count = int(reply_count or 0)
+
     reply_count=reply_count,
 
     aff_audit=aff_audit,
