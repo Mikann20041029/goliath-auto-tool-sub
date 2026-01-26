@@ -3657,6 +3657,9 @@ for _t in (chosen_themes or []):
         break
             # default_tool_slug may be unset depending on code path; define it defensively.
     default_tool_slug = os.environ.get("DEFAULT_TOOL_SLUG", "").strip()
+# --- ensure variable exists (prevents NameError) ---
+default_tool_slug = (os.environ.get("DEFAULT_TOOL_SLUG") or os.environ.get("DEFAULT_PAGE_SLUG") or "").strip()
+# --- /ensure ---
 
 if not default_tool_slug:
     default_tool_slug = "tool"
