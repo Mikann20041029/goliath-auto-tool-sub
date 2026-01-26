@@ -3954,10 +3954,6 @@ write_run_summary(
 
 
 if __name__ == "__main__":
-    # --- robust entrypoint (syntax-safe) ---
-    # 目的:
-    # 1) 末尾の try 構文を必ず正しい形に固定する
-    # 2) 既存の main / run / run_goliath / goliath_main のどれがあっても起動できる
     try:
         entry = (
             globals().get("main")
@@ -3973,21 +3969,15 @@ if __name__ == "__main__":
             )
 
         result = entry()
-
-        # 数値が返った場合だけ exit に反映（None 等は無視）
         if isinstance(result, int):
             sys.exit(result)
 
     except KeyboardInterrupt:
-        # Ctrl+C はそのまま上に投げる
         raise
     except Exception as e:
-        # logging が未初期化でも落ちないようにする
         try:
             import logging
             logging.exception("Unhandled exception in goliath/main.py: %s", e)
         except Exception:
             print("Unhandled exception in goliath/main.py:", e, file=sys.stderr)
         raise
-
-
