@@ -3719,7 +3719,32 @@ if not default_tool_slug:
     # Prepare reply candidates (min 100)
     # We prefer real posts; if not enough posts mapped, stub fill.
     mapped_post_ids = set(post_to_tool_url.keys())
-    mapped_posts = [p for p in posts if p.id in mapped_post_ids]
+    # ---- SAFE: posts がこのスコープに無い（= リファクタで local になった等）場合でも落ちないようにする ----
+_posts = globals().get("posts")
+if _posts is None:
+    _posts = (
+        globals().get("all_posts")
+        or globals().get("collected_posts")
+        or globals().get("raw_posts")
+        or []
+    )
+
+# iterable を list 化（念のため）
+if not isinstance(_posts, list):
+    try:
+        _posts = list(_posts)
+    except Exception:
+        _posts = []
+
+# mapped_post_ids が無い/壊れてても落ちないようにする
+try:
+    _ids = set(mapped_post_ids)
+except Exception:
+    _ids = set()
+
+mapped_posts = [p for p in _posts if getattr(p, "id", None) in _ids]
+logging.info("mapped_posts=%d (ids=%d, pool=%d)", len(mapped_posts), len(_ids), len(_posts))
+
     # --- FIX: resolve posts list safely (avoid NameError when posts wasn't assigned) ---
 _scope = locals()
 
