@@ -3812,9 +3812,15 @@ if (not mapped_posts) and mapped_post_ids:
     slug = ""
 if theme is not None:
     slug = getattr(theme, "slug", "") or ""
-if not slug:
-# --- hotfix: ensure `slug` is defined before use (avoid NameError) ---
+# ---- slug safety: always have a usable string ----
 slug = locals().get("slug", "")
+if not isinstance(slug, str):
+    slug = "" if slug is None else str(slug)
+slug = slug.strip()
+if not slug:
+    base_for_slug = locals().get("search_title", "") or locals().get("title", "") or "tool"
+    slug = safe_slug(str(base_for_slug))
+
 if not slug:
     _obj = locals().get("theme") or locals().get("t") or locals().get("th") or locals().get("item")
     if _obj is not None:
