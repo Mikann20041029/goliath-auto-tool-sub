@@ -3922,9 +3922,8 @@ if ALLOW_ROOT_UPDATE:
 else:
     logging.info("Root sitemap/robots NOT updated (ALLOW_ROOT_UPDATE=0). Wrote to goliath/_out instead.")
 
-    # self-check summary
-if True:
-        # --- counts (always defined) ---
+        # self-check summary
+    # --- counts (always defined) ---
     counts = {"bluesky": 0, "mastodon": 0, "reddit": 0, "hn": 0, "x": 0, "total": 0}
     try:
         _all = (
@@ -3945,12 +3944,15 @@ if True:
                 counts["total"] = len(_all)
     except Exception as e:
         logging.warning("counts build failed: %s", e)
-write_run_summary(
-    counts=counts,
-    # safety: issue_items が空でも確実にカウントできる
-reply_count = int(reply_count or 0)
 
-    reply_count=reply_count,
+    # safety: reply_count が None/空でも数値化
+    reply_count = int(reply_count or 0)
+
+    write_run_summary(
+        counts=counts,
+        reply_count=reply_count,
+    )
+
 
     aff_audit=aff_audit,
     post_drafts=drafts,
