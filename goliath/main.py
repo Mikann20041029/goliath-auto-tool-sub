@@ -169,12 +169,9 @@ ISSUE_MAX_ITEMS = int(os.environ.get("ISSUE_MAX_ITEMS", "40"))  # chunking for l
 # Branding / canonical
 SITE_BRAND = os.environ.get("SITE_BRAND", "Mikanntool")
 
-# 公開URL（いまは GitHub Pages 側。ドメイン移行後は env で差し替え）
-PUBLIC_BASE_URL = os.environ.get("PUBLIC_BASE_URL", "https://mikann20041029.github.io")
-HUB_BASE_URL = os.environ.get("HUB_BASE_URL", "https://mikann20041029.github.io/hub/")
+SITE_DOMAIN = env_first("SITE_DOMAIN", default=PUBLIC_BASE_URL)
+HUB_BASE_URL = env_first("HUB_BASE_URL", default=PUBLIC_BASE_URL.rstrip("/") + "/hub/")
 
-# canonical/og に使う基準（今は PUBLIC_BASE_URL に合わせる）
-SITE_DOMAIN = os.environ.get("SITE_DOMAIN", PUBLIC_BASE_URL)
 
 SITE_CONTACT_EMAIL = os.environ.get("SITE_CONTACT_EMAIL", "contact@mikanntool.com")
 
