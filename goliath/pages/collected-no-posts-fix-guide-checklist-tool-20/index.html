@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>collected no posts fix guide checklist tool | Mikanntool</title>
+  <meta name="description" content="One-page fix guide + checklist + tool: collected no posts fix guide checklist tool">
+  <link rel="canonical" href="https://mikann20041029.github.io/goliath/pages/collected-no-posts-fix-guide-checklist-tool-20/">
+  <meta property="og:title" content="collected no posts fix guide checklist tool">
+  <meta property="og:description" content="Fix guide + checklist + FAQ + references">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mikann20041029.github.io/goliath/pages/collected-no-posts-fix-guide-checklist-tool-20/">
+  <meta name="twitter:card" content="summary_large_image">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+        "Noto Sans JP","Noto Sans KR","Noto Sans SC", Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    .glass { backdrop-filter: blur(10px); }
+  </style>
+</head>
+<body class="min-h-screen bg-zinc-950 text-white">
+  <div class="pointer-events-none fixed inset-0 opacity-70">
+    <div class="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-gradient-to-br from-indigo-500/35 to-cyan-400/20 blur-3xl"></div>
+    <div class="absolute top-40 -right-24 h-96 w-96 rounded-full bg-gradient-to-br from-emerald-500/25 to-lime-400/10 blur-3xl"></div>
+    <div class="absolute bottom-0 left-1/4 h-96 w-96 rounded-full bg-gradient-to-br from-fuchsia-500/20 to-rose-400/10 blur-3xl"></div>
+  </div>
+
+  <header class="relative z-10 mx-auto max-w-6xl px-4 py-6">
+    <div class="flex items-center justify-between gap-4">
+      <a href="https://mikann20041029.github.io/hub/" class="flex items-center gap-3">
+        <div class="h-10 w-10 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center font-bold">🍊</div>
+        <div>
+          <div class="font-semibold leading-tight">Mikanntool</div>
+          <div class="text-xs text-white/60">Hub → categories / popular / new</div>
+        </div>
+      </a>
+
+      <nav class="flex items-center gap-3 text-sm">
+        <a class="text-white/80 hover:text-white" href="https://mikann20041029.github.io/hub/" data-i18n="home">Home</a>
+        <a class="text-white/80 hover:text-white" href="https://mikann20041029.github.io/hub/#about" data-i18n="about">About Us</a>
+        <a class="text-white/80 hover:text-white" href="https://mikann20041029.github.io/hub/#tools" data-i18n="all_tools">All Tools</a>
+        <select id="langSel" class="ml-2 rounded-xl bg-white/10 border border-white/10 px-2 py-1 text-xs">
+          <option value="en">EN</option>
+          <option value="ja">JA</option>
+          <option value="ko">KO</option>
+          <option value="zh">ZH</option>
+        </select>
+      </nav>
+    </div>
+  </header>
+
+  <main class="relative z-10 mx-auto max-w-6xl px-4 pb-16">
+    <section class="rounded-3xl border border-white/10 bg-white/5 glass p-6 md:p-8">
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+        <div>
+          <h1 class="text-2xl md:text-3xl font-semibold leading-tight">collected no posts fix guide checklist tool</h1>
+          <p class="mt-2 text-white/70">
+            Category: <span class="text-white/90">Dev/Tools</span> ·
+            Updated: <span class="text-white/90">2026-02-02T16:41:54+00:00</span>
+          </p>
+        </div>
+        <div class="rounded-2xl border border-white/10 bg-black/20 p-4 w-full md:w-[360px]">
+          <div class="text-sm text-white/70 mb-2" data-i18n="share">Share</div>
+          <div class="space-y-2">
+            <div class="text-xs text-white/60">Short URL (for posts)</div>
+            <div class="flex items-center gap-2">
+              <input id="shortUrl" value="https://mikann20041029.github.io/goliath/go/8trJK5M/" class="w-full rounded-xl bg-black/40 border border-white/10 px-3 py-2 text-xs" readonly>
+              <button id="copyBtnShort" class="rounded-xl bg-white/10 border border-white/10 px-3 py-2 text-xs" data-i18n="copy" onclick="copyTextFrom('shortUrl','copyBtnShort')">Copy</button>
+            </div>
+
+            <div class="text-xs text-white/60">Full URL</div>
+            <div class="flex items-center gap-2">
+              <input id="fullUrl" value="https://mikann20041029.github.io/goliath/pages/collected-no-posts-fix-guide-checklist-tool-20/" class="w-full rounded-xl bg-black/40 border border-white/10 px-3 py-2 text-xs" readonly>
+              <button id="copyBtnFull" class="rounded-xl bg-white/10 border border-white/10 px-3 py-2 text-xs" data-i18n="copy" onclick="copyTextFrom('fullUrl','copyBtnFull')">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mt-6">
+  <div class='rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/80'>Tool UI rendering failed. Please refresh later.</div>
+</section>
+
+<script>
+function copyTextFrom(inputId, btnId) {
+  const input = document.getElementById(inputId);
+  const btn = document.getElementById(btnId);
+  if (!input) return;
+
+  const text = String(input.value ?? "");
+
+  const done = () => {
+    if (!btn) return;
+    const prev = btn.textContent;
+    btn.textContent = "Copied";
+    setTimeout(() => { btn.textContent = prev; }, 1200);
+  };
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(done).catch(() => {
+      input.focus();
+      input.select();
+      try { document.execCommand("copy"); } catch (e) {}
+      done();
+    });
+    return;
+  }
+
+  input.focus();
+  input.select();
+  try { document.execCommand("copy"); } catch (e) {}
+  done();
+}
+</script>
+
+
+    <section class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 space-y-6">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <h2 class="text-xl font-semibold" data-i18n="problems">Problems this tool can help with</h2>
+          <ul class="mt-3 text-white/85 list-disc list-inside">
+            <li class='py-1'>seed: no posts collected this run</li>
+<li class='py-1'>Trouble related to Dev/Tools: symptom #2</li>
+<li class='py-1'>Trouble related to Dev/Tools: symptom #3</li>
+<li class='py-1'>Trouble related to Dev/Tools: symptom #4</li>
+<li class='py-1'>Trouble related to Dev/Tools: symptom #5</li>
+<li class='py-1'>Trouble related to Dev/Tools: symptom #6</li>
+<li class='py-1'>Trouble related to Dev/Tools: symptom #7</li>
+<li class='py-1'>Trouble related to Dev/Tools: symptom #8</li>
+<li class='py-1'>Trouble related to Dev/Tools: symptom #9</li>
+<li class='py-1'>Trouble related to Dev/Tools: symptom #10</li>
+          </ul>
+        </div>
+
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <h2 class="text-xl font-semibold" data-i18n="quick_answer">Quick answer</h2>
+          <pre class="mt-3 text-white/85 whitespace-pre-wrap leading-relaxed">最短で進める方針は「再現条件の固定 → 原因の切り分け → 最小変更 → 検証 → 記録」です。
+今回のカテゴリは「Dev/Tools」なので、まずは“どこで止まっているか”を小さく分解して確認します。
+観測キーワード: collected, no, posts, run, seed:
+下のチェックリストは、上から順に潰せば“事故率”が下がる順番で並べています。</pre>
+        </div>
+
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <h2 class="text-xl font-semibold" data-i18n="causes">Common causes</h2>
+          <ul class="mt-3 text-white/85 list-disc list-inside">
+            <li class='py-1'>入力・前提条件のズレ（想定と実際が違う）</li>
+<li class='py-1'>権限/設定/バージョンの不一致</li>
+<li class='py-1'>キャッシュや反映待ち</li>
+<li class='py-1'>原因が前段にあるのに、見えている画面で決め打ちしている</li>
+          </ul>
+        </div>
+
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <h2 class="text-xl font-semibold" data-i18n="steps">Step-by-step checklist</h2>
+          <ul class="mt-3 text-white/85 list-disc list-inside">
+            <li class='py-1'>再現条件を固定する（同じ入力・同じ手順・同じ端末/ブラウザで再現）</li>
+<li class='py-1'>表示/ログをそのまま保存（コピペ/スクショ、時刻も残す）</li>
+<li class='py-1'>影響範囲が小さい順に確認（確認→読み取り→最小変更→検証）</li>
+<li class='py-1'>直ったら差分を記録し、再発防止チェックを作る（次回3分復旧が目標）</li>
+          </ul>
+        </div>
+
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <h2 class="text-xl font-semibold" data-i18n="pitfalls">Common pitfalls & how to avoid them</h2>
+          <ul class="mt-3 text-white/85 list-disc list-inside">
+            <li class='py-1'>一気に複数箇所を変えてしまい、どれが原因か分からなくなる</li>
+<li class='py-1'>反映待ち（DNS/キャッシュ）を無視して焦ってさらに壊す</li>
+<li class='py-1'>ログ/メモを取らずに試行回数だけ増やす（後で復旧不能になる）</li>
+<li class='py-1'>“いま見えている画面”が原因だと決めつける（前段が原因のことが多い）</li>
+          </ul>
+        </div>
+
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <h2 class="text-xl font-semibold" data-i18n="next">If it still doesn’t work</h2>
+          <ul class="mt-3 text-white/85 list-disc list-inside">
+            <li class='py-1'>別経路で同じ結果が出るか確認（別端末/別回線/別ブラウザ）</li>
+<li class='py-1'>ログ/メモの粒度を上げる（失敗時の条件と差分を残す）</li>
+<li class='py-1'>“元に戻せる形”で段階的にロールバック（変更前後の差分を残す）</li>
+<li class='py-1'>同じ失敗を繰り返さないよう、チェック項目を固定化する</li>
+          </ul>
+        </div>
+
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <h2 class="text-xl font-semibold">Long guide (JP, 2500+ chars)</h2>
+          <div class="mt-3"><p class='leading-relaxed whitespace-pre-wrap text-white/85'>このページは「Dev/Tools」でよく起きる悩みを、短時間で安全に整理して解決へ進めるためのガイドです。
+ポイントは“推測で決め打ちしない”こと。再現条件を固定し、影響範囲が小さい順にチェックするだけで、無駄な試行回数が大きく減ります。
+
+多くのトラブルは、(1)設定の不一致、(2)権限や期限、(3)キャッシュ/反映待ち、(4)入力条件の揺れ、のどれかに落ちます。
+つまり、この4点を順に潰すだけで“直らない理由”の大半は説明できます。
+
+大事なのは「最小変更」です。一度に複数箇所をいじると、直ったとしても原因が分からず再発します。
+最小変更→検証→記録、を守ると、次回はチェックリストだけで復旧できます。
+
+【このページで扱う悩み一覧（例）】
+- seed: no posts collected this run
+- Trouble related to Dev/Tools: symptom #2
+- Trouble related to Dev/Tools: symptom #3
+- Trouble related to Dev/Tools: symptom #4
+- Trouble related to Dev/Tools: symptom #5
+- Trouble related to Dev/Tools: symptom #6
+- Trouble related to Dev/Tools: symptom #7
+- Trouble related to Dev/Tools: symptom #8
+- Trouble related to Dev/Tools: symptom #9
+- Trouble related to Dev/Tools: symptom #10
+
+【原因のパターン分け】
+- 入力・前提条件のズレ（想定と実際が違う）
+- 権限/設定/バージョンの不一致
+- キャッシュや反映待ち
+- 原因が前段にあるのに、見えている画面で決め打ちしている
+
+【手順（チェックリスト）】
+- 再現条件を固定する（同じ入力・同じ手順・同じ端末/ブラウザで再現）
+- 表示/ログをそのまま保存（コピペ/スクショ、時刻も残す）
+- 影響範囲が小さい順に確認（確認→読み取り→最小変更→検証）
+- 直ったら差分を記録し、再発防止チェックを作る（次回3分復旧が目標）
+
+【よくある失敗と回避策】
+- 一気に複数箇所を変えてしまい、どれが原因か分からなくなる
+- 反映待ち（DNS/キャッシュ）を無視して焦ってさらに壊す
+- ログ/メモを取らずに試行回数だけ増やす（後で復旧不能になる）
+- “いま見えている画面”が原因だと決めつける（前段が原因のことが多い）
+
+【直らない場合の次の手】
+- 別経路で同じ結果が出るか確認（別端末/別回線/別ブラウザ）
+- ログ/メモの粒度を上げる（失敗時の条件と差分を残す）
+- “元に戻せる形”で段階的にロールバック（変更前後の差分を残す）
+- 同じ失敗を繰り返さないよう、チェック項目を固定化する
+
+【検証のコツ】
+- “期待結果”を1文にする（何ができれば成功か）
+- 失敗が出たら、入力・環境・時刻・ログをセットで残す
+- 直った瞬間に、何を変えたかを1行で書ける状態にする
+- 再発防止は“次回3分で復旧できるか”で判断する
+これだけで、調査が感情ではなく手順になります。
+
+【切り分けの分岐（迷った時用）】
+1) 別ブラウザ/別端末でも同じ？
+  - はい → サービス/設定/権限側が濃厚
+  - いいえ → キャッシュ/拡張機能/端末依存が濃厚
+2) 同じ入力・同じ手順で再現する？
+  - はい → 原因追跡が可能。ログを増やして一点ずつ潰す
+  - いいえ → 入力条件が揺れている。まず再現条件の固定が最優先
+この分岐を守るだけで、無駄な試行をかなり減らせます。
+【追加メモ】
+問題が複雑に見える時ほど、最初に“変えた点”を列挙し、それを一つずつ戻して差分を取ると復旧が早くなります。
+ログがない場合は、まずログを作ることが最短ルートです。
+
+【追加メモ】
+問題が複雑に見える時ほど、最初に“変えた点”を列挙し、それを一つずつ戻して差分を取ると復旧が早くなります。
+ログがない場合は、まずログを作ることが最短ルートです。
+
+【追加メモ】
+問題が複雑に見える時ほど、最初に“変えた点”を列挙し、それを一つずつ戻して差分を取ると復旧が早くなります。
+ログがない場合は、まずログを作ることが最短ルートです。
+
+【追加メモ】
+問題が複雑に見える時ほど、最初に“変えた点”を列挙し、それを一つずつ戻して差分を取ると復旧が早くなります。
+ログがない場合は、まずログを作ることが最短ルートです。
+
+【追加メモ】
+問題が複雑に見える時ほど、最初に“変えた点”を列挙し、それを一つずつ戻して差分を取ると復旧が早くなります。
+ログがない場合は、まずログを作ることが最短ルートです。
+
+【追加メモ】
+問題が複雑に見える時ほど、最初に“変えた点”を列挙し、それを一つずつ戻して差分を取ると復旧が早くなります。
+ログがない場合は、まずログを作ることが最短ルートです。
+
+【追加メモ】
+問題が複雑に見える時ほど、最初に“変えた点”を列挙し、それを一つずつ戻して差分を取ると復旧が早くなります。
+ログがない場合は、まずログを作ることが最短ルートです。
+
+【追加メモ】
+問題が複雑に見える時ほど、最初に“変えた点”を列挙し、それを一つずつ戻して差分を取ると復旧が早くなります。
+ログがない場合は、まずログを作ることが最短ルートです。
+
+【追加メモ】
+問題が複雑に見える時ほど、最初に“変えた点”を列挙し、それを一つずつ戻して差分を取ると復旧が早くなります。
+ログがない場合は、まずログを作ることが最短ルートです。
+
+【追加メモ】
+問題が複雑に見える時ほど、最初に“変えた点”を列挙し、それを一つずつ戻して差分を取ると復旧が早くなります。
+ログがない場合は、まずログを作ることが最短ルートです。
+
+【追加メモ】
+問題が複雑に見える時ほど、最初に“変えた点”を列挙し、それを一つずつ戻して差分を取ると復旧が早くなります。
+ログがない場合は、まずログを作ることが最短ルートです。
+
+【追加メモ】
+問題が複雑に見える時ほど、最初に“変えた点”を列挙し、それを一つずつ戻して差分を取ると復旧が早くなります。
+ログがない場合は、まずログを作ることが最短ルートです。
+
+【追加メモ】
+問題が複雑に見える時ほど、最初に“変えた点”を列挙し、それを一つずつ戻して差分を取ると復旧が早くなります。
+ログがない場合は、まずログを作ることが最短ルートです。</p></div>
+        </div>
+
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <h2 class="text-xl font-semibold" data-i18n="faq">FAQ</h2>
+          <div class="mt-3 space-y-3"><details class="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <summary class="cursor-pointer font-medium">What should I check first?</summary>
+          <div class="mt-2 text-white/80 leading-relaxed">Fix the conditions: steps, expected result, actual result, and what changed recently.</div>
+        </details>
+<details class="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <summary class="cursor-pointer font-medium">How do I know if it’s just cache / stale data?</summary>
+          <div class="mt-2 text-white/80 leading-relaxed">Try private mode or a different device. If it changes, cache is likely involved.</div>
+        </details>
+<details class="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <summary class="cursor-pointer font-medium">What’s the safest order to troubleshoot?</summary>
+          <div class="mt-2 text-white/80 leading-relaxed">Confirm → read-only checks → one small change → verify → write down the diff.</div>
+        </details>
+<details class="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <summary class="cursor-pointer font-medium">What should I do after it works?</summary>
+          <div class="mt-2 text-white/80 leading-relaxed">Save the diff + a quick checklist so the next recovery is under 3 minutes.</div>
+        </details>
+<details class="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <summary class="cursor-pointer font-medium">How should I share this problem with someone?</summary>
+          <div class="mt-2 text-white/80 leading-relaxed">Include steps to reproduce, expected vs actual, logs/screenshots, and environment.</div>
+        </details></div>
+        </div>
+
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <h2 class="text-xl font-semibold" data-i18n="references">Reference links</h2>
+          <ul class="mt-3 text-white/85 list-disc list-inside">
+            <li class='py-1'><a class='underline break-all' href='https://mikann20041029.github.io/hub' target='_blank' rel='noopener'>https://mikann20041029.github.io/hub</a></li>
+<li class='py-1'><a class='underline break-all' href='https://developers.google.com/search/docs/crawling-indexing/robots/intro' target='_blank' rel='noopener'>https://developers.google.com/search/docs/crawling-indexing/robots/intro</a></li>
+<li class='py-1'><a class='underline break-all' href='https://support.google.com/webmasters/answer/156184' target='_blank' rel='noopener'>https://support.google.com/webmasters/answer/156184</a></li>
+<li class='py-1'><a class='underline break-all' href='https://en.wikipedia.org/wiki/Software_bug' target='_blank' rel='noopener'>https://en.wikipedia.org/wiki/Software_bug</a></li>
+<li class='py-1'><a class='underline break-all' href='https://en.wikipedia.org/wiki/Debugging' target='_blank' rel='noopener'>https://en.wikipedia.org/wiki/Debugging</a></li>
+<li class='py-1'><a class='underline break-all' href='https://developer.mozilla.org/en-US/docs/Web/SEO' target='_blank' rel='noopener'>https://developer.mozilla.org/en-US/docs/Web/SEO</a></li>
+<li class='py-1'><a class='underline break-all' href='https://developers.google.com/search/docs/crawling-indexing/sitemaps/overview' target='_blank' rel='noopener'>https://developers.google.com/search/docs/crawling-indexing/sitemaps/overview</a></li>
+<li class='py-1'><a class='underline break-all' href='https://docs.python.org/3/tutorial/errors.html' target='_blank' rel='noopener'>https://docs.python.org/3/tutorial/errors.html</a></li>
+          </ul>
+        </div>
+
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <h2 class="text-xl font-semibold" data-i18n="supplement">Supplementary resources</h2>
+          <ul class="mt-3 text-white/85 list-disc list-inside">
+            <li class='py-1'><a class='underline break-all' href='https://en.wikipedia.org/wiki/Debugging' target='_blank' rel='noopener'>https://en.wikipedia.org/wiki/Debugging</a></li>
+<li class='py-1'><a class='underline break-all' href='https://en.wikipedia.org/wiki/Software_bug' target='_blank' rel='noopener'>https://en.wikipedia.org/wiki/Software_bug</a></li>
+<li class='py-1'><a class='underline break-all' href='https://docs.python.org/3/tutorial/errors.html' target='_blank' rel='noopener'>https://docs.python.org/3/tutorial/errors.html</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <aside class="space-y-6">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <h3 class="text-lg font-semibold" data-i18n="aff_title">Recommended</h3>
+          <div class="mt-3 space-y-3">
+            <!-- AFF_SLOT (top2 injected) -->
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <div class="text-sm text-white/70 mb-2">Recommended</div>
+          <div class="text-white/70">No affiliate available for this category.</div>
+        </div>
+          </div>
+        </div>
+
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <h3 class="text-lg font-semibold" data-i18n="related">Related tools</h3>
+          <ul class="mt-3 text-white/85 list-disc list-inside">
+            <li class='py-1'><a class='underline' href='https://mikann20041029.github.io/goliath/pages/collected-no-posts-fix-guide-checklist-tool-3/'>collected no posts fix guide checklist tool</a> <span class='text-white/50 text-xs'>(Dev/Tools)</span></li>
+<li class='py-1'><a class='underline' href='https://mikann20041029.github.io/goliath/pages/collected-no-posts-fix-guide-checklist-tool-11/'>collected no posts fix guide checklist tool</a> <span class='text-white/50 text-xs'>(Dev/Tools)</span></li>
+<li class='py-1'><a class='underline' href='https://mikanntool.com/goliath/pages/checklist-fixing-help-issue-need-f13019/'>checklist / fixing / help / issue / need — Fix Guide &amp; Tool</a> <span class='text-white/50 text-xs'>(Dev/Tools)</span></li>
+<li class='py-1'><a class='underline' href='https://mikann20041029.github.io/goliath/pages/collected-no-posts-fix-guide-checklist-tool-8/'>collected no posts fix guide checklist tool</a> <span class='text-white/50 text-xs'>(Dev/Tools)</span></li>
+<li class='py-1'><a class='underline' href='https://mikann20041029.github.io/goliath/pages/collected-no-posts-fix-guide-checklist-tool-16/'>collected no posts fix guide checklist tool</a> <span class='text-white/50 text-xs'>(Dev/Tools)</span></li>
+          </ul>
+        </div>
+
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <h3 class="text-lg font-semibold" data-i18n="popular">Popular tools</h3>
+          <ul class="mt-3 text-white/85 list-disc list-inside">
+            <li class='py-1'><a class='underline' href='https://mikann20041029.github.io/goliath/pages/collected-no-posts-fix-guide-checklist-tool-19/'>collected no posts fix guide checklist tool</a> <span class='text-white/50 text-xs'>(Dev/Tools)</span></li>
+<li class='py-1'><a class='underline' href='https://mikann20041029.github.io/goliath/pages/collected-no-posts-fix-guide-checklist-tool-18/'>collected no posts fix guide checklist tool</a> <span class='text-white/50 text-xs'>(Dev/Tools)</span></li>
+<li class='py-1'><a class='underline' href='https://mikann20041029.github.io/goliath/pages/collected-no-posts-fix-guide-checklist-tool-17/'>collected no posts fix guide checklist tool</a> <span class='text-white/50 text-xs'>(Dev/Tools)</span></li>
+<li class='py-1'><a class='underline' href='https://mikann20041029.github.io/goliath/pages/collected-no-posts-fix-guide-checklist-tool-16/'>collected no posts fix guide checklist tool</a> <span class='text-white/50 text-xs'>(Dev/Tools)</span></li>
+<li class='py-1'><a class='underline' href='https://mikann20041029.github.io/goliath/pages/collected-no-posts-fix-guide-checklist-tool-15/'>collected no posts fix guide checklist tool</a> <span class='text-white/50 text-xs'>(Dev/Tools)</span></li>
+<li class='py-1'><a class='underline' href='https://mikann20041029.github.io/goliath/pages/collected-no-posts-fix-guide-checklist-tool-14/'>collected no posts fix guide checklist tool</a> <span class='text-white/50 text-xs'>(Dev/Tools)</span></li>
+<li class='py-1'><a class='underline' href='https://mikann20041029.github.io/goliath/pages/collected-no-posts-fix-guide-checklist-tool-13/'>collected no posts fix guide checklist tool</a> <span class='text-white/50 text-xs'>(Dev/Tools)</span></li>
+<li class='py-1'><a class='underline' href='https://mikann20041029.github.io/goliath/pages/collected-no-posts-fix-guide-checklist-tool-12/'>collected no posts fix guide checklist tool</a> <span class='text-white/50 text-xs'>(Dev/Tools)</span></li>
+          </ul>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="relative z-10 mt-10 bg-zinc-900/60 border-t border-white/10">
+    <div class="mx-auto max-w-6xl px-4 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div class="md:col-span-2">
+        <div class="flex items-center gap-3">
+          <div class="h-10 w-10 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center font-bold">🍊</div>
+          <div>
+            <div class="font-semibold">Mikanntool</div>
+            <div class="text-xs text-white/60" data-i18n="footer_note">Practical, fast, and respectful guides—built to reduce wasted trial-and-error.</div>
+          </div>
+        </div>
+        <div class="mt-3 text-xs text-white/60">Contact: contact@mikanntool.com</div>
+      </div>
+
+      <div class="text-sm">
+        <div class="font-semibold mb-2">Legal</div>
+        <ul class="space-y-2 text-white/70">
+          <li><a class="underline" href="https://mikann20041029.github.io/policies/privacy.html" data-i18n="privacy">Privacy</a></li>
+          <li><a class="underline" href="https://mikann20041029.github.io/policies/terms.html" data-i18n="terms">Terms</a></li>
+          <li><a class="underline" href="https://mikann20041029.github.io/policies/contact.html" data-i18n="contact">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="text-sm">
+        <div class="font-semibold mb-2">Hub</div>
+        <ul class="space-y-2 text-white/70">
+          <li><a class="underline" href="https://mikann20041029.github.io/hub/">/hub/</a></li>
+          <li><a class="underline" href="https://mikann20041029.github.io/hub/#tools">All tools</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+const I18N = {"en": {"home": "Home", "about": "About Us", "all_tools": "All Tools", "language": "Language", "share": "Share", "problems": "Problems this tool can help with", "tool": "Tool", "quick_answer": "Quick answer", "causes": "Common causes", "steps": "Step-by-step checklist", "pitfalls": "Common pitfalls & how to avoid them", "next": "If it still doesn’t work", "faq": "FAQ", "references": "Reference links", "supplement": "Supplementary resources", "related": "Related tools", "popular": "Popular tools", "disclaimer": "Disclaimer", "terms": "Terms", "privacy": "Privacy", "contact": "Contact", "footer_note": "Practical, fast, and respectful guides—built to reduce wasted trial-and-error.", "aff_title": "Recommended", "copy": "Copy", "copied": "Copied", "short_value": "Do it in 3 seconds"}, "ja": {"home": "Home", "about": "About Us", "all_tools": "All Tools", "language": "言語", "share": "共有", "problems": "このツールが助ける悩み一覧", "tool": "ツール", "quick_answer": "結論（最短で直す方針）", "causes": "原因のパターン分け", "steps": "手順（チェックリスト）", "pitfalls": "よくある失敗と回避策", "next": "直らない場合の次の手", "faq": "FAQ", "references": "参考URL", "supplement": "補助資料", "related": "関連ツール", "popular": "人気のツール", "disclaimer": "免責事項", "terms": "利用規約", "privacy": "プライバシーポリシー", "contact": "お問い合わせ", "footer_note": "実務で使える手順に寄せて、短時間で解決できる形を目指しています。", "aff_title": "おすすめ", "copy": "コピー", "copied": "コピーしました", "short_value": "3秒でできる"}, "ko": {"home": "Home", "about": "About Us", "all_tools": "All Tools", "language": "언어", "share": "공유", "problems": "이 도구가 해결할 수 있는 고민", "tool": "도구", "quick_answer": "결론(가장 빠른 해결 방향)", "causes": "원인 패턴", "steps": "체크리스트(단계별)", "pitfalls": "자주 하는 실수와 회피법", "next": "계속 안 될 때", "faq": "FAQ", "references": "참고 링크", "supplement": "추가 자료", "related": "관련 도구", "popular": "인기 도구", "disclaimer": "면책", "terms": "이용약관", "privacy": "개인정보 처리방침", "contact": "문의", "footer_note": "바로 실행 가능한 가이드를 목표로 합니다.", "aff_title": "추천", "copy": "복사", "copied": "복사됨", "short_value": "3초면 끝"}, "zh": {"home": "Home", "about": "About Us", "all_tools": "All Tools", "language": "语言", "share": "分享", "problems": "本工具可帮助解决的问题", "tool": "工具", "quick_answer": "结论（最快修复方向）", "causes": "常见原因分类", "steps": "步骤清单", "pitfalls": "常见坑与规避方法", "next": "仍无法解决时", "faq": "FAQ", "references": "参考链接", "supplement": "补充资料", "related": "相关工具", "popular": "热门工具", "disclaimer": "免责声明", "terms": "条款", "privacy": "隐私政策", "contact": "联系", "footer_note": "提供可落地、快速、尊重用户的排障指南。", "aff_title": "推荐", "copy": "复制", "copied": "已复制", "short_value": "3秒搞定"}};
+const LANGS = ["en", "ja", "ko", "zh"];
+function setLang(lang) {
+  if (!LANGS.includes(lang)) lang = "en";
+  document.documentElement.setAttribute("lang", lang);
+  localStorage.setItem("lang", lang);
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.getAttribute("data-i18n");
+    const v = (I18N[lang] && I18N[lang][key]) || (I18N["en"][key]) || key;
+    el.textContent = v;
+  });
+}
+function initLang() {
+  const saved = localStorage.getItem("lang");
+  const lang = saved || "en";
+  setLang(lang);
+  const sel = document.getElementById("langSel");
+  if (sel) {
+    sel.value = lang;
+    sel.addEventListener("change", (e) => setLang(e.target.value));
+  }
+}
+document.addEventListener("DOMContentLoaded", initLang);
+</script>
+  <script>
+function copyTextFrom(id, btnId){
+  const el = document.getElementById(id);
+  if(!el) return;
+  navigator.clipboard.writeText(el.value).then(()=>{
+    const b = document.getElementById(btnId);
+    if(b){
+      b.textContent = (window.I18N && I18N[document.documentElement.lang] && I18N[document.documentElement.lang].copied) || "Copied";
+    }
+    setTimeout(()=>{
+      const b2 = document.getElementById(btnId);
+      if(b2){
+        b2.textContent = (window.I18N && I18N[document.documentElement.lang] && I18N[document.documentElement.lang].copy) || "Copy";
+      }
+    }, 1200);
+  });
+}
+</script>
+</body>
+</html>
