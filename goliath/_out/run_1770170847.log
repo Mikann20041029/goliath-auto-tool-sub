@@ -1,0 +1,32 @@
+2026-02-04 02:07:27,856 | INFO | RUN_ID=1770170847
+2026-02-04 02:07:27,856 | INFO | REPO_ROOT=/home/runner/work/goliath-auto-tool-sub/goliath-auto-tool-sub
+2026-02-04 02:07:27,857 | INFO | SITE_DOMAIN=https://mikann20041029.github.io
+2026-02-04 02:07:27,857 | INFO | ALLOW_ROOT_UPDATE=False
+2026-02-04 02:07:27,857 | INFO | LEADS_TOTAL=100
+2026-02-04 02:07:27,857 | INFO | HN_QUERY=how to fix error OR help OR cannot OR failed OR bug
+2026-02-04 02:07:27,857 | INFO | HN_MAX=70
+2026-02-04 02:07:27,857 | INFO | Bluesky: skipped (missing BLUESKY_HANDLE/BLUESKY_APP_PASSWORD)
+2026-02-04 02:07:27,857 | INFO | Mastodon: skipped (missing MASTODON_BASE/MASTODON_TOKEN)
+2026-02-04 02:07:27,857 | INFO | Reddit: public mode collecting up to 20
+2026-02-04 02:07:28,410 | INFO | Reddit: collected 0
+2026-02-04 02:07:28,410 | INFO | X: skipped (missing X_BEARER_TOKEN or aliases)
+2026-02-04 02:07:28,804 | INFO | HN: collected 0
+2026-02-04 02:07:28,804 | INFO | Collected total=0 (Bluesky=0, Mastodon=0, Reddit=0, X=0, HN=0)
+2026-02-04 02:07:28,804 | INFO | Clustering 0 posts (threshold=0.22)
+2026-02-04 02:07:28,805 | INFO | Clusters: 0 (top sizes=[])
+2026-02-04 02:07:28,809 | INFO | Chosen themes forced=1 (seed)
+2026-02-04 02:07:28,809 | INFO | Chosen themes=1
+2026-02-04 02:07:28,810 | ERROR | build_tool_ui failed: name 'p' is not defined
+Traceback (most recent call last):
+  File "goliath/main.py", line 2824, in build_page_html
+    tool_ui = build_tool_ui(theme)
+  File "goliath/main.py", line 2215, in build_tool_ui
+    problems_html_items.append(f"<li>{html.escape(str(p))}</li>")
+NameError: name 'p' is not defined
+2026-02-04 02:07:28,811 | INFO | Built site: https://mikann20041029.github.io/goliath/pages/collected-no-posts-fix-guide-checklist-tool-24/ (Dev/Tools) short=https://mikann20041029.github.io/goliath/go/31aiw2m/
+2026-02-04 02:07:28,815 | INFO | Wrote issues payload: /home/runner/work/goliath-auto-tool-sub/goliath-auto-tool-sub/goliath/_out/issues_payload_1770170847.json
+2026-02-04 02:07:28,815 | INFO | Root sitemap/robots NOT updated (ALLOW_ROOT_UPDATE=0). Wrote to goliath/_out instead.
+2026-02-04 02:07:28,816 | INFO | Self-check: counts={'Bluesky': 0, 'Mastodon': 0, 'Reddit': 0, 'X': 0, 'HN': 0, 'Total': 0}
+2026-02-04 02:07:28,816 | INFO | Self-check: reply_candidates=100
+2026-02-04 02:07:28,816 | INFO | Self-check: affiliates_audit ok=True missing=0 extra=0
+2026-02-04 02:07:28,816 | INFO | Self-check: sitemap=https://mikann20041029.github.io/goliath/_out/sitemap.xml
