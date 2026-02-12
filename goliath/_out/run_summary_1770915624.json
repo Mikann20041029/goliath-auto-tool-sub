@@ -1,0 +1,27 @@
+{
+  "run_id": "1770915624",
+  "counts": {
+    "Bluesky": 0,
+    "Mastodon": 0,
+    "Reddit": 0,
+    "X": 0,
+    "HN": 0,
+    "Total": 0
+  },
+  "reply_candidates": 100,
+  "affiliates_audit": {
+    "missing": [],
+    "extra": [],
+    "ok": true
+  },
+  "sitemap_url": "https://mikann20041029.github.io/goliath/_out/sitemap.xml",
+  "post_drafts": [
+    {
+      "category": "Dev/Tools",
+      "search_title": "collected no posts fix guide checklist tool",
+      "short_url": "https://mikann20041029.github.io/goliath/go/9zAYgA3/",
+      "text": "Get a clean checklist + next steps in seconds.\nhttps://mikann20041029.github.io/goliath/go/9zAYgA3/"
+    }
+  ],
+  "updated_at": "2026-02-12T17:00:25+00:00"
+}
